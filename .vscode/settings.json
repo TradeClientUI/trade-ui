@@ -1,0 +1,96 @@
+{
+    "git.ignoreMissingGitWarning": true,
+    "editor.detectIndentation": false,
+    // 一个制表符等于的空格数。该设置在 "editor.detectIndentation" 启用时根据文件内容可能会被覆盖。
+    "editor.tabSize": 4,
+    "editor.formatOnType": false,
+    "editor.formatOnPaste": false,
+    // 控制是否在搜索中跟踪符号链接。
+    "search.followSymlinks": false,
+    "editor.wordWrapColumn": 180,
+    "editor.wordWrap": "on", // .then方法不换行
+    "vetur.format.options.tabSize": 4,
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "vetur.format.defaultFormatterOptions": {
+        "prettyhtml": {
+            "printWidth": 120,
+            "wordWrapColumn": 120,
+            "wrapAttributes": false,
+            "sortAttributes": false
+        }
+    },
+    "workbench.statusBar.visible": true,
+    "workbench.activityBar.visible": true,
+    "html.format.wrapLineLength": 160,
+    "html.format.wrapAttributes": "force-aligned",
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "editor.fastScrollSensitivity": 12,
+    "telemetry.enableCrashReporter": false,
+    "liveServer.settings.donotShowInfoMsg": true,
+    // eslint
+    "eslint.options": {
+        "configFile": ".eslintrc.js"
+    },
+    "eslint.nodePath": "./",
+    "vetur.validation.template": true,
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.fixAll.stylelint": true
+    },
+    "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact", "html", "vue"],
+    "eslint.validate": ["javascript", "javascriptreact", "vue"],
+    "eslint.run": "onSave",
+    "eslint.format.enable": true,
+    "[vue]": {
+        "editor.defaultFormatter": "svipas.prettier-plus"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "vue-format.pug-beautify": {
+
+        "fill_tab": false
+    },
+    "editor.minimap.enabled": true,
+    "i18n-ally.localesPaths": [
+        // "src/themes/plans_PCUI/i18n",
+        "src/themes/plans/i18n",
+        "src/themeCommon/i18n",
+    ], //
+        
+    "i18n-ally.refactor.templates": [ "$t(\"{key}\")" ],
+    // "i18n-ally.pathMatcher": "{locale}/{namespaces}.{ext}",
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.namespace": true,
+    "i18n-ally.enabledParsers": ["json", "js"],
+    // "i18n-ally.sortKeys": true,
+    "i18n-ally.sourceLanguage": "zh-CN",
+    "i18n-ally.displayLanguage": "zh-CN",
+    "vue-i18n.i18nPaths": "src\\themeCommon\\i18n,src\\themes\\cats\\i18n,src\\themes\\mt4\\i18n",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#ab307e",
+        "activityBar.activeBorder": "#25320e",
+        "activityBar.background": "#ab307e",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#25320e",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "sash.hoverBorder": "#ab307e",
+        "statusBar.background": "#832561",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#ab307e",
+        "statusBarItem.remoteBackground": "#832561",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#832561",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#83256199",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#832561"
+}

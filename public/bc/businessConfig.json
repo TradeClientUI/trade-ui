@@ -1,0 +1,12 @@
+{
+    "//": "pcuiLogo 请配置https://开头的图片地址，如果不配置则显示公版默认Logo",
+    "pcuiLogo": "http://www.alloyteam.com/wp-content/themes/alloyteam/images/qcloud-logo.svg",
+    "v10Link//": "V10基金介绍页地址，如果配置了此地址，则点击行情列表页面的申购和图表页面的申购按钮跳转到此地址，如：/fundV10/index",
+    "v10Link": "/api",
+    "fundDEX//": "是否显示去中心化基金功能",
+    "fundDEX": false,
+    "enterpriseLogin//": "是否显示企业登录功能",
+    "enterpriseLogin": false,
+    "fundLogin//": "是否显示基金登录功能",
+    "fundLogin": false
+}

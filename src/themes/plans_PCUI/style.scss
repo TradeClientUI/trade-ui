@@ -1,0 +1,850 @@
+@import '~@/sass/mixin.scss';
+.auto-width {
+    width: 1200px;
+    margin: 0 auto;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+html {
+    font-size: 35px;
+}
+html,
+body,
+#app {
+    height: 100%;
+    color: var(--color);
+    background-color: var(--bgColor);
+    // @include scroll-pc();
+    // scrollbar-color:var(--lineColor) var(--bgColor);
+    // scrollbar-width:thin;
+}
+body {
+    font-size: 14px;
+    /* no */
+    line-height: 1.5;
+    // font-family: 'PingFang SC', '-apple-system', 'Heiti SC', 'Helvetica Neue', 'Droid Sans Fallback', 'Droid Sans';
+    //font-family: 'Trebuchet MS', 'roboto', 'ubuntu', 'sans-serif';
+    //background-color: var(--bgColor2);
+    webkit-text-size-adjust: none;
+}
+a {
+    text-decoration: none;
+}
+.link {
+    color: var(--primary);
+}
+.riseColor {
+    color: var(--riseColor) !important;
+}
+.riseColorBg {
+    color: var(--color) !important;
+    background-color: var(--riseColor) !important;
+}
+.fallColor {
+    color: var(--fallColor) !important;
+}
+.fallColorBg {
+    color: var(--color) !important;
+    background-color: var(--fallColor) !important;
+}
+.grayColorBg {
+    color: var(--color) !important;
+    background-color: var(--minorColor) !important;
+}
+.grayColor {
+    color: var(--minorColor) !important;
+}
+.buyColor {
+    color: var(--riseColor) !important;
+}
+.sellColor {
+    color: var(--fallColor) !important;
+}
+.successColor {
+    color: var(--success) !important;
+}
+[class*='icon_'] {
+    font-family: iconfont;
+}
+.m-field {
+    background-color: var(--contentColor);
+    // padding: .38667rem .42667rem;
+    border: none;
+}
+.topBack {
+    z-index: 1;
+    width: rem(120px);
+    padding: 0 rem(30px);
+    color: var(--color);
+}
+::-webkit-input-placeholder {
+    color: var(--placeholdColor);
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+input,
+textarea {
+    color: var(--color);
+    font-family: 'PingFang SC', '-apple-system', 'Heiti SC', 'Helvetica', 'Helvetica Neue', 'Droid Sans Fallback', 'Droid Sans';
+    background: none;
+}
+i {
+    font-style: normal;
+}
+.pageRouter {
+    min-height: 100%;
+    color: var(--btnText);
+    font-size: rem(26px);
+    line-height: 1.4;
+}
+.protocolContent a {
+    color: var(--primary) !important;
+}
+.primary {
+    color: var(--primary) !important;
+}
+.primaryBg,
+.mainColorBg {
+    color: #FFF;
+    background-color: var(--primary) !important;
+}
+.muted {
+    color: var(--minorColor);
+}
+.red {
+    color: var(--warn);
+}
+.alignRight {
+    text-align: right;
+}
+.alignCenter {
+    text-align: center;
+}
+.alignLeft {
+    text-align: left;
+}
+.alignmiddle {
+    vertical-align: middle;
+}
+.mtop5 {
+    margin-top: 5px;
+}
+.mtop10 {
+    margin-top: 10px;
+}
+.mbottom10 {
+    margin-bottom: 10px;
+}
+.mtop20 {
+    margin-top: 20px;
+}
+.relative {
+    position: relative;
+}
+.fullPageWrapper {
+    flex: 1;
+    margin-top: rem(90px);
+    overflow-y: auto;
+}
+.fixedHeader {
+    position: sticky !important;
+    top: 0;
+}
+
+@font-face {
+    font-weight: normal;
+    font-family: 'vant-icon';
+    font-style: normal;
+    font-display: auto;
+    src: url('~@planspc/font/vant-icon-db1de1.woff2') format('woff2'), url('~@planspc/font/vant-icon-db1de1.woff') format('woff'), url('~@planspc/font/vant-icon-db1de1.ttf') format('truetype');
+}
+
+@keyframes redPacketsRain {
+    to {
+        top: 100%;
+    }
+}
+
+@keyframes AnimFadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes bg-red {
+    0% {
+        background: #FFF;
+    }
+    30% {
+        background: linear-gradient(to right, var(--contentColor), #FCF6F7);
+    }
+    80% {
+        background: linear-gradient(to right, var(--contentColor), #FAF3F3);
+    }
+    100% {
+        background: #FFF;
+    }
+}
+
+@keyframes bg-green {
+    0% {
+        background: #FFF;
+    }
+    30% {
+        background: linear-gradient(to right, var(--contentColor), #F0FAF8);
+    }
+    80% {
+        background: linear-gradient(to right, var(--contentColor), #EAF8F6);
+    }
+    100% {
+        background: #FFF;
+    }
+}
+body.light {
+    .riseColorBgAni,
+    .fallColorBgAni {
+        transition-property: background;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+        animation-iteration-count: infinite;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+    }
+    .riseColorBgAni {
+        animation-name: bg-green;
+    }
+    .fallColorBgAni {
+        animation-name: bg-red;
+    }
+}
+.z-index-9999 {
+    position: relative;
+    z-index: 99999;
+}
+// 移动端1px处理
+[class*='of-1px'] {
+    position: relative;
+}
+[class*='of-1px']::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    width: 200%;
+    height: 200%;
+    border: 0 solid var(--lineColor);
+    transform: scale(0.5);
+    transform-origin: 0 0;
+    content: '';
+    pointer-events: none;
+}
+.of-1px-top::after {
+    border-top-width: 1px;
+}
+.of-1px-left::after {
+    border-left-width: 1px;
+}
+.of-1px-right::after {
+    border-right-width: 1px;
+}
+.of-1px-bottom::after {
+    border-bottom-width: 1px;
+    transform: scale(0.5) translateY(-1px);
+}
+.of-1px-top-bottom::after {
+    border-width: 1px 0;
+}
+.of-1px-all::after {
+    border-width: 1px;
+}
+.bank-icons-sm {
+    display: inline-block;
+    width: rem(44px);
+    height: rem(44px);
+    vertical-align: middle;
+    background: url('~@/assets/bank-icons-sm.png') no-repeat top center;
+    background-position: rem(-5px) rem(-5px);
+    background-size: rem(54px) auto;
+}
+.bank-icons-sm.bk-ABOCCNBJXXX,
+.bk-ABC {
+    background-position: rem(-5px) rem(-5px);
+    /* 中国农业银行 */
+}
+.bank-icons-sm.bk-CIBKCNBJXXX,
+.bk-CITIC {
+    background-position: rem(-5px) rem(-59px);
+    /* 中信银行 */
+}
+.bank-icons-sm.bk-BJCNCNBJXXX,
+.bk-BCCB {
+    background-position: rem(-5px) rem(-113px);
+    /* 北京银行 */
+}
+.bank-icons-sm.bk-CHBHCNBTXXX,
+.bk-CHBHCNBTXXX {
+    background-position: rem(-5px) rem(-167px);
+    /* 渤海银行 */
+}
+.bank-icons-sm.bk-ICBKCNBJXXX,
+.bk-ICBC {
+    background-position: rem(-5px) rem(-221px);
+    /* 中国工商银行 */
+}
+.bank-icons-sm.bk-ZJCBCN2NXXX,
+.bk-CZBANK {
+    background-position: rem(-5px) rem(-275px);
+    /* 浙商银行 */
+}
+.bank-icons-sm.bk-FJIBCNBAXXX,
+.bk-CIB {
+    background-position: rem(-5px) rem(-329px);
+    /* 兴业银行 */
+}
+.bank-icons-sm.bk-HZCBCN2HXXX {
+    background-position: rem(-5px) rem(-383px);
+    /* 杭州银行 */
+}
+.bank-icons-sm.bk-HXBKCNBJXXX {
+    background-position: rem(-5px) rem(-437px);
+    /* 华夏银行 */
+}
+.bank-icons-sm.bk-PCBCCNBJXXX,
+.bk-CCB {
+    background-position: rem(-5px) rem(-491px);
+    /* 中国建设银行 */
+}
+.bank-icons-sm.bk-BOJSCNBNXXX {
+    background-position: rem(-5px) rem(-545px);
+    /* 江苏银行 */
+}
+.bank-icons-sm.bk-COMMCNSHXXX,
+.bk-BCM {
+    background-position: rem(-5px) rem(-599px);
+    /* 交通银行 */
+}
+.bank-icons-sm.bk-NJCBCNBNXXX {
+    background-position: rem(-5px) rem(-653px);
+    /* 南京银行 */
+}
+.bank-icons-sm.bk-BINHCN2NXXX {
+    background-position: rem(-5px) rem(-707px);
+    /* 宁波银行 */
+}
+.bank-icons-sm.bk-CMBCCNBSXXX,
+.bk-CMB {
+    background-position: rem(-5px) rem(-761px);
+    /* 招商银行 */
+}
+.bank-icons-sm.bk-SZDBCNBSXXX,
+.bk-SPABANK {
+    background-position: rem(-5px) rem(-815px);
+    /* 平安银行 */
+}
+.bank-icons-sm.bk-BOSHCNSHXXX,
+.bk-SHBANK {
+    background-position: rem(-5px) rem(-869px);
+    /* 上海银行 */
+}
+.bank-icons-sm.bk-BKCHCNBJXXX,
+.bk-BOC {
+    background-position: rem(-5px) rem(-923px);
+    /* 中国银行 */
+}
+.bank-icons-sm.bk-SHRCCNSHXXX {
+    background-position: rem(-5px) rem(-977px);
+    /* 上海农商银行 */
+}
+.bank-icons-sm.bk-GDBKCN22XXX,
+.bk-GDB {
+    background-position: rem(-5px) rem(-1031px);
+    /* 广东发展银行 */
+}
+.bank-icons-sm.bk-EVERCNBJXXX {
+    background-position: rem(-5px) rem(-1085px);
+    /* 中国光大银行 */
+}
+.bank-icons-sm.bk-MSBCCNBJXXX,
+.bk-CMBC {
+    background-position: rem(-5px) rem(-1139px);
+    /* 中国民生银行 */
+}
+.bank-icons-sm.bk-PSBCCNBJXXX,
+.bk-PSBC {
+    background-position: rem(-5px) rem(-1193px);
+    /* 中国邮政储蓄 */
+}
+.bank-icons-sm.bk-SPDBCNSHXXX,
+.bk-SPDB {
+    background-position: rem(-5px) rem(-1247px);
+    /* 上海浦东发展银行 */
+}
+.bank-icons-sm.bk-SRCCCNBSXXX,
+.bk-SRCB {
+    background-position: rem(-5px) rem(-1301px);
+    /* 深圳农村商业银行 */
+}
+.bank-icons-sm.bk-RCCSCNBSXXX {
+    background-position: rem(-5px) rem(-1355px);
+    /* 顺德农村农业银行 */
+}
+.bank-icons-sm.bk-BRCBCNBJXXX {
+    background-position: rem(-5px) rem(-1409px);
+    /* 北京农村商业银行 */
+}
+.bank-icons-sm.bk-GZRCCN22XXX {
+    background-position: rem(-5px) rem(-1463px);
+    /* 广州农村商业银行 */
+}
+.bank-icons-sm.bk-CZCBCN2XXXX {
+    background-position: rem(-5px) rem(-1517px);
+    /* 浙江稠州商业银行 */
+}
+.bank-icons-sm.bk-SDB {
+    background-position: rem(-5px) rem(-1571px);
+    /* 深圳发展银行 */
+}
+.bank-icons-sm.bk-BSB {
+    background-position: rem(-5px) rem(-1625px);
+    /* 包商银行 */
+}
+.bank-icons-sm.bk-EGBANK {
+    background-position: rem(-5px) rem(-1679px);
+    /* 恒丰银行 */
+}
+.bank-icons-sm.bk-GCB {
+    background-position: rem(-5px) rem(-1723px);
+    /* 广州银行 */
+}
+.bank-icons-sm.bk-CDB {
+    background-position: rem(-5px) rem(-1787px);
+    /* 国家开发银行 */
+}
+.bank-icons-sm.bk-PBC {
+    background-position: rem(-5px) rem(-1841px);
+    /* 中国人民银行 */
+}
+.van-loading {
+    text-align: center;
+}
+.m-dialog {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bgColor);
+    &.transparent {
+        background-color: transparent;
+    }
+    .dialog-header {
+        position: relative;
+        padding: rem(43px) 0 rem(45px) 0;
+        color: var(--color);
+        font-size: rem(34px);
+        .title {
+            text-align: center;
+        }
+        .right {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            padding: rem(45px) rem(30px);
+            i {
+                font-size: rem(40px);
+            }
+        }
+    }
+    .dialog-body {
+        flex: 1;
+        overflow-y: auto;
+        .words {
+            color: var(--color);
+        }
+    }
+    .dialog-footer {
+        display: flex;
+        .van-button {
+            flex: 1;
+            height: rem(90px);
+            font-size: rem(34px);
+            border: none;
+            border-radius: 0;
+        }
+        .van-button--plain {
+            color: #477FD3;
+        }
+    }
+}
+body {
+    &.night {
+        .van-search__action:active,
+        .van-action-sheet__cancel:active,
+        .van-action-sheet__item:active {
+            background-color: initial;
+        }
+    }
+    .van-cell,
+    .van-field__control,
+    .van-search__action {
+        color: var(--color);
+    }
+    .van-search__content {
+        background-color: var(--bgColor);
+    }
+    .van-cell {
+        padding-left: rem(30px);
+        background-color: var(--contentColor);
+        .van-cell__title {
+            color: var(--normalColor);
+        }
+        .van-cell__value {
+            color: var(--color);
+        }
+        .van-field__control {
+            color: var(--color);
+        }
+        &::after {
+            border-color: var(--lineColor);
+        }
+    }
+    .van-action-sheet__item {
+        color: var(--color);
+        background-color: var(--contentColor);
+    }
+    .van-checkbox__label {
+        color: var(--minorColor);
+    }
+    .van-action-sheet {
+        background: var(--contentColor);
+        .van-action-sheet__header,
+        .van-action-sheet__content {
+            color: var(--color);
+        }
+    }
+    .van-tabs__nav {
+        background: var(--contentColor);
+    }
+    [class*=van-hairline]::after {
+        border-color: var(--lineColor);
+    }
+    .van-dropdown-menu__bar {
+        background-color: var(--white);
+    }
+    .van-tab {
+        background-color: var(--white);
+        .van-tab__text {
+            color: var(--minorColor);
+        }
+        &.van-tab--active {
+            .van-tab__text {
+                color: var(--primary);
+            }
+        }
+        .title {
+            color: var(--btnColor);
+        }
+    }
+    .van-tabs__nav--complete {
+        background-color: var(--white);
+        .title {
+            color: var(--lightenPrimary);
+        }
+    }
+    .van-dropdown-item__option {
+        color: var(--lightenPrimary);
+    }
+    // .van-popup {
+    //     z-index: 3000 !important;
+    //     //background: var(--contentColor);
+    // }
+    .van-button--default {
+        color: var(--color);
+        background: var(--contentColor);
+        border-color: var(--lineColor);
+    }
+    .van-dialog {
+        background-color: var(--contentColor);
+        .van-dialog__header {
+            color: var(--normalColor);
+        }
+        .van-dialog__message {
+            color: var(--color);
+        }
+        .van-button {
+            background-color: var(--contentColor);
+            &.van-dialog__confirm {
+                .van-button__text {
+                    color: var(--primary);
+                }
+            }
+            .van-button__text {
+                color: var(--normalColor);
+            }
+        }
+        .van-dialog__footer {
+            background-color: var(--contentColor);
+        }
+    }
+    .van-checkbox__icon--checked,
+    .van-checkbox__icon {
+        .van-icon {
+            border-radius: rem(8px);
+        }
+    }
+    .van-picker__mask {
+        background-image: none;
+    }
+    .van-switch {
+        background-color: var(--assistColor);
+    }
+    .van-collapse-item__content {
+        background-color: var(--contentColor);
+    }
+    .assetsPicker [class*=van-hairline]::after {
+        border-color: var(--placeholdColor);
+    }
+    ::-webkit-input-placeholder {
+        color: var(--placeholdColor);
+    }
+
+    --van-button-primary-background-color: var(--primary);
+    --van-picker-confirm-action-color: var(--primary);
+    --van-radio-checked-icon-color: var(--primary);
+    --van-popup-background-color: var(--contentColor);
+    --van-search-background-color: var(--contentColor);
+    --van-field-placeholder-text-color: var(--placeholdColor);
+    --van-picker-background-color: var(--contentColor);
+    --van-button-default-background-color: var(--contentColor);
+    --van-button-plain-background-color: var(--contentColor);
+    --van-button-default-color: var(--color);
+    --van-picker-option-text-color: var(--color);
+    --van-popover-light-text-color: var(--color);
+    --van-active-color: var(--primaryAssistColor);
+    --van-radio-label-color: var(--normalColor);
+    --van-cell-group-background-color: var(--bgColor);
+    --van-popover-action-width: rem(80px);
+    --van-popover-action-height: 30px;
+    --van-cell-active-color: none;
+    .van-calendar__footer {
+        .van-button {
+            height: rem(74px);
+            border-radius: rem(6px);
+        }
+    }
+    .van-calendar {
+        background-color: var(--bgColor) !important;
+    }
+    .van-button--primary {
+        background-color: var(--primary);
+        border: 1px solid var(--primary);
+    }
+    .van-button--plain.van-button--primary {
+        color: var(--primary);
+    }
+
+    // element-plus
+    .el-dialog {
+        background: var(--contentColor);
+        .el-dialog__title {
+            color: var(--color);
+        }
+        .el-icon-close {
+            &:hover {
+                color: var(--primary);
+            }
+        }
+    }
+    .el-loading-mask {
+        background-color: var(--contentColor);
+        opacity: 0.9;
+    }
+    .el-dropdown-menu {
+        background: var(--contentColor);
+    }
+    .el-dropdown-menu__item,
+    .el-select-dropdown__item {
+        color: var(--color);
+        &.selected {
+            color: var(--primary);
+            background: var(--contentColor) !important;
+        }
+        &:hover {
+            color: var(--primary);
+            background: var(--contentColor) !important;
+        }
+        &.hover {
+            background: none;
+        }
+    }
+    // .el-popper {
+    //     color: var(--color) !important;
+    //     font-size: 14px;
+    //     background: var(--contentColor) !important;
+    //     border: 1px solid var(--lineColor) !important;
+    //     &.is-light {
+    //         border: 1px solid var(--lineColor) !important;
+    //         .el-popper__arrow::before {
+    //             background: var(--contentColor) !important;
+    //             border-top-color: var(--lineColor) !important;
+    //             border-left-color: var(--lineColor) !important;
+    //         }
+    //     }
+    // }
+    .el-pagination {
+        display: flex;
+        align-items: center;
+        li {
+            color: var(--color) !important;
+            font-weight: normal;
+            font-size: 16px;
+            background-color: transparent !important;
+            &.active {
+                color: var(--primary) !important;
+                font-weight: bold;
+                background-color: var(--primaryAssistColor) !important;
+            }
+        }
+        button {
+            color: var(--color) !important;
+            background-color: transparent !important;
+            .el-icon {
+                font-size: 16px !important;
+            }
+        }
+    }
+    .el-input__inner {
+        color: var(--color);
+        background: var(--assistColor);
+        border: none;
+        &:hover {
+            border: 1px solid var(--primary) !important;
+        }
+    }
+    .el-checkbox__input {
+        &.is-checked .el-checkbox__inner {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        &.is-indeterminate .el-checkbox__inner {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        &.is-focus .el-checkbox__inner {
+            border-color: var(--primary);
+        }
+    }
+    .el-checkbox__inner {
+        &:hover {
+            border-color: var(--primary);
+        }
+    }
+    .el-table {
+        th {
+            border-color: var(--lineColor) !important;
+        }
+        tbody tr td {
+            border-color: var(--lineColor) !important;
+        }
+    }
+    .el-table--border {
+        border-color: var(--lineColor);
+        &::after {
+            background: var(--lineColor);
+        }
+    }
+    .web3modal-modal-lightbox {
+        z-index: 102;
+    }
+}
+/* 滚动条 */
+// ::-webkit-scrollbar {
+// 	width: 7px;
+// 	height: 7px;
+// }
+// ::-webkit-scrollbar-track {
+// 	background: var(--bgColor);
+// 	border-radius: 10px;
+// 	outline: 1px solid var(--lineColor);
+// 	outline-offset: -1px;
+// 	border: 1px solid var(--lineColor);
+// }
+// ::-webkit-scrollbar-thumb {
+// 	background: #C2C2C2;
+// 	border-radius: 10px;
+// }
+// ::-webkit-scrollbar-thumb:hover {
+// 	background: #7D7D7D;
+// }
+
+// element-plus
+.dialog-layer {
+    .el-overlay {
+        .el-overlay-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .el-dialog {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            margin: 0 !important;
+            overflow: hidden;
+            border-radius: 10px;
+            .el-icon-close {
+                font-size: 22px;
+            }
+            .el-dialog__header {
+                width: 90%;
+                margin: auto;
+                color: var(--color);
+                text-align: center;
+            }
+            .el-dialog__body {
+                @include scroll-pc();
+                flex: 1;
+                padding: 20px;
+                overflow-y: auto;
+                word-break: normal;
+                img {
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
+.el-overlay-dialog {
+    overflow: hidden;
+}
+.icon_zixuan2,
+.icon_hangqingliebiaoyijiazixuan {
+    color: var(--focusColor);
+}
+.icon_hangqingliebiaoweijiazixuan {
+    color: var(--minorColor);
+}
+
+// pcui登录页面选择国家的actionsheet样式
+.loginAreaActionsheet,
+.actionsheetCenter {
+    right: 50% !important;
+    bottom: 0 !important;
+    margin-right: -200px;
+}
+//web3Modal 样式覆盖
+@media only screen and (min-width: 768px) {
+    .walletconnect-connect__buttons__wrapper__wrap {
+        //margin-top: 0 !important;
+    }
+}

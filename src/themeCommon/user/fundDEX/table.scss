@@ -1,0 +1,253 @@
+@import '@/sass/mixin.scss';
+
+.body-module {
+    margin-top: 16px;
+    background: var(--contentColor);
+    border-radius: 10px;
+    :deep {
+        .van-empty__image {
+            width: 80px;
+            height: 80px;
+        }
+    }
+    @media (max-width: 768px) {
+        border-radius: 0;
+    }
+}
+.headerTitle {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    .titleTxt {
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    .titleSubTxt {
+        margin-right: 10px;
+        color: var(--minorColor);
+        font-size: 14px;
+    }
+    @media (max-width: 768px) {
+        padding: 15px;
+        .titleTxt {
+            display: none;
+        }
+    }
+}
+.loading-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+.table-module {
+    overflow-y: auto;
+    .pro-link {
+        flex: 1;
+        min-width: 210px;
+        text-align: left;
+        padding-left: 20px;
+    }
+    .pro-row {
+        flex: 1;
+        padding-left: 5px;
+    }
+    .handle-row {
+        flex: 1;
+        min-width: 210px;
+    }
+    @media (max-width: 768px) {
+        .pro-link {
+            padding-left: 15px;
+        }
+        .pro-row {
+            min-width: 70px;
+            text-align: right;
+        }
+        .last-row {
+            min-width: 85px;
+            padding-right: 15px;
+        }
+        .handle-row {
+            display:  none;
+        }   
+    }
+}
+.table-header {
+    display: flex;
+    align-items: center;
+    height: 42px;
+}
+.table-list {
+    li {
+        display: flex;
+        align-items: center;
+        height: 78px;
+        transition: .2s;
+        &:hover {
+            background-color: var(--bgColor);
+        }
+        .pro-link {
+            display: inline-flex;
+            align-items: center;
+            height: 100%;
+            border-top: 1px solid var(--lineColor);
+            cursor: pointer;
+        }
+        .pro-cell {
+            position: relative;
+            margin-right: 15px;
+            .currencyIcon {
+                width: 34px;
+                border-radius: 50%;
+            }
+            .small {
+                position: absolute;
+                top: -2px;
+                right: -8px;
+                width: 18px;
+                height: 18px;
+                background-color: var(--contentColor);
+                border-radius: 50%;
+            }
+        }
+        .pro-name {
+            display: inline-flex;
+            flex-direction: column;
+            line-height: 1;
+            .black {
+                font-size: 18px;
+                color: var(--mainColor);
+                font-weight: bold;
+            }
+            .bottomText {
+                margin-top: 4px;
+                color: var(--normalColor);
+                font-size: 13px;
+            }
+        }
+        .pro-row {
+            display: inline-flex;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            line-height: 1;
+            border-top: 1px solid var(--lineColor);
+            .black {
+                font-size: 14px;
+                color: var(--mainColor);
+                font-weight: bold;
+            }
+            .bottomText {
+                margin-top: 5px;
+                color: var(--normalColor);
+                font-size: 13px;
+            }
+        }
+    }
+    .handle {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        flex: 1;
+        height: 100%;
+        border-top: 1px solid var(--lineColor);
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 92px;
+            height: 36px;
+            margin-right: 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            &.default {
+                color: var(--primary);
+                background: var(--primaryBg);
+                border: 1px solid transparent;
+                cursor: pointer;
+                &:hover {
+                    color: #FFF;
+                    background: var(--primaryBg);
+                }
+            }
+            &.easy {
+                color: var(--color);
+                background: #FFF;
+                border: 1px solid #E6E6E6;
+                cursor: pointer;
+                &:hover {
+                    color: var(--primary);
+                    border: 1px solid var(--primary);
+                }
+            }
+            &.disable {
+                color: var(--minorColor);
+                background: var(--lineColor);
+            }
+        }
+    }
+    @media (max-width: 768px) {
+        li {
+            height: 60px;
+            &:hover {
+                background-color: transparent;
+            }
+            .pro-cell {
+                .currencyIcon {
+                    width: 28px;
+                }
+                .small {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+            .pro-name {
+                .black {
+                    font-size: 15px;
+                }
+                .bottomText {
+                    font-size: 12px;
+                }
+            }
+            .pro-row {
+                .bottomText {
+                    font-size: 12px;
+                }
+            }
+            .handle {
+                display: none;
+            }
+        }
+    }
+}
+
+/* 单独设置列表样式 */
+.earning-module {
+    .table-module {
+        @media (max-width: 768px) {
+            .pro-link {
+                min-width: 100px;
+            }
+        }
+    }
+}
+.index-funds-module {
+    .table-module {
+        @media (max-width: 768px) {
+            .pro-link {
+                min-width: 168px;
+            }
+        }
+    }
+}
+.dashboardTable {
+    .table-module {
+        @media (max-width: 768px) {
+            .pro-link {
+                min-width: 168px;
+            }
+        }
+    }
+}

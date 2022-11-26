@@ -1,0 +1,484 @@
+@import '@/sass/mixin.scss';
+.dashboard {
+    margin-top: 16px;
+    .tabs {
+        line-height: 50px;
+        background: #FFF;
+        border-radius: 10px;
+        overflow: hidden;
+        :deep {
+            .el-tabs__header {
+                margin: 0;
+            }
+           .van-tab--shrink {
+                padding: 0 10px;
+           }
+        }
+        @media (max-width: 768px) {
+            border-radius: 0;
+        }
+    }
+    .earning-warp {
+        margin-top: 10px;
+        background-color: #FFF;
+        border-radius: 10px;
+    }
+    .indexfund-wrap {
+        margin-top: 20px;
+        background-color: #FFF;
+        border-radius: 10px;
+        .indexfund-wrapH5 {
+            text-align: center;
+            padding: 60px;
+        }
+    }
+    .header-title {
+        padding: 20px 0 20px 20px;
+        color: var(--color);
+        font-size: 16px;
+        background-color: #FFF;
+    }
+    .table-module-wrap {
+        display: none;
+        @media (max-width: 768px) {
+            display: block;
+            .card {
+                border-bottom: solid 1px var(--lineColor);
+                padding: 15px;
+                margin-bottom: 10px;
+                .header {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                    .currencyIcon {
+                        width: 30px;
+                        margin-right: 10px;
+                    }
+                    .mark {
+                        position: absolute;
+                        width: 18px;
+                        height: 18px;
+                        left: 20px;
+                        top: -5px;
+                    }
+                }
+                .row {
+                    margin-bottom: 15px;
+                    display: flex;
+                    justify-content: space-between;
+                    .label {
+                        color: var(--minorColor);
+                    }
+                    .vals {
+                        color: var(--color);
+                        text-align: right;
+                    }
+                    button {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex: 1;
+                        height: 36px;
+                        //margin-left: 12px;
+                        font-size: 14px;
+                        border-radius: 5px;
+                        &.default {
+                            color: var(--primary);
+                            background-color: var(--primaryBg);
+                            border: 1px solid transparent;
+                            cursor: pointer;
+                            &:hover {
+                                color: #FFF;
+                                background: var(--primary);
+                            }
+                        }
+                        &.easy {
+                            color: var(--color);
+                            background: #FFF;
+                            border: 1px solid #E6E6E6;
+                            cursor: pointer;
+                            &:hover {
+                                color: var(--primary);
+                                border: 1px solid var(--primary);
+                            }
+                        }
+                        &:first-child {
+                            margin-right: 10px;
+                        }
+                    }
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+                &:last-child {
+                    border-bottom: none;
+                    padding: 15px 15px 0;
+                }
+            }
+        }
+    }
+    :deep(.van-collapse) {
+        .van-cell {
+            padding-left: 20px;
+            .title {
+                position: relative;
+                display: flex;
+            }
+        }
+    }
+    :deep(.el-tabs__item) {
+        padding: 0 20px;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    :deep(.el-tabs__nav-wrap) {
+        margin-top: 16px;
+        padding: 0 20px;
+    }
+    :deep(.el-collapse-item__header) {
+        position: relative;
+        padding-left: 20px;
+        font-size: 16px;
+        .collapseItem {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 14px;
+            line-height: 20px;
+            em {
+                display: none;
+                font-style: normal;
+            }
+        }
+        &.is-active {
+            .collapseItem {
+                em {
+                    display: inline-block;
+                }
+                span {
+                    display: none;
+                }
+            }
+        }
+    }
+    :deep(.el-collapse-item__arrow) {
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+        content: '+++';
+        &::before {
+            display: none;
+        }
+    }
+    .fund-list {
+        //margin: 0 20px 0;
+        background: var(--contentColor);
+        border-radius: 10px;
+        .el-button {
+            font-weight: normal;
+        }
+        .fundsTable {
+            width: 100%;
+            .black {
+                color: var(--mainColor);
+                font-weight: bold;
+            }
+            .bottomText {
+                font-size: 12px;
+            }
+            .btns {
+                text-align: right;
+            }
+        }
+        .no-data {
+            padding: 30px 0;
+            color: var(--minorColor);
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .table-module {
+                display: none;
+            }
+        }
+    }
+    .dashboardTable {
+        border-radius: 10px;
+        overflow: hidden;
+        .title {
+            font-weight: bold;
+            .currencyIcon {
+                width: 28px;
+                margin-right: 8px;
+            }
+            .testnet {
+                position: absolute;
+                bottom: -3px;
+                left: 19px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 16px;
+                height: 16px;
+                color: rgb(255, 255, 255);
+                font-size: 12px;
+                line-height: 16px;
+                background-color: rgb(41, 182, 246);
+                border-radius: 50%;
+                -webkit-box-align: center;
+                -webkit-box-pack: center;
+            }
+        }
+        :deep(.el-collapse-item__content) {
+            padding-bottom: 0;
+        }
+        @media (max-width: 768px) {
+            border-radius: 0;
+        }
+    }
+    .all-no-data {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 0;
+        background: #FFF;
+        border-radius: 10px;
+        @media (max-width: 768px) {
+            margin: 20px;
+        }
+        .text {
+            padding: 0 20px 20px;
+            //color: var(--minorColor);
+        }
+        .button {
+            padding: 0 36px;
+            color: #FFF;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 37px;
+            background: var(--primary);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    }
+}
+.skeleton-wrap {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    .van-skeleton {
+        flex: 1;
+        margin-bottom: 15px;
+    }
+    .skeleton-item {
+        margin-top: 16px;
+        padding: 25px 0;
+        background: #FFF;
+    }
+    .skeleton-fild {
+        height: 50px;
+        margin-top: 10px;
+    }
+    .filed1 {
+        width: 24px;
+        height: 24px;
+        margin-left: 20px;
+    }
+    .filed2 {
+        width: 10%;
+        height: 24px;
+        margin-left: 20px;
+    }
+    .filed3 {
+        width: 20%;
+        height: 24px;
+        margin-left: 50px;
+    }
+    .filed4 {
+        width: 20%;
+        height: 24px;
+        margin-right: 80px;
+        margin-left: 20px;
+    }
+    .filed5 {
+        width: 110px;
+        height: 24px;
+        margin-left: 20px;
+    }
+}
+.no-login-wrap {
+    justify-content: center;
+    margin-top: 50px;
+    padding: 100px 0;
+    color: #303549;
+    text-align: center;
+    background-color: #FFF;
+    border-radius: 4px;
+    box-shadow: 0 2px 1px rgb(0 0 0 / 5%), 0 0 1px rgb(0 0 0 / 25%);
+    @media (max-width: 768px) {
+        margin: 20px;
+    }
+    .text1 {
+        margin-bottom: 10px;
+    }
+    .text2 {
+        margin-bottom: 30px;
+        color: var(--minorColor);
+    }
+    .connect-btn {
+        padding: 0 36px;
+        color: #FFF;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 37px;
+        background: linear-gradient(248.86deg, #5292F1 10.51%, #5BECBC 90.41%);
+        border-radius: 5px;
+        cursor: pointer;
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}
+.empty-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 10px;
+    background: var(--bgColor);
+    border-radius: 50%;
+    .close-wrap {
+        position: absolute;
+        top: 0;
+        right: -4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background-color: var(--color);
+        border-radius: 50%;
+        .close-icon {
+            color: #FFF;
+        }
+    }
+}
+.headerTitle {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    .titleTxt {
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    .titleSubTxt {
+        color: var(--minorColor);
+        font-size: 14px;
+    }
+    .linkSelect {
+        width: 180px;
+        .icon {
+            display: inline-block;
+            width: 24px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border-radius: 50%;
+        }
+        // :deep(.el-input__inner) {
+        //     padding-left: 36px !important;
+        // }
+        :deep(.black) {
+            color: var(--normalColor);
+        }
+    }
+}
+
+// funds-page
+.IndexFunds {
+    :deep(.el-select) {
+        border: 1px solid var(--lineColor);
+        border-radius: 8px;
+        .select-trigger {
+            .el-input__inner {
+                color: var(--mainColor);
+                background: none;
+            }
+        }
+    }
+    .black {
+        color: var(--mainColor);
+        font-weight: bold;
+    }
+    .bottomText {
+        color: var(--normal);
+        font-size: 12px;
+    }
+    .fund-list {
+        width: 100%;
+        margin-top: 16px;
+        overflow: hidden;
+        background: var(--contentColor);
+        border-radius: 10px;
+        :deep(th.el-table__cell>.cell) {
+            color: rgb(98, 103, 123);
+            font-weight: normal !important;
+            font-size: 12px;
+        }
+        :deep(.el-table .cell) {
+            padding-left: 20px;
+        }
+        :deep(.el-table__empty-block) {
+            min-height: 450px;
+        }
+        .pro-link {
+            cursor: pointer;
+        }
+        .el-button {
+            min-width: 105px;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        .pro-name {
+            display: inline-block;
+            //margin-left: 20px;
+            line-height: 20px;
+            vertical-align: middle;
+            b {
+                font-size: 18px;
+            }
+            .smallTxt {
+                display: block;
+                color: var(--minorColor);
+                font-size: 12px;
+            }
+        }
+        .fundsTable {
+            width: 100%;
+            .btns {
+                text-align: right;
+            }
+        }
+        .currencyIcon {
+            width: 34px;
+            &.small {
+                width: 18px;
+            }
+        }
+    }
+}
+.smallIco {
+    display: inline-block;
+    width: 32px;
+    margin-right: 12px;
+    padding-left: 10px;
+}
+.dropicon {
+    display: inline-block;
+    width: 24px;
+    margin-right: 15px;
+    vertical-align: middle;
+}

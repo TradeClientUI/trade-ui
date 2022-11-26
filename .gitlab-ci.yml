@@ -1,0 +1,19 @@
+master job:
+  only:
+    - master
+  script:
+    - pwd
+    - echo "master start ..."
+    - echo "master golive start ..."
+    - echo "current branch ****** $CI_JOB_NAME ******" $CI_JOB_NAME
+    - echo "deploy golive done."
+uat job:
+  only:
+    - dev_plansPCUI
+  script:
+    - pwd
+    - echo "dev_plansPCUI start ..."
+    - echo "dev_plansPCUI golive start ..."
+    - echo "current branch ****** $CI_JOB_NAME ******" $CI_JOB_NAME
+    - echo "uat golive done."
+    - sh ../dev_plansPCUI.sh

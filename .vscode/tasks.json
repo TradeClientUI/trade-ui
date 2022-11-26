@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "type": "npm",
+            "script": "build_webview",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "npm: build_webview",
+            "detail": "vue-cli-service build --type webview"
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+**/fonts/**/*
+**/font/**/*
+src/components/tradingview/datafeeds/**/*
+# /src
+public/charting_library/

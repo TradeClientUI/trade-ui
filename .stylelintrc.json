@@ -1,0 +1,64 @@
+{
+    "extends": [
+        "stylelint-config-standard",
+        "stylelint-config-css-modules",
+        "stylelint-no-unsupported-browser-features"
+    ],
+    "plugins": ["stylelint-declaration-block-no-ignored-properties"],
+    "rules": {
+        "no-descending-specificity": null,
+        "function-calc-no-invalid": null,
+        "font-family-no-missing-generic-family-keyword": null,
+        "plugin/declaration-block-no-ignored-properties": true,
+        "unit-no-unknown": [true, {
+            "ignoreUnits": ["rpx"]
+        }],
+        "indentation": [4, {
+            "baseIndentLevel": 0
+        }],
+        "color-hex-case": "upper",
+        "no-extra-semicolons": true,
+        "shorthand-property-no-redundant-values": true,
+        "comment-empty-line-before": "never",
+        "comment-whitespace-inside": "always",
+        "declaration-colon-space-after": "always",
+        "declaration-colon-space-before": "never",
+        "declaration-block-semicolon-newline-after": "always",
+        "declaration-block-trailing-semicolon": "always",
+        "declaration-empty-line-before": "never",
+        "block-opening-brace-newline-after": "always",
+        "block-opening-brace-space-before": "always",
+        "block-closing-brace-empty-line-before": "never",
+        "block-closing-brace-newline-before": "always",
+        "block-closing-brace-newline-after": "always",
+        "function-comma-space-after": "always",
+        "function-parentheses-space-inside": "never",
+        "function-url-quotes": null,
+        "value-list-comma-space-after": "always",
+        "value-list-comma-space-before": "never",
+        "value-list-max-empty-lines": 0,
+        "value-list-comma-newline-after": "never-multi-line",
+        "selector-list-comma-space-after": "always-single-line",
+        "selector-descendant-combinator-no-non-space": true,
+        "selector-combinator-space-before": "never",
+        "selector-combinator-space-after": "never",
+        "selector-pseudo-class-no-unknown": [true, {
+            "ignorePseudoClasses": ["deep"]
+        }],
+        "selector-pseudo-element-no-unknown": [true, {
+            "ignorePseudoElements": ["deep"]
+        }],
+        "at-rule-no-unknown": [true, {
+            "ignoreAtRules": ["mixin", "include", "if", "else", "error", "function", "return"]
+        }],
+        "at-rule-empty-line-before": ["always", {
+            "except": ["inside-block", "blockless-after-same-name-blockless"],
+            "ignore": ["after-comment"]
+        }],
+        "at-rule-semicolon-newline-after": "always",
+        "string-quotes": "single",
+        "rule-empty-line-before": "never"
+    },
+    "ignoreFiles": ["**/*.js", "**/*.jsx", "**/*.tsx", "**/*.ts"],
+    "defaultSeverity": "warning"
+}

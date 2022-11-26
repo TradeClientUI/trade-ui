@@ -1,0 +1,11 @@
+<svg
+    class='svg-icon-1'
+    fill='currentColor'
+    stroke='currentColor'
+    stroke-width='0'
+    width='24px'
+    viewBox='0 0 24 24'
+    xmlns='http://www.w3.org/2000/svg'
+    >
+    <g><path d='M0 0H24V24H0z' fill='none' /><path d='M5 3v16h16v2H3V3h2zm14.94 2.94l2.12 2.12L16 14.122l-3-3-3.94 3.94-2.12-2.122L13 6.88l3 3 3.94-3.94z' /></g>
+</svg>

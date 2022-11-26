@@ -1,0 +1,215 @@
+@import '@/sass/mixin.scss';
+
+.assets-module {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+	overflow: hidden;
+}
+.assets-header {
+    padding: 22px;
+    line-height: 1;
+    background: var(--contentColor);
+    border-radius: 10px;
+    position: relative;
+    .all {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        .label {
+            margin-right: 16px;
+            color: var(--minorColor);
+        }
+        .risk {
+            padding: 2px 4px;
+            color: var(--success);
+            border: 1px solid var(--success);
+            border-radius: 4px;
+        }
+    }
+    .total-money {
+        margin-top: 18px;
+        font-size: 40px;
+        font-weight: bold;
+        color: var(--color);
+    }
+    .assets-ul {
+        display: flex;
+        margin-top: 25px;
+        li {
+            display: inline-flex;
+            flex-direction: column;
+            width: 20%;
+            span {
+                font-size: 14px;
+                color: var(--minorColor);
+            }
+            strong {
+                margin-top: 10px;
+                font-size: 24px;
+                color: var(--color);
+            }
+        }
+    }
+    .assets-handle {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 22px;
+        .btn {
+            @include hover();
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 88px;
+            height: 40px;
+            margin-left: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary);
+            background: var(--primaryAssistColor);
+            border-radius: 4px;
+            cursor: pointer;
+            &:hover {
+                color: #fff;
+                background: var(--primary);
+            }
+        }
+        .record-link {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 20px;
+            color: var(--normalColor);
+            cursor: pointer;
+            i {
+                margin-right: 6px;
+                font-size: 16px;
+            }
+            span {
+                font-size: 14px;
+            }
+            &:hover {
+                span {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+.riskLevel{
+    position: relative;
+    padding-left: rem(25px);
+    margin-left: rem(10px);
+    font-size: rem(22px);
+    &::before{
+        content: '';
+        display: block;
+        position: absolute;
+        top: 45%;
+        left: 0%;
+        transform: translate(0, -50%);
+        width: rem(16px);
+        height: rem(16px);
+        border-radius: 16px;
+    }
+}
+.riskLevel1{
+    color: var(--success);
+    &::before{
+        background: var(--success);
+    }
+}
+.riskLevel2{
+    color: var(--focusColor);
+    &::before{
+        background: var(--focusColor);
+    }
+}
+.riskLevel3{
+    color: var(--warn);
+    &::before{
+        background: var(--warn);
+    }
+}
+.assets-body {
+    flex: 1;
+    margin-top: 16px;
+    padding: 0 20px;
+    background: var(--contentColor);
+    border-radius: 10px;
+	:deep(.el-table) {
+		background-color: transparent;
+		&::before {
+			background: none;
+		}
+        .el-table__fixed-right::before {
+            background: none;
+        }
+        .el-table__cell.is-right {
+            background: var(--contentColor) !important;
+        }
+		thead {
+			tr {
+				height: 50px;
+				font-size: 12px;
+				color: var(--minorColor);
+				background: transparent;
+				th {
+					font-weight: normal;
+					border-bottom: 1px solid var(--lineColor);
+					background: transparent;
+				}
+			}
+		}
+		tbody {
+			tr {
+				height: 62px;
+				font-size: 14px;
+				color: var(--color);
+				background: transparent;
+				td {
+					border-bottom: 1px solid var(--lineColor);
+					background: transparent;
+				}
+			}
+		}
+		.el-table__body-wrapper {
+			@include scroll-pc();
+		}
+        .empty{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            .image{
+                width: 160px;
+                height: auto;
+            }
+        }
+        .emptyText{
+            display: inline-block;
+            width: 160px;
+            padding-top: 140px;
+            background: url('/images/empty.png') center top no-repeat;
+            background-size: 160px auto;
+            color: var(--placeholdColor);
+        }
+	}
+	.handle {
+		display: flex;
+		justify-content: flex-end;
+	    button {
+	        margin-right: 15px;
+	        font-size: 14px;
+	        color: var(--primary);
+	        background: none;
+	        cursor: pointer;
+	        &:last-of-type {
+	            margin-right: 0;
+	        }
+			&:hover {
+				text-decoration: underline;
+			}
+	    }
+	}
+}

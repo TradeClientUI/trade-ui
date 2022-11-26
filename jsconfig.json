@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"],
+            "@m/*": ["src/themes/mobile/*"],
+            "@public/*": ["public/*"],
+            "@plans/*": ["src/themes/plans/*"]
+        }
+    },
+    "exclude": ["node_modules", "build_folder", "zip", "dist"]
+}

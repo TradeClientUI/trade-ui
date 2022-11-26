@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="" data-buildTime="<%= process.env.VUE_APP_build %>">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="Keywords" content="">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="icon"
+          href="<%= BASE_URL %>favicon.ico">
+  
+    <meta name="google-signin-client_id"
+          content="507643510387-ff4on5fmgb2h06tmd5vou0trprtnk0b9.apps.googleusercontent.com">
+    <style>
+    html {
+        font-size: 10vw;
+    }
+    #app:empty::after,
+    .loadIcon::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 30px;
+        height: 30px;
+        margin: -30px 0 0 -15px;
+        background: url(/images/loading.svg) center no-repeat;
+        background-size: 100%;
+        opacity: 0.7;
+        -webkit-animation: loading 1s linear infinite;
+        animation: loading 1s linear infinite;
+        content: '';
+    }
+
+    @-webkit-keyframes loading {
+        0% {
+            transform: translateZ(0) rotate(0deg);
+        }
+        100% {
+            transform: translateZ(0) rotate(360deg);
+        }
+    }
+
+    @keyframes loading {
+        0% {
+            transform: translateZ(0) rotate(0deg);
+        }
+        100% {
+            transform: translateZ(0) rotate(360deg);
+        }
+    }
+    .unsupported {
+        padding-top: 100px;
+        color: #666;
+        font-size: 16px;
+        text-align: center;
+    }
+    .unsupported .text1 {
+        color: #333;
+        font-weight: bold;
+        font-size: 36px;
+    }
+    .broswer-list {
+        width: 1200px;
+        margin: 56px auto 0;
+        text-align: center;
+    }
+    .broswer-item {
+        display: inline-block;
+        width: 75px;
+        margin-left: 60px;
+        color: #666;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+    }
+    .broswer-item>i {
+        display: block;
+        width: 100%;
+        width: 70px;
+        height: 70px;
+        margin-bottom: 20px;
+    }
+    .chrome {
+        background: url('/images/browser/chrome.png');
+    }
+    .safari {
+        background: url('/images/browser/safari.png');
+    }
+    .firefox {
+        background: url('/images/browser/firefox.png');
+    }
+    .opera {
+        background: url('/images/browser/opera.png');
+    }
+    .browser360 {
+        background: url('/images/browser/browser360.png');
+    }
+    .browserQQ {
+        background: url('/images/browser/browserQQ.png');
+    }
+    .liebao {
+        background: url('/images/browser/liebao.png');
+    }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        (function(window) {   
+            if(!!window.ActiveXObject || "ActiveXObject" in window) {
+                var str = "温馨提醒";
+                var str2 = "为确保您获得顺畅的交易体验，请使用以下浏览器访问交易平台"
+               
+                var htmlText = "<pre class='unsupported'><p class='text1'>"+ str +"</p><p class='text2'>"+ str2 +"</p></pre>"
+                +"<div class='broswer-list'>"
+                +"<a class='broswer-item' target='_blank' href='https://www.google.com/chrome/'><i class='chrome'></i><p>Chrome</p></a>"    
+                +"<a class='broswer-item' target='_blank' href='https://support.apple.com/downloads/safari'><i class='safari'></i><p>Safari</p></a>"
+                +"<a class='broswer-item' target='_blank' href='https://www.mozilla.org/en-US/firefox/new/'><i class='firefox'></i><p>火狐</p></a>"
+                +"<a class='broswer-item' target='_blank' href='https://www.opera.com/zh-cn/browsers'><i class='opera'></i><p>Opera</p></a>"
+                +"<a class='broswer-item' target='_blank' href='https://browser.360.cn/'><i class='browser360'></i><p>360浏览器</p></a>"
+                +"<a class='broswer-item' target='_blank' href='https://www.liebao.cn/'><i class='liebao'></i><p>猎豹</p></a>"
+                +"<a class='broswer-item' target='_blank' href='https://browser.qq.com/'><i class='browserQQ'></i><p>QQ浏览器</p></a>"
+                +"</div>"
+                document.write(htmlText)
+                document.execCommand("Stop"); 
+            }
+
+           
+        })(window);
+         
+  </script>
+    <noscript>
+        <strong>We're sorry but <%= htmlWebpackPlugin.options.title
+                %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <script src="<%= BASE_URL %>charting_library/charting_library.js?t=2"></script>
+    <!-- built files will be auto injected -->
+    <script>
+        window['isPRD'] = true
+
+        /* ##wp_imsService start## */
+        window['imsService'] = ''
+        /* ##wp_imsService end## */
+
+        /* ##wp_serviceUrl start## */
+        window['serviceUrl'] = 'http://uatwpapi.ixmiddle.site';
+        /* ##wp_serviceUrl end## */
+        /* ##wp_apiPath start## */
+        window['wp_apiPath'] = '/cats-manage-api/json';
+        /* ##wp_apiPath end## */
+
+        /* ##wp_ChannelSett start## */
+        window['ChannelSett'] = '';
+        /* ##wp_ChannelSett end## */
+
+        /* ##wp_SysSetting start## */
+        window['wp_SysSetting'] = '';
+        /* ##wp_SysSetting end## */
+
+        /* ##wp_Nav start## */
+        window['wp_Nav'] = '';
+        /* ##wp_Nav end## */
+
+        /* ##wp_Home start## */
+        window['wp_Home'] = '';
+        /* ##wp_Home end## */
+
+        /* ##wp_Footer start## */
+        window['wp_Footer'] = '';
+        /* ##wp_Footer end## */
+
+
+
+        /* ##wp_SelfSymbolIndex start## */
+        window['wp_SelfSymbolIndex'] = '';
+        /* ##wp_SelfSymbolIndex end## */
+
+
+        /* ##wp_TradeIndex start## */
+        window['wp_TradeIndex'] = '';
+        /* ##wp_TradeIndex end## */
+
+        /* ##wp_PositionIndex start## */
+        window['wp_PositionIndex'] = '';
+        /* ##wp_PositionIndex end## */
+
+        /* ##wp_Mine start## */
+        window['wp_Mine'] = '';
+        /* ##wp_Mine end## */
+
+        /* ##wp_companyId start## */
+        window['companyId'] = '';
+        /* ##wp_companyId end## */
+
+        /* ##接口域名*/
+        /* ##wp_apiService start## */ // uat //uatcatsapi.cmfbl.com //pre //precatsapi3.cmfbl.com:5443
+        window['apiService'] = 'https://precatsapi3.cmfbl.com:5443';   
+        // window['apiService'] = 'https://catsapi3.cmfbl.com:5443';   
+        /* ##wp_apiService end## */
+
+        /* ##行情websocket地址## */
+        /* ##wp_quoteService start## */
+        window['quoteService'] = 'wss://precatsapi3.cmfbl.com:5443/quote'
+        /* ##wp_quoteService end## */
+
+        /* ##消息websocket地址## */
+        /* ##wp_msgService start## */
+        window['msgService'] = 'wss://precatsapi3.cmfbl.com:5443/msg'
+        /* ##wp_msgService end## */
+
+        /* ##交易websocket地址 start## */
+        /* ##wp_tradeService start## */
+        window['tradeService'] = 'wss://precatsapi3.cmfbl.com:5443/cats-gateway/ws'
+        /* ##wp_tradeService end## */
+
+        /* ##行情板块的基金banner图表位置## */
+        window['fundBannerPosition'] = ''; // 玩法id-板块位置  5-2
+		/* ##PCUI基金功能是否显示## */
+		window['fundShow'] = false
+    </script>
+    <script type="text/javascript" src="/libs/uni-app/uni.webview.1.5.2.js"></script>
+    <script type="text/javascript" src="/libs/adapter-latest.js"></script>
+    
+</body>
+
+</html>

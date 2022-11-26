@@ -1,0 +1,53 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+html {
+    font-size: 37.5px;
+}
+body {
+    --primaryAssistColor: #f4f7fc;
+    --color: #333333;
+    --normalColor: #656667;
+    --minorColor: #999999;
+    --placeholdColor: #c2c2c2;
+    --contentColor: #ffffff;
+    --bgColor: #f8f8f8;
+    --assistColor: #f8f8f8;
+    --lineColor: #eeeeee;
+    --primary: rgba(71, 127, 211, 1);
+    --riseColor: #26a69a;
+    --fallColor: #F60000;
+    --warn: #ef5353;
+    --success: #26a69a;
+    --focusColor: #f2a11b;
+    
+    font-size: 12px;
+}
+body,
+html,
+#app,
+.g-layout {
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    background: #FFF;
+}
+
+// 去掉input type=number的上下箭头
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+// 重置element-ui样式
+.form-module {
+    .el-select {
+        display: block;
+    }
+}

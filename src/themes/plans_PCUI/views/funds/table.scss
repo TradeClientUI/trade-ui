@@ -1,0 +1,60 @@
+@import "@/sass/mixin.scss";
+
+// el-table
+:deep(.el-table) {
+	background-color: transparent;
+	&::before {
+		background: none;
+	}
+	.el-checkbox {
+		height: auto;
+		position: relative;
+		top: 3px;
+	}
+	.el-table__fixed-right::before {
+		background: none;
+	}
+	.el-table__cell.is-right {
+		background: var(--contentColor) !important;
+	}
+    .cell {
+        line-height: 16px;
+    }
+	thead {
+		tr {
+			height: 50px;
+			font-size: 12px;
+			color: var(--minorColor);
+			background: transparent;
+			th {
+				font-weight: normal;
+				border-bottom: 1px solid var(--lineColor);
+				background: transparent;
+			}
+		}
+	}
+	tbody {
+		tr {
+			height: 50px;
+			font-size: 14px;
+			color: var(--color);
+			background: transparent;
+			td {
+				border-bottom: 1px solid var(--lineColor);
+				background: transparent;
+			}
+		}
+	}
+	.el-table__body-wrapper {
+		@include scroll-pc();
+	}
+	.emptyText {
+		display: inline-block;
+		width: 160px;
+		padding-top: 140px;
+		margin: 150px 0;
+		background: url('/images/empty.png') center top no-repeat;
+		background-size: 160px auto;
+		color: var(--placeholdColor);
+	}
+}

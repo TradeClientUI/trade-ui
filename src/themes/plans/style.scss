@@ -1,6 +1,5 @@
 @import '~@/sass/mixin.scss';
-
-/*:root {
+/* :root {
       --color: #333;
     --minorColor: #989898;
     --placeholder: #C2C2C2;
@@ -27,8 +26,8 @@
     --red: #E3525C;
     --assistColor: #989898;
     --assist2Color: #484848;
-    --bgColor2: #F8F8F8; 
-}*/
+    --bgColor2: #F8F8F8;
+} */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -45,9 +44,7 @@ body,
 body {
     font-size: 16px;
     font-size: rem(26px);
-    /* no */
-    // font-family: 'PingFang SC', '-apple-system', 'Heiti SC', 'Helvetica', 'Helvetica Neue', 'Droid Sans Fallback', 'Droid Sans';
-    //font-family: 'Trebuchet MS', 'roboto', 'ubuntu', 'sans-serif';
+    font-family: 'HarmonyOS Sans', 'PingFang SC', 'Microsoft Yahei', 'Heiti SC', 'WenQuanYi Micro Hei', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif';
     //background-color: var(--bgColor2);
     user-select: none;
     text-size-adjust: none;
@@ -99,6 +96,13 @@ a {
 ::-webkit-input-placeholder {
     color: var(--placeholdColor);
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-transition-delay: 111111s;
+    -webkit-transition: color 11111s ease-out, background-color 111111s ease-out;
+}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -109,7 +113,7 @@ input[type='number'] {
 input,
 textarea {
     color: var(--color);
-    font-family: 'PingFang SC', '-apple-system', 'Heiti SC', 'Helvetica', 'Helvetica Neue', 'Droid Sans Fallback', 'Droid Sans';
+    font-family: inherit;
     background: none;
 }
 i {
@@ -196,31 +200,61 @@ i {
 
 @keyframes bg-red {
     0% {
-        background: #FFF;
+        background: var(--bgColor);
     }
     30% {
-        background: linear-gradient(to right, var(--contentColor), var(--quoteRiseBg));
+        background: #FCF6F7;
     }
     80% {
-        background: linear-gradient(to right, var(--contentColor), var(--quoteRiseBg));
+        background: #FAF3F3;
     }
     100% {
-        background: #FFF;
+        background: var(--bgColor);
     }
 }
 
 @keyframes bg-green {
     0% {
-        background: #FFF;
+        background: var(--bgColor);
     }
     30% {
-        background: linear-gradient(to right, var(--contentColor), var(--quoteFallBg));
+        background: #F0FAF8;
     }
     80% {
-        background: linear-gradient(to right, var(--contentColor), var(--quoteFallBg));
+        background: #EAF8F6;
     }
     100% {
-        background: #FFF;
+        background: var(--bgColor);
+    }
+}
+
+@keyframes bg-red-night {
+    0% {
+        background: var(--bgColor);
+    }
+    30% {
+        background: #4B3132;
+    }
+    80% {
+        background: #614143;
+    }
+    100% {
+        background: var(--bgColor);
+    }
+}
+
+@keyframes bg-green-night {
+    0% {
+        background: var(--bgColor);
+    }
+    30% {
+        background: #335545;
+    }
+    80% {
+        background: #295F45;
+    }
+    100% {
+        background: var(--bgColor);
     }
 }
 body.light {
@@ -238,6 +272,23 @@ body.light {
     }
     .fallColorBgAni {
         animation-name: bg-red;
+    }
+}
+body.night {
+    .riseColorBgAni,
+    .fallColorBgAni {
+        transition-property: background;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+        animation-iteration-count: infinite;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+    }
+    .riseColorBgAni {
+        animation-name: bg-green-night;
+    }
+    .fallColorBgAni {
+        animation-name: bg-red-night;
     }
 }
 .z-index-9999 {
@@ -491,7 +542,7 @@ body.light {
             height: rem(90px);
             font-size: rem(28px);
             border: none;
-            color: #fff;
+            color: #FFF;
             border-radius: 0;
             background-color: var(--primary);
             border-radius: rem(6px);
@@ -553,6 +604,12 @@ body {
     }
     [class*=van-hairline]::after {
         border-color: var(--lineColor);
+    }
+    .van-pagination__item{
+        background: var(--contentColor)
+    }
+    .van-cell-group{
+        background: var(--contentColor)
     }
     .van-dropdown-menu__bar {
         background-color: var(--white);
@@ -621,6 +678,9 @@ body {
     .van-collapse-item__content {
         background-color: var(--contentColor);
     }
+    .van-collapse-item {
+        --van-border-color: var(--lineColor);
+    }
     .assetsPicker [class*=van-hairline]::after {
         border-color: var(--placeholdColor);
     }
@@ -643,6 +703,12 @@ body {
     --van-popover-action-width: rem(80px);
     --van-popover-action-height: 30px;
     --van-cell-active-color: none;
+    --swiper-pagination-color: var(--primary);
+    --swiper-pagination-bullet-inactive-color: var(--minorColor);
+    .van-checkbox__icon--checked .van-icon{
+        --van-checkbox-checked-icon-color: var(--primary);
+        --van-checkbox-checked-icon-color: var(--primary);
+    }
     .van-calendar__footer {
         .van-button {
             height: rem(74px);
@@ -652,24 +718,36 @@ body {
     .van-calendar {
         background-color: var(--bgColor) !important;
     }
+    .van-empty {
+        .van-empty__description {
+            margin-top: 0;
+            padding: rem(30px);
+        }
+    }
+    
+    .van-toast{
+        word-break: break-word;
+    }
 }
-
-.custom-popup{
+.custom-popup {
     height: 92%;
     overflow: hidden;
     background: var(--bgColor);
     padding: 0 rem(30px);
-    .header{
+    :root .night &.custom-popup {
+        background: var(--contentColor) !important;
+    }
+    .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: rem(37px) 0 rem(50px);
-        .header-title{
+        .header-title {
             font-size: rem(48px);
             font-weight: bold;
             color: var(--color);
         }
-        .icon_guanbi{
+        .icon_guanbi {
             font-size: rem(30px);
             font-weight: bold;
         }

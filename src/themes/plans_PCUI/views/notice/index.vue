@@ -524,8 +524,8 @@ export default {
         })
 
         const setMinHeight = () => {
-            const heightFooter = document.querySelectorAll("div[class='footer-nav']")
-            const headerFooter = document.querySelectorAll("div[class='nav-left']")
+            const heightFooter = document.querySelectorAll('div.footer-nav')
+            const headerFooter = document.querySelectorAll('div.nav-left')
             const calcHeight = heightFooter[0].clientHeight + headerFooter[0].clientHeight
             state.wrapperHeight = 'calc(100vh - ' + calcHeight + 'px)'
         }
@@ -634,7 +634,6 @@ export default {
             width: 150px;
             :deep(.el-input__inner) {
                 background: var(--contentColor);
-                border: 1px solid var(--lineColor);
             }
         }
     }
@@ -661,7 +660,7 @@ export default {
             .msg-title {
                 color: var(--color);
                 font-weight: bold;
-                font-size: rem(28px);
+                font-size: rem(30px);
                 line-height: rem(60px);
                 cursor: pointer;
                 span {
@@ -681,7 +680,7 @@ export default {
             .msg-time {
                 color: var(--minorColor);
                 font-weight: 400;
-                font-size: rem(20px);
+                font-size: rem(26px);
                 line-height: rem(60px);
             }
         }
@@ -697,11 +696,28 @@ export default {
                 cursor: pointer;
             }
         }
+        :deep(.van-pagination__item) {
+            color: var(--primary);
+            background: var(--contentColor);
+            &:active,
+            &.van-pagination__item--active {
+                background: var(--primary);
+                color: #FFF;
+            }
+        }
     }
     .all-read {
-        display: inline-block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 10px;
         font-size: 14px;
+        color: var(--color);
+        border-color: var(--color);
+        background: transparent;
+        &:hover {
+            opacity: 0.8;
+        }
     }
 }
 

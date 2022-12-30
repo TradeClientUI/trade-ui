@@ -79,7 +79,6 @@ export default {
 <style lang="scss">
 .notice-wrap {
     width: 96% !important;
-    height: 15%;
     margin: 2% !important;
     overflow: hidden;
     background: var(--contentColor);
@@ -95,10 +94,7 @@ export default {
             }
         }
         .content {
-            display: -webkit-box;
-            overflow: hidden;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3;
+
         }
     }
 }

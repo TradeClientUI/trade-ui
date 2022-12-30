@@ -39,7 +39,7 @@
                             </div>
                         </div>
                     </template>
-                    <div class='cell' @click.stop='toPositionDetail(data)'>
+                    <div :class="['cell', 'cell-type-' + tradeType]" @click.stop='toPositionDetail(data)'>
                         <div class='flex-wrap'>
                             <div class='flex-item'>
                                 <div class='title'>
@@ -49,7 +49,7 @@
                                     {{ data.openPrice }}
                                 </div>
                             </div>
-                            <div class='flex-item alignRight'>
+                            <div class='flex-item'>
                                 <div class='title'>
                                     {{ $t('trade.currentPrice') }}
                                 </div>
@@ -58,11 +58,51 @@
                                 </div>
                             </div>
                             <div v-if='Number(tradeType) === 2' class='flex-item'>
-                                <div class='title alignRight'>
-                                    {{ $t('trade.previewStopPrice') }}
+                                <div class='title'>
+                                    <span @click.stop='showExplain(7)'>
+                                        {{ $t('trade.previewStopPrice') }}
+                                    </span>
+                                    <van-icon class='question' name='question-o' @click.stop='showExplain(7)' />
                                 </div>
-                                <div class='val alignRight'>
+                                <div class='val'>
                                     {{ data.previewStopPrice || '--' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if='Number(tradeType) === 2' class='flex-wrap'>
+                            <div class='flex-item'>
+                                <div class='title'>
+                                    <span @click.stop='showExplain(8)'>
+                                        {{ $t('trade.originalMargin') }}
+                                    </span>
+                                    <van-icon class='question' name='question-o' @click.stop='showExplain(8)' />
+                                </div>
+                                <div class='val'>
+                                    {{ data.occupyTheMargin || '--' }}
+                                </div>
+                            </div>
+                            <div class='flex-item'>
+                                <div class='title'>
+                                    <span @click.stop='showExplain(9)'>
+                                        {{ $t('trade.holdMargin') }}
+                                    </span>
+                                    <van-icon class='question' name='question-o' @click.stop='showExplain(9)' />
+                                </div>
+                                <div class='val'>
+                                    {{ data?.maintenanceMargin || '--' }}
+                                </div>
+                            </div>
+                            <div class='flex-item'>
+                                <div class='title'>
+                                    <span @click.stop='showExplain(10)'>
+                                        风险状态
+                                    </span>
+                                    <van-icon class='question' name='question-o' @click.stop='showExplain(10)' />
+                                </div>
+                                <div class='val'>
+                                    <span :class='["riskLevel", "riskLevel" + data?.riskStatus]'>
+                                        {{ riskLevelMap[data?.riskStatus] }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -75,31 +115,12 @@
                                     {{ parseFloat(data.takeProfitDecimal) ? data.takeProfitDecimal : '--' }}
                                 </div>
                             </div>
-                            <div class='flex-item alignRight'>
+                            <div class='flex-item'>
                                 <div class='title'>
                                     {{ $t('trade.stopLossPrice') }}
                                 </div>
                                 <div class='val'>
                                     {{ parseFloat(data.stopLossDecimal) ? data.stopLossDecimal : '--' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if='Number(tradeType) === 2' class='flex-wrap'>
-                            <div class='flex-item'>
-                                <div class='title'>
-                                    {{ $t('trade.originalMargin') }}
-                                </div>
-                                <div class='val'>
-                                    {{ data.occupyTheMargin || '--' }}
-                                </div>
-                            </div>
-                            <div class='flex-item'>
-                                <div class='title'>
-                                    {{ $t('trade.holdMargin') }}
-                                </div>
-                                <div class='val'>
-                                    {{ data?.maintenanceMargin || '--' }}
                                 </div>
                             </div>
                         </div>
@@ -134,26 +155,50 @@
             </van-collapse>
         </div>
     </div>
+
+    <!-- 说明弹窗 -->
+    <explain-popup
+        v-model='isExplain'
+        :explain-type='explainType'
+        :user-account='userAccount'
+    />
 </template>
 
 <script>
-import { computed, reactive, toRefs, onMounted, watchEffect } from 'vue'
+import { computed, reactive, toRefs, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import { minus } from '@/utils/calculation'
+import explainPopup from '@plans/views/assets/components/explain-popup.vue'
+
 export default {
+    components: {
+        explainPopup
+    },
     props: ['data'],
     // emits: ['showClose', 'showAdjustPopup', 'showSLTP'],
     setup ({ data }) {
         const store = useStore()
         const router = useRouter()
+        const { t } = useI18n({ useScope: 'global' })
         const state = reactive({
             show: false,
             loading: false,
             cur: {},
             cpVis: false,
-            activeNames: []
+            activeNames: [],
+            // 是否显示说明弹窗
+            isExplain: false,
+            // 说明类型
+            explainType: 0
         })
+        // 风险状态等级文案
+        const riskLevelMap = {
+            1: t('riskLevel.safety'),
+            2: t('riskLevel.warn'),
+            3: t('riskLevel.danger')
+        }
         // 获取玩法列表
         const plans = computed(() => store.state._base.plans)
         const tradeType = computed(() => store.state._quote.curTradeType || plans.value[0].id)
@@ -161,7 +206,6 @@ export default {
         const positionList = computed(() => store.state._trade.positionList[tradeType.value])
         const product = computed(() => store.state._quote.productMap[data.symbolId + '_' + tradeType.value])
         const btnBg = computed(() => store.state.style.primary + '0D')
-
         const toPositionDetail = (item) => {
             store.commit('_quote/Update_productActivedID', item.symbolId)
             router.push({
@@ -181,6 +225,12 @@ export default {
             router.push({ path: '/product', query: { symbolId, tradeType: tradeType.value } })
         }
 
+        // 显示说明弹窗
+        const showExplain = (type) => {
+            state.explainType = type
+            state.isExplain = true
+        }
+
         watchEffect(() => {
             if (positionList.value?.length > 0) {
                 state.activeNames = positionList.value.map(item => item.positionId)
@@ -197,7 +247,9 @@ export default {
             toProduct,
             minus,
             btnBg,
-            tradeType
+            tradeType,
+            riskLevelMap,
+            showExplain
         }
     }
 }
@@ -218,7 +270,9 @@ export default {
             padding: rem(20px) rem(30px) 0 rem(30px);
             .van-cell__right-icon {
                 color: var(--color);
-                vertical-align: middle;
+                position: absolute;
+                top: rem(20px);
+                right: rem(45px);
             }
         }
         :deep(.van-collapse) {
@@ -252,54 +306,60 @@ export default {
                 //margin-right: rem(15px);
                 text-align: center;
             }
-            .block{
+            .block {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                .bleft{
-                  .direction{
+                .bleft {
+                    .direction {
                         display: inline-block;
                         height: rem(36px);
                         line-height: rem(40px);
                         border-radius: rem(6px);
-                        color: #fff;
+                        color: #FFF;
                         text-align: center;
                         padding: 0 rem(8px);
                         font-size: rem(24px);
                         margin-right: rem(10px);
-                        &.riseColor{
+                        &.riseColor {
                             background: var(--riseColor);
                         }
-                        &.fallColor{
+                        &.fallColor {
                             background: var(--fallColor);
                         }
                     }
                 }
             }
-
-            .riseColor{
-
-            }
             .flex-wrap {
                 display: flex;
-                justify-content: space-between;
                 margin-bottom: rem(30px);
                 .flex-item {
-                    display: inline-block;
                     .title {
                         padding: 0;
                         color: var(--minorColor);
+                        .question {
+                            margin-top: rem(-12px);
+                            margin-left: rem(4px);
+                            font-size: rem(28px);
+                        }
                     }
                     .val {
                         color: var(--color);
                         font-size: rem(28px);
                     }
-                    .cur-price{
+                    .cur-price {
                         font-size: rem(28px);
                     }
-                    &:nth-child(2n) {
-                        .val {
-                            text-align: right;
+                    .riskLevel {
+                        font-size: rem(26px);
+                        &.riskLevel1 {
+                            color: var(--success);
+                        }
+                        &.riskLevel2 {
+                            color: var(--focusColor);
+                        }
+                        &.riskLevel3 {
+                            color: var(--warn);
                         }
                     }
                 }
@@ -310,12 +370,11 @@ export default {
                 .van-button {
                     color: var(--primary);
                     vertical-align: middle;
-                    background: v-bind(btnBg);
+                    background: var(--primaryBg);
                     border-color: var(--primaryAssistColor);
                 }
             }
             .amount {
-                padding-right: rem(16px);
                 font-weight: 600;
                 font-size: rem(34px);
             }
@@ -345,6 +404,22 @@ export default {
                 font-size: rem(20px);
             }
         }
+        .cell-type-1 {
+            .flex-item {
+                width: 50%;
+                &:nth-child(2n) {
+                    text-align: right;
+                }
+            }
+        }
+        .cell-type-2 {
+            .flex-item {
+                width: calc(100% / 3);
+                &:nth-child(3n) {
+                    text-align: right;
+                }
+            }
+        }
         .icon_tubiao {
             display: inline-block;
             width: rem(52px);
@@ -367,15 +442,15 @@ export default {
             color: var(--primary) !important;
             font-size: rem(24px);
             line-height: rem(48px);
-            background: b-bind(--btnBg) !important;
+            background: b-bind(--btnbg) !important;
             border: none;
             border-color: var(--btnBg) !important;
             border-radius: rem(6px);
-            &:last-child{
+            &:last-child {
                 margin-right: 0;
             }
         }
-        .multipleVal{
+        .multipleVal {
             vertical-align: middle;
             position: relative;
             height: rem(32px);
@@ -386,12 +461,11 @@ export default {
             color: var(--color);
             border-radius: 3px;
             border: 1px solid var(--color);
-            &.arrow{
+            &.arrow {
                 padding-right: rem(50px);
                 color: var(--color);
             }
-
-            .icon_icon_arrow{
+            .icon_icon_arrow {
                 font-size: rem(22px);
                 position: absolute;
                 right: 4px;

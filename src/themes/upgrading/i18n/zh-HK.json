@@ -1,0 +1,4 @@
+{
+    "dear": "親愛的客戶",
+    "upgrade": "系統維護中，暫停所有服務。預計於今天 <span id='endTime'>{time}</span> 恢復。"
+}

@@ -409,9 +409,9 @@ const openAddAssets = (item) => {
 // 跳转到充值页面
 const toDeposit = (item) => {
     router.push({
-        path: '/assets/depositChoose',
+        path: '/depositChoose',
         query: {
-            tradeType: 5
+            tradeType: 1
         }
     })
 }

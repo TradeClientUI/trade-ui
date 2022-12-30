@@ -1,12 +1,12 @@
 import pako from 'pako'
-import { toFixed } from '@/utils/calculation'
+import { toFixed, mul } from '@/utils/calculation'
 import { priceFormat } from '@/utils/util'
 
 export function tickFormat (data) {
     data.symbolKey = `${data.symbol_id}_${data.trade_type}`
     data.symbolId = parseInt(data.symbol_id)
     const digits = data.price_digits
-    if (!isNaN(digits)) {
+    if (digits) {
         const tick_deep = data.tick_deep || []
         tick_deep.forEach(el => {
             el.price_ask = toFixed(el.price_ask, digits)
@@ -107,6 +107,7 @@ export function positionsTickToObj (str) {
             positionId: elData[0], // 持仓id
             profitLoss: elData[1] < 0 ? elData[1] : '+' + elData[1], // 盈亏
             previewStopPrice: elData[2], // 预估强平价
+            riskStatus: elData[6] // 风险状态
         }
     })
     const result = {
@@ -117,7 +118,11 @@ export function positionsTickToObj (str) {
             netWorth: accountData[4],
             occupyMargin: accountData[1],
             profitLoss: accountData[0],
+            riskStatus: accountData[6],
+            closePositionProportion: toFixed(mul(accountData[7], 100), 2),
+            earlyWarningProportion: toFixed(mul(accountData[8], 100), 2),
             positionProfitLossMessages: positionsProfitLoss,
+            withdrawAmount: accountData[9]
         }
     }
     return result

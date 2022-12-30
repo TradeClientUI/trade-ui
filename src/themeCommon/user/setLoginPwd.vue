@@ -46,6 +46,7 @@ import { setLoginPwd, modifyLoginPwd } from '@/api/user'
 import md5 from 'js-md5'
 import { useI18n } from 'vue-i18n'
 import googleVerifyCode from '@/themeCommon/components/googleVerifyCode.vue'
+import { pwdReg } from '@/utils/util'
 
 export default {
     components: {
@@ -83,7 +84,6 @@ export default {
         }
 
         function handleConfirm () {
-            const pwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
             if (!state.oldPwd && !isFirstSet.value) {
                 return Toast(t('login.originPwd'))
             }

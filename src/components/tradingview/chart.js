@@ -1,4 +1,4 @@
-import { isEmpty } from '@/utils/util'
+import { isEmpty, localSet, localGet } from '@/utils/util'
 import { UDFCompatibleDatafeed } from './datafeeds/udf/lib/udf-compatible-datafeed'
 import { portraitOptions, landscapeOptions, styleNameMap } from './datafeeds/userConfig/config.js'
 
@@ -254,6 +254,58 @@ class Chart {
             setTimeout(() => {
                 isDrawing = false
             }, 50)
+        })
+
+        // 订阅指标属性修改
+        this.widget.subscribe('study_properties_changed', id => {
+            const studyObj = this.widget.activeChart().getStudyById(id)
+            const { _metaInfo, _properties } = studyObj._study
+            const _inputs = studyObj.getInputValues().map(el => el.value)
+
+            const allStyle = {}
+            const _childs = _properties.palettes._childs.join()
+            const styleObj = {
+                styles: _properties?.styles,
+                filledAreasStyle: _properties?.filledAreasStyle,
+                filledAreas: _properties?.filledAreas,
+                bands: _properties?.bands,
+                // [`palettes.${_childs}.colors`]: _properties?.palettes?.[_childs]?.colors
+                // metaInfo: _metaInfo
+            }
+
+            if (_childs) {
+                styleObj[`palettes.${_childs}.colors`] = _properties?.palettes?.[_childs]?.colors
+            }
+
+            // 缓存最后一次修改的类型 1: 系统设置 2 TradingView 设置
+            if (_metaInfo.shortId === 'Volume') {
+                localSet('lastModifyType', 2)
+            }
+
+            for (const key in styleObj) {
+                if (Object.hasOwnProperty.call(styleObj, key)) {
+                    const element = styleObj[key]
+                    for (const k in element) {
+                        if (Object.hasOwnProperty.call(element, k)) {
+                            const val = element[k]
+                            for (const v in val) {
+                                if (Object.hasOwnProperty.call(val, v)) {
+                                    const element = val[v]
+                                    const styleKey = `${key}.${k}.${v}`
+                                    if (!isEmpty(element._value)) allStyle[styleKey] = element._value
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            const tvStudyConfig = JSON.parse(localGet('tvStudyConfig')) || {}
+            tvStudyConfig[_metaInfo.description] = {}
+            tvStudyConfig[_metaInfo.description].styles = allStyle
+            tvStudyConfig[_metaInfo.description].inputs = _inputs
+
+            localSet('tvStudyConfig', JSON.stringify(tvStudyConfig))
         })
     }
 
@@ -624,13 +676,30 @@ class Chart {
         const removeList = this._indicatorsEntity.filter(item => !value.find(e => e.name === item.name))
 
         addList.forEach(e => {
-            this.widget.activeChart().createStudy(e.name, ...e.params, {
-                'palettes.plot_0_Palette.colors.0.color': this.property.upColor, // MACD指标涨的颜色
-                'palettes.plot_0_Palette.colors.1.color': this.property.downColor, // MACD跌的颜色
-                'palettes.volumePalette.colors.0.color': this.property.upColor, // 涨的颜色
-                'palettes.volumePalette.colors.1.color': this.property.downColor, // 跌的颜色
-                precision: e.name === 'Volume' ? 'default' : this.initial.digits // 成交量指标不需要指定小数位
-            }).then(id => {
+            const params = e.params
+            const tvStudyConfig = JSON.parse(localGet('tvStudyConfig'))?.[e.name]
+            const styles = tvStudyConfig?.styles
+            if (tvStudyConfig?.inputs) {
+                params[2] = tvStudyConfig?.inputs
+            }
+
+            const property = {
+                // 'palettes.plot_0_Palette.colors.0.color': this.property.upColor, // MACD指标涨的颜色
+                // 'palettes.plot_0_Palette.colors.1.color': this.property.downColor, // MACD跌的颜色
+                // 'palettes.volumePalette.colors.0.color': this.property.upColor, // 涨的颜色
+                // 'palettes.volumePalette.colors.1.color': this.property.downColor, // 跌的颜色
+                precision: e.name === 'Volume' ? 'default' : this.initial.digits, // 成交量指标不需要指定小数位
+                ...styles
+            }
+
+            // 判断成交量指标是根据系统设置还是TV设置
+            const lastModifyType = localGet('lastModifyType')
+            if (Number(lastModifyType) === 1 || !lastModifyType) {
+                property['palettes.volumePalette.colors.0.color'] = this.property.downColor
+                property['palettes.volumePalette.colors.1.color'] = this.property.upColor
+            }
+
+            this.widget.activeChart().createStudy(e.name, ...params, property).then(id => {
                 // 更新指标实体
                 this._indicatorsEntity.push({
                     name: e.name,

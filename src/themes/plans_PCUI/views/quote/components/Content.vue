@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref, watch, unref, computed, onUnmounted, onMounted, onBeforeMount, provide, nextTick } from 'vue'
+import { ref, watch, unref, computed, onUnmounted, onMounted, onBeforeMount, provide, nextTick, watchEffect } from 'vue'
 import PlansType from './PlansType'
 import useProduct from '@planspc/hooks/useProduct'
 import { QuoteSocket } from '@/plugins/socket/socket'
@@ -25,10 +25,12 @@ import ProductList from './ProductList'
 import CategoryList from './CategoryList'
 import Autocomplete from './Autocomplete'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 
 const store = useStore()
 const tradeType = ref('')
 const productListData = ref([])
+const route = useRoute()
 
 // 获取板块列表和所选板块的产品列表
 const categoryType = ref('1')
@@ -81,6 +83,13 @@ watch(
         unSubscribe = QuoteSocket.add_subscribe24H({ moduleId, symbolKeys: subscribeSymbolsList.value })
     }
 )
+
+// 初始化需要显示的板块
+onMounted(() => {
+    if (route.query.categoryType) {
+        categoryType.value = route.query.categoryType
+    }
+})
 
 const initList = () => {
     productListData.value = ref(productList)

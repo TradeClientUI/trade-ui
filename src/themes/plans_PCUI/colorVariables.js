@@ -3,12 +3,12 @@ import store from './store'
 
 export const colors = {
     common: {
-        primary: '#0062FF',
-        primaryBg: '#0062FF1A',
+        primary: '#EA5A26',
+        primaryBg: '#EA5A261A',
         riseColor: '#ef5353',
-        fallColor: '#0062FF',
+        fallColor: '#03A66D',
         warn: '#ef5353',
-        success: '#26a69a',
+        success: '#03A66D',
         focusColor: '#f2a11b'
     },
     night: {
@@ -65,10 +65,17 @@ export const colors = {
 // 更新body类
 function updateBodyClass (themeColor) {
     const classList = document.body.classList
-    if (!themeColor || classList.contains(themeColor)) return false
+    const htmlClassList = document.documentElement.classList
+    if (!themeColor) return false
     classList.remove('light')
     classList.remove('night')
     classList.add(themeColor)
+
+    htmlClassList.remove('light')
+    htmlClassList.remove('night')
+    htmlClassList.remove('dark')
+    htmlClassList.add(themeColor)
+    if (themeColor === 'night') htmlClassList.add('dark')
 }
 
 // 设置root变量

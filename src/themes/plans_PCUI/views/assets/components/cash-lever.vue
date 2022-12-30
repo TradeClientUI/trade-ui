@@ -17,16 +17,28 @@
             </p>
             <ul class='assets-ul'>
                 <li>
-                    <span>{{ $t('trade.netAssets') }}</span>
-                    <strong>{{ assetsInfo?.totalNetAssets }}</strong>
+                    <p class='muted'>
+                        <span>{{ $t('trade.netAssets') }}</span>
+                    </p>
+                    <p class='value'>
+                        <strong>{{ assetsInfo?.totalNetAssets }}</strong>
+                    </p>
                 </li>
                 <li>
-                    <span>{{ $t('trade.totalLoan') }}</span>
-                    <strong>{{ assetsInfo?.totalLiabilitiesPrincipal }}</strong>
+                    <p class='muted'>
+                        <span>{{ $t('trade.totalLoan') }}</span>
+                    </p>
+                    <p class='value'>
+                        <strong>{{ assetsInfo?.totalLiabilitiesPrincipal }}</strong>
+                    </p>
                 </li>
                 <li>
-                    <span>{{ $t('trade.swap_2') }}</span>
-                    <strong>{{ assetsInfo?.totalInterest }}</strong>
+                    <p class='muted'>
+                        <span>{{ $t('trade.swap_2') }}</span>
+                    </p>
+                    <p class='value'>
+                        <strong>{{ assetsInfo?.totalInterest }}</strong>
+                    </p>
                 </li>
             </ul>
             <div class='assets-handle'>
@@ -34,6 +46,14 @@
                 <!-- <button class='btn' @click='goLoan'>
                     {{ $t('trade.loan') }}
                 </button> -->
+                <template v-if='businessConfig?.tradeTypeShowCash.includes(Number(tradeType)) && customerInfo.companyType === "real"'>
+                    <button class='btn pc_assets_deposit_ga' @click='goDesposit'>
+                        {{ $t('trade.desposit') }}
+                    </button>
+                    <button class='btn' @click='goWithdraw'>
+                        {{ $t('trade.withdraw') }}
+                    </button>
+                </template>
                 <button class='btn' @click='goRepayment'>
                     {{ $t('trade.repayment') }}
                 </button>
@@ -70,9 +90,14 @@
                     </template>
                 </el-table-column>
                 <template #empty>
-                    <span class='emptyText'>
-                        {{ $t('c.noData') }}
-                    </span>
+                    <div class='none-data'>
+                        <button @click='onTrade'>
+                            {{ $t('common.startTrade') }}
+                        </button>
+                        <p class='tip'>
+                            {{ $t('trade.positionEmpty') }}
+                        </p>
+                    </div>
                 </template>
             </el-table>
         </div>
@@ -120,6 +145,9 @@ export default {
             }
             return list.filter(item => item.currency.toUpperCase().includes(searchText.value.toUpperCase())) || []
         })
+
+        // 配置文件
+        const businessConfig = computed(() => store.state.businessConfig)
 
         // 账户信息
         const accountInfo = computed(() => accountList?.value[0])
@@ -207,6 +235,32 @@ export default {
             searchText.value = val
         }
 
+        // 跳转充值页面
+        const goDesposit = () => {
+            router.push({
+                path: '/depositChoose',
+                query: {
+                    tradeType: props.tradeType
+                }
+            })
+        }
+
+        // 跳转提现页面
+        const goWithdraw = () => {
+            router.push({
+                path: '/assets/withdrawAccount',
+                query: {
+                    accountId: accountInfo.value.accountId,
+                    tradeType: props.tradeType
+                }
+            })
+        }
+
+        // 去交易
+        const onTrade = () => {
+            router.push('quote')
+        }
+
         return {
             assetsInfo,
             accountList,
@@ -217,7 +271,11 @@ export default {
             goRecord,
             customerInfo,
             changeState,
-            searchAsset
+            searchAsset,
+            businessConfig,
+            goDesposit,
+            goWithdraw,
+            onTrade
         }
     }
 }

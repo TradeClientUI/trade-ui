@@ -25,6 +25,15 @@ const routes = [{
 
 },
 {
+    path: '/appRegister',
+    name: 'AppRegister',
+    component: () => import(/* webpackChunkName: "login" */ '../user/register/appRegister.vue'),
+    meta: {
+        title: 'cRoute.register',
+        roles: ['Guest'],
+    }
+},
+{
     path: '/register/success',
     name: 'RegisterSuccess',
     component: () =>
@@ -104,6 +113,16 @@ const routes = [{
         import(/* webpackChunkName: "page" */ '../user/withdraw/withdrawAccount.vue'),
     meta: {
         title: 'cRoute.withdrawAccount',
+        footerMenu: false,
+    }
+},
+{
+    path: '/depositChoose',
+    name: 'DepositChoose',
+    component: () =>
+        import(/* webpackChunkName: "deposit" */ '@/themeCommon/user/deposit/choose.vue'),
+    meta: {
+        title: 'cRoute.deposit',
         footerMenu: false,
     }
 },
@@ -202,50 +221,6 @@ const routes = [{
         import(/* webpackChunkName: "addBank" */ '../user/addBank.vue'),
     meta: {
         title: 'cRoute.addBank',
-        footerMenu: false,
-        roles: ['User'],
-    }
-},
-{
-    path: '/deposit',
-    name: 'Deposit',
-    component: () =>
-        import(/* webpackChunkName: "addBank" */ '../user/deposit/deposit.vue'),
-    meta: {
-        title: 'cRoute.deposit',
-        footerMenu: false,
-        roles: ['User'],
-    }
-},
-{
-    path: '/depositChoose',
-    name: 'DepositChoose',
-    component: () =>
-        import(/* webpackChunkName: "addBank" */ '../user/deposit/choose.vue'),
-    meta: {
-        title: 'cRoute.deposit',
-        footerMenu: false,
-        roles: ['User'],
-    }
-},
-{
-    path: '/depositDirect',
-    name: 'DepositDirect',
-    component: () =>
-        import(/* webpackChunkName: "addBank" */ '../user/deposit/direct.vue'),
-    meta: {
-        title: 'cRoute.deposit',
-        footerMenu: false,
-        roles: [],
-    }
-},
-{
-    path: '/depositRecord',
-    name: 'DepositRecord',
-    component: () =>
-        import(/* webpackChunkName: "addBank" */ '../user/deposit/depositRecord.vue'),
-    meta: {
-        title: 'cRoute.depositRecord',
         footerMenu: false,
         roles: ['User'],
     }
@@ -553,16 +528,6 @@ const routes = [{
         import(/* webpackChunkName: "google_MFA" */ '../user/invite/rule.vue'),
     meta: {
         title: 'cRoute.rule'
-    }
-},
-// api管理模块
-{
-    path: '/apiManage/list',
-    name: 'Api_manage',
-    component: () =>
-        import(/* webpackChunkName: "api_Manage" */ '../user/api_Manage/list.vue'),
-    meta: {
-        title: 'api.title'
     }
 },
 {

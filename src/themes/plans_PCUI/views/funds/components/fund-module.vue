@@ -4,7 +4,7 @@
             {{ $t('funds.title') }}
         </h2>
         <p class='by'>
-            By <span>VITATOKEN</span> Crypto Exchange
+            By <span>MagnaMarkets</span> Crypto Exchange
         </p>
         <p class='subTitle'>
             {{ $t('funds.subTitle') }}
@@ -48,7 +48,7 @@ const fundModel = ref('card')
         margin-bottom: 4px;
         font-size: 40px;
         font-weight: 700;
-        letter-spacing: .15px;
+        letter-spacing: 0.15px;
         color: var(--mainColor);
     }
     .by {
@@ -57,7 +57,7 @@ const fundModel = ref('card')
         font-weight: 600;
         color: var(--mainColor);
         span {
-            color: #ebb650;
+            color: #EBB650;
         }
     }
     .subTitle {
@@ -83,7 +83,7 @@ const fundModel = ref('card')
         background: var(--contentColor);
         border-radius: 10px;
         box-shadow: 3px 3px 20px rgb(0 0 0 / 9%);
-        transition: all .2s ease-in-out;
+        transition: all 0.2s ease-in-out;
         cursor: pointer;
         &.card-icon {
             font-size: 32px;

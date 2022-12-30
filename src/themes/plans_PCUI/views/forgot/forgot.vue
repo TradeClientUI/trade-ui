@@ -13,11 +13,6 @@
                 <div class='tabs-wrap'>
                     <van-tabs
                         v-model:active='active'
-                        :color='style.primary'
-                        line-width='66px'
-                        :title-active-color='style.primary'
-                        :title-inactive-color='style.primary'
-                        type='line'
                         @click='handleTabChange'
                     >
                         <van-tab :name='1' :title='$t("forgot.retrievedByEmail")' />
@@ -32,6 +27,7 @@
                                 v-model:zone='zone'
                                 class='forgotAccount'
                                 clear
+                                :country-code='countryCode'
                                 :placeholder='$t("common.inputPhone")'
                                 @onBlur='checkUserMfa'
                                 @zoneSelect='zoneSelect'
@@ -97,6 +93,7 @@
                         </div>
                     </form>
                 </div>
+
                 <van-button block class='next-btn' type='primary' @click='next'>
                     <span>{{ $t('common.nextStep') }}</span>
                 </van-button>
@@ -111,7 +108,7 @@ import topNav from '@planspc/layout/topNav'
 import userLayoutFooter from '@planspc/components/userLayoutFooter'
 import areaInputPc from '@/components/form/areaInputPc'
 import InputComp from '@/components/form/input'
-import { reactive, toRefs, computed } from 'vue'
+import { reactive, toRefs, computed, watch } from 'vue'
 // import areaInput from '@/components/form/areaInput'
 import checkCode from '@/components/form/checkCode'
 import googleVerifyCode from '@/themeCommon/components/googleVerifyCode.vue'
@@ -123,7 +120,7 @@ import RuleFn from './rule'
 import { useStore } from 'vuex'
 import { verifyCodeSend, verifyCodeCheck } from '@/api/base'
 import { checkUserStatus, checkGoogleMFAStatus } from '@/api/user'
-import { isEmpty, localGet } from '@/utils/util'
+import { isEmpty, localGet, localGetJSON, getDefaultZoneIndex } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 
 export default {
@@ -149,7 +146,7 @@ export default {
             checkCode: '',
             email: '',
             emailCode: '',
-            zone: localGet('phoneArea') || '',
+            zone: '',
             curTab: 1,
             tips: {
                 flag: true,
@@ -159,7 +156,9 @@ export default {
             active: 1,
             loading: false,
             googleCodeVis: false,
-            googleCode: ''
+            googleCode: '',
+            theme: localGet('invertColor'),
+            countryCode: ''
         })
 
         const bizTypeMap = {
@@ -172,6 +171,42 @@ export default {
                 1: 'EMAIL_LOGINED_VERIFICATION_CODE'
             }
         }
+        const countryList = computed(() => {
+            return store.state.countryList
+        })
+
+        // 初始化区号
+        watch([countryList, () => store.state._base.wpCompanyInfo?.defaultZone], (value) => {
+            if (value[0] && value[0].length) {
+                const allCountryList = value[0]
+                const defaultZone = value[1]
+                let index = -1
+                const loginInfo = localGetJSON('loginInfo')
+                if (loginInfo?.phoneArea) {
+                    index = allCountryList.findIndex(el => el.countryCode === loginInfo.phoneArea)
+                }
+                if (loginInfo?.accountType) {
+                    if (loginInfo.accountType === 2) {
+                        // state.mobile = loginInfo?.loginName || ''
+                        state.curTab = 0
+                        state.active = 0
+                    } else {
+                        // state.email = loginInfo?.loginName || ''
+                        state.curTab = 1
+                        state.active = 1
+                    }
+                }
+                // 根据语言优先显示默认区号
+                if (index === -1) {
+                    index = getDefaultZoneIndex(allCountryList, defaultZone?.code)
+                }
+                const defaultZoneConfig = (index === -1) ? allCountryList[0] : allCountryList[index]
+                if (defaultZoneConfig?.countryCode) {
+                    state.zone = defaultZoneConfig.countryCode
+                    state.countryCode = defaultZoneConfig.code
+                }
+            }
+        }, { immediate: true })
 
         // 获取国家区号
         store.dispatch('getCountryListByParentCode').then(res => {
@@ -180,7 +215,6 @@ export default {
                 const defaultZone = store.state._base.wpCompanyInfo?.defaultZone
                 const defaultZoneConfig = defaultZone?.code ? countryList.find(el => el.code === defaultZone.code) : countryList[0]
                 if (defaultZoneConfig?.code && !state.zone) {
-                    state.countryVal = defaultZoneConfig.code
                     state.zone = defaultZoneConfig.countryCode
                 }
             }
@@ -375,10 +409,6 @@ export default {
             if (state.googleCodeVis && isEmpty(state.googleCode)) {
                 return Toast(t('common.inputGoogleCode'))
             }
-            if (isEmpty(state.sendToken)) {
-                return Toast(t('common.getVerifyCode'))
-            }
-
             if (type === 'login') {
                 resetLoginPwd()
             } else if (type === 'fund') {
@@ -419,7 +449,7 @@ export default {
     display: flex;
     flex-flow: column;
     height: 100%;
-    background: var(--bgColor);
+    background: var(--primaryAssistColor);
     .container {
         display: flex;
         flex: 1;
@@ -434,28 +464,22 @@ export default {
         }
     }
     .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         margin: 0 0 10px;
     }
     .pageTitle {
-        margin-bottom: 0;
+        margin-bottom: 20px;
         font-weight: bold;
-        font-size: 32px;
-        font-family: Microsoft YaHei;
+        font-size: 28px;
     }
     .tabs-wrap {
-        width: 40%;
-        :deep {
+        :deep(.van-tabs__nav) {
             .van-tab {
+                flex: none;
+                margin: 0 10px;
                 font-size: 16px;
-                &.van-tab--active {
-                    font-weight: bold;
-                }
             }
-            .van-tabs__nav--line {
-                background: var(--contentColor);
+            .van-tabs__line {
+                background: var(--primary);
             }
         }
     }
@@ -468,20 +492,24 @@ export default {
     font-size: rem(34px);
 }
 .loginForm {
-    margin: 30px 0 40px;
+    margin: 30px 0 50px;
     .field {
         position: relative;
         display: flex;
         align-items: center;
         :deep {
             .inputWrapper {
-                background-color: var(--bgColor);
+                //background-color: var(--bgColor);
+                border: solid 1px var(--lineColor);
                 border-radius: 4px;
                 .input {
                     width: 100%;
                     height: 48px;
                     padding: 0 16px;
                     font-size: 16px;
+                }
+                &:hover {
+                    border: solid 1px var(--primary);
                 }
             }
             .van-hairline--bottom {
@@ -535,17 +563,34 @@ export default {
             font-size: rem(36px);
         }
     }
-    .field-google :deep() {
+    :deep(.field-google) {
         .form-item {
-            background: var(--assistColor);
+            border-radius: 4px;
         }
         .van-cell {
             padding-left: 20px;
             background: none;
+            &::after {
+                border-bottom: none;
+            }
+            .van-cell__value {
+                font-size: 16px;
+            }
         }
         .paste {
             display: none;
         }
+    }
+}
+.to-login {
+    margin-top: 20px;
+    text-align: center;
+    color: var(--minorColor);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    >a {
+        color: var(--primary);
     }
 }
 .next-btn {
@@ -567,9 +612,11 @@ export default {
 .verifyCodeCell {
     :deep {
         .checkCodeBar {
-            background-color: var(--assistColor);
-            border-bottom: none;
+            border: solid 1px var(--lineColor);
             border-radius: 4px;
+            &:hover {
+                border: solid 1px var(--primary);
+            }
             .checkCodeInput {
                 font-size: 16px;
             }
@@ -586,6 +633,11 @@ export default {
                 padding-left: 18px;
             }
         }
+    }
+}
+body.night {
+    .forgot {
+        background: none;
     }
 }
 </style>

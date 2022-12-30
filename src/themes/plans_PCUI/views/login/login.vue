@@ -1,110 +1,127 @@
 <template>
+    <router-view />
     <div class='login'>
         <topNav class='header' />
-
-        <div class='main'>
-            <!-- 登录账号类型 -->
-            <div v-if='businessConfig.enterpriseLogin || businessConfig.fundLogin' class='account-type'>
-                <button :class="['btn', { 'active': accountType === 1 }]" @click='accountType = 1'>
-                    <!-- {{ $t('signIn.defaultLogin') }} -->
-                    {{ $t('login.loginByPersonal') }}
-                </button>
-                <button v-if='businessConfig.enterpriseLogin' :class="['btn', { 'active': accountType === 2 }]" @click='accountType = 2'>
+        <div class='login-wrap'>
+            <div class='pageTitle'>
+                <h5 v-if='accountType === 1' class='opentype1'>
+                    {{ $t('login.welcomeLogin') }}MagnaMarkets
+                </h5>
+                <h5 v-if='accountType === 2' class='opentype2'>
                     {{ $t('login.loginByCorporate') }}
-                </button>
-                <button v-if='businessConfig.fundLogin' :class="['btn', { 'active': accountType === 3 }]" @click='accountType = 3'>
-                    {{ $t('signIn.fundLogin') }}
-                </button>
+                </h5>
+                <h5 v-if='accountType === 3' class='opentype3'>
+                    {{ $t('login.loginByFund') }}
+                </h5>
             </div>
-            <loginNameTypeBar v-model='loginNameType' />
-            <form class='loginForm'>
-                <!-- <h2 class='loginTitle'>
+            <div class='main' :class="inAnimation?'anim':''" @animationend='inAnimation=false'>
+                <!-- <div class='logo'>
+                <img alt='' src='/images/logo_vitamin.png' srcset='' />
+            </div> -->
+
+                <loginNameTypeBar v-model='loginNameType' />
+                <form class='loginForm'>
+                    <!-- <h2 class='loginTitle'>
                     {{ loginType==='password' ? $t("signIn.loginByPwd") : $t("signIn.loginByCode") }}
                 </h2> -->
-                <div v-if="loginNameType==='mobile'" class='field'>
-                    <areaInputPc
-                        ref='loginNameEl'
-                        v-model.trim='loginName'
-                        v-model:zone='zone'
-                        block
-                        :is-business='accountType === 2'
-                        :placeholder="$t('common.inputPhone')"
-                        @keyup.enter='onLoginNameKeyupEnter'
-                        @onBlur='checkUserMfa'
-                        @zoneSelect='zoneSelect'
-                    />
-                </div>
-                <div v-else class='field'>
-                    <compInput
-                        ref='loginNameEl'
-                        v-model.trim='email'
-                        block
-                        :placeholder="$t('common.inputEmail')"
-                        @keyup.enter='onLoginNameKeyupEnter'
-                        @onBlur='checkUserMfa'
-                    />
-                </div>
-                <div v-if="loginType==='password'" class='field'>
-                    <compInput
-                        ref='pwdEl'
-                        v-model='pwd'
-                        block
-                        :placeholder="$t('signIn.pwd')"
-                        type='password'
-                        @keyup.enter='loginHandle'
-                    />
-                </div>
-                <div v-else class='field'>
-                    <div v-show="loginNameType==='email'" class='verifyCodeCell'>
-                        <CheckCode
-                            ref='checkCodeEmailEl'
-                            v-model.trim='checkCodeEmail'
-                            clear
-                            :label='$t("login.verifyCode")'
-                            :loading='sendVerifyLoading'
-                            @verifyCodeSend='sendVerifyHandler'
+                    <div v-if="loginNameType==='mobile'" class='field'>
+                        <areaInputPc
+                            ref='loginNameEl'
+                            v-model.trim='loginName'
+                            v-model:zone='zone'
+                            block
+                            :country-code='countryCode'
+                            :is-business='accountType === 2'
+                            :placeholder="$t('common.inputPhone')"
+                            @keyup.enter='onLoginNameKeyupEnter'
+                            @onBlur='checkUserMfa'
+                            @zoneSelect='zoneSelect'
                         />
                     </div>
-                    <div v-show="loginNameType==='mobile'" class='verifyCodeCell'>
-                        <CheckCode
-                            ref='checkCodeMobileEl'
-                            v-model.trim='checkCodeMobile'
-                            clear
-                            :label='$t("login.verifyCode")'
-                            :loading='sendVerifyLoading'
-                            @verifyCodeSend='sendVerifyHandler'
+                    <div v-else class='field'>
+                        <compInput
+                            ref='loginNameEl'
+                            v-model.trim='email'
+                            block
+                            :placeholder="$t('common.inputEmail')"
+                            @keyup.enter='onLoginNameKeyupEnter'
+                            @onBlur='checkUserMfa'
                         />
                     </div>
+                    <div v-if="loginType==='password'" class='field'>
+                        <compInput
+                            ref='pwdEl'
+                            v-model='pwd'
+                            block
+                            :placeholder="$t('signIn.pwd')"
+                            type='password'
+                            @keyup.enter='loginHandle'
+                        />
+                    </div>
+                    <div v-else class='field'>
+                        <div v-show="loginNameType==='email'" class='verifyCodeCell'>
+                            <CheckCode
+                                ref='checkCodeEmailEl'
+                                v-model.trim='checkCodeEmail'
+                                clear
+                                :label='$t("login.verifyCode")'
+                                :loading='sendVerifyLoading'
+                                @verifyCodeSend='sendVerifyHandler'
+                            />
+                        </div>
+                        <div v-show="loginNameType==='mobile'" class='verifyCodeCell'>
+                            <CheckCode
+                                ref='checkCodeMobileEl'
+                                v-model.trim='checkCodeMobile'
+                                clear
+                                :label='$t("login.verifyCode")'
+                                :loading='sendVerifyLoading'
+                                @verifyCodeSend='sendVerifyHandler'
+                            />
+                        </div>
+                    </div>
+                    <div v-if='googleCodeVis' class='field field-google'>
+                        <googleVerifyCode @getGooleVerifyCode='getGooleVerifyCode' />
+                    </div>
+                    <div class='forget-link'>
+                        <router-link :to='{ path: "/forgot",query:{ type: "login" } }'>
+                            {{ $t('signIn.forgot') }}?
+                        </router-link>
+                    </div>
+
+                    <van-button block class='loginBtn' :disabled='loading' icon='/images/icon-register.png' @click='loginHandle'>
+                        {{ $t('signIn.loginBtn') }}
+                    </van-button>
+                </form>
+                <div class='linkBar'>
+                    <div>
+                        {{ $t('login.goRegister') }}
+                        <router-link class='link pc_signin_signup_ga' to='/register'>
+                            {{ $t('signIn.register') }}
+                        </router-link>
+                    </div>
+
+                    <a class='switchLoginType' href='javascript:;' @click='switchLoginType'>
+                        {{ loginType==='password' ? $t("signIn.loginByCode") : $t("signIn.loginByPwd") }}
+                    </a>
                 </div>
-                <div v-if='googleCodeVis' class='field field-google'>
-                    <googleVerifyCode @getGooleVerifyCode='getGooleVerifyCode' />
-                </div>
-                <van-button block class='loginBtn' :disabled='loading' type='primary' @click='loginHandle'>
-                    {{ $t('signIn.loginBtn') }}
-                </van-button>
-            </form>
-            <div class='linkBar'>
-                <router-link to='/register'>
-                    {{ $t('signIn.register') }}
-                </router-link>
-                <a class='switchLoginType' href='javascript:;' @click='switchLoginType'>
-                    {{ loginType==='password' ? $t("signIn.loginByCode") : $t("signIn.loginByPwd") }}
-                </a>
-                <router-link :to='{ path: "/forgot",query:{ type: "login" } }'>
-                    {{ $t('signIn.forgot') }}
-                </router-link>
-            </div>
-            <div v-if='thirdLoginArr.length > 0' class='three-way-login'>
-                <p class='title'>
-                    {{ $t('login.otherLogin') }}
-                </p>
-                <div class='otherLogin'>
-                    <LoginByGoogle v-if="thirdLoginArr.includes('google')" />
-                    <LoginByFacebook v-if="thirdLoginArr.includes('facebook')" />
-                    <LoginByTwitter v-if="thirdLoginArr.includes('twitter')" />
-                </div>
+                <third-login v-if='accountType !== 2' />
+
+                <!-- 登录账号类型 -->
+                <!-- <div v-if='businessConfig.enterpriseLogin || businessConfig.fundLogin' class='account-type'>
+                    <button v-if='accountType!==1' :class="['btn', { 'active': accountType === 1 }]" @click='changeLoginType(1)'>
+                        {{ $t('login.loginByPersonal') }}
+                    </button>
+                    <button v-if='businessConfig.enterpriseLogin && accountType!==2' :class="['btn', { 'active': accountType === 2 }]" @click='changeLoginType(2)'>
+                        {{ $t('login.loginByCorporate') }}
+                    </button>
+                    <button v-if='businessConfig.fundLogin && accountType !== 3' :class="['btn', { 'active': accountType === 3 }]" @click='changeLoginType(3)'>
+                        {{ $t('login.loginByFund') }}
+                    </button>
+                </div> -->
             </div>
         </div>
+
         <div class='footer'>
             <!-- © 2021 Trade Switcher. All rights reserved -->
         </div>
@@ -128,13 +145,11 @@ import { reactive, ref, toRefs, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { localGet, isEmpty, localSet } from '@/utils/util'
+import { localGet, isEmpty, localSet, localGetJSON, getDefaultZoneIndex, localGetObj } from '@/utils/util'
 import { Toast, Dialog } from 'vant'
 import LoginHook from './loginHook'
-import LoginByGoogle from '@/themeCommon/user/login/components/loginByGoogle.vue'
-import LoginByFacebook from '@/themeCommon/user/login/components/loginByFacebook.vue'
-import LoginByTwitter from '@/themeCommon/user/login/components/loginByTwitter.vue'
 import googleVerifyCode from '@/themeCommon/components/googleVerifyCode.vue'
+import thirdLogin from '@/themeCommon/components/thirdLogin'
 import { checkGoogleMFAStatus } from '@/api/user'
 
 export default {
@@ -147,9 +162,7 @@ export default {
         CheckCode,
         areaInputPc,
         googleVerifyCode,
-        LoginByGoogle,
-        LoginByFacebook,
-        LoginByTwitter,
+        thirdLogin
     },
     setup () {
         const router = useRouter()
@@ -168,48 +181,86 @@ export default {
             sendVerifyLoading: false,
             loginName: '',
             email: '',
-            zone: localGet('phoneArea') || '',
+            zone: '',
             pwd: '',
             googleCodeVis: '',
             checkCodeMobile: '',
             checkCodeEmail: '',
             token: '', // 验证码token
-            loginNameType: localGet('loginNameType') || 'email', // mobile 手机号登录   email 邮箱登录
+            loginNameType: 'email', // mobile 手机号登录   email 邮箱登录
             loginType: 'password', // password 密码登录   checkCode 验证码登录
+            countryCode: '',
+            theme: localGet('invertColor'),
+            inAnimation: false
         })
 
-        // 获取国家区号
-        store.dispatch('getCountryListByParentCode').then(res => {
-            if (res.check() && res.data.length) {
-                setDefaultZone()
-            }
+        const countryList = computed(() => {
+            return state.accountType === 2 ? store.getters.companyCountryList : store.state.countryList
         })
-        const countryList = computed(() => store.state.countryList)
+
+        // 检测客户是否开启GoogleMFA
+        const checkUserMfa = (val) => {
+            if (val) {
+                const param = {
+                    loginName: val,
+                    type: state.loginNameType === 'email' ? 1 : 2
+                }
+                if (state.loginNameType === 'mobile') param.phoneArea = state.zone
+                checkGoogleMFAStatus(param).then(res => {
+                    if (res.check()) {
+                        state.googleCodeVis = res.data > 0
+                    }
+                }).catch(err => {
+                    console.log('err', err)
+                })
+            }
+        }
+
+        // 初始化区号
+        watch([countryList, () => store.state._base.wpCompanyInfo?.defaultZone], (value) => {
+            if (value[0] && value[0].length) {
+                const allCountryList = value[0]
+                const defaultZone = value[1]
+                let index = -1
+                const loginInfo = localGetJSON('loginInfo')
+                if (loginInfo?.phoneArea) {
+                    index = allCountryList.findIndex(el => el.countryCode === loginInfo.phoneArea)
+                }
+                if (loginInfo?.accountType) {
+                    if (loginInfo.accountType === 1) {
+                        state.email = loginInfo?.loginName || ''
+                        state.loginNameType = 'email'
+                    } else {
+                        state.loginName = loginInfo?.loginName || ''
+                        state.loginNameType = 'mobile'
+                    }
+                }
+                // 根据语言优先显示默认区号
+                if (index === -1) {
+                    index = getDefaultZoneIndex(allCountryList, defaultZone?.code)
+                }
+                const defaultZoneConfig = (index === -1) ? allCountryList[0] : allCountryList[index]
+                if (defaultZoneConfig?.countryCode) {
+                    state.zone = defaultZoneConfig.countryCode
+                    state.countryCode = defaultZoneConfig.code
+                }
+                if (loginInfo?.loginName) {
+                    checkUserMfa(loginInfo?.loginName)
+                }
+            }
+        }, { immediate: true })
+
         const thirdLoginArr = computed(() => store.state._base.wpCompanyInfo?.thirdLogin || [])
 
         const { loginSubmit, loginToPath, verifyCodeBtnText, sendVerifyCode } = LoginHook()
 
-        // 监听个人登录还是企业登录,设置不同国家列表
-        watch(() => state.accountType, val => {
-            setDefaultZone()
-        })
-
         watch(() => state.loginNameType, val => {
             state.pwd = ''
-        })
-
-        // 设置默认区号
-        const setDefaultZone = () => {
-            const localArea = localGet('phoneArea')
-            let localObj
-            if (state.accountType === 2) {
-                localObj = store.getters.companyCountryList.find(el => el.countryCode === localArea)
-                state.zone = localObj ? localArea : store.getters.companyCountryList[0]?.countryCode
-            } else {
-                localObj = countryList.value.find(el => el.countryCode === localArea)
-                state.zone = localObj ? localArea : countryList.value[0]?.countryCode
+            const loginName = state.loginNameType === 'email' ? state.email : state.loginName
+            if (loginName) {
+                checkUserMfa(loginName)
             }
-        }
+        })
 
         // 跳转路由
         const toRoute = path => {
@@ -243,11 +294,18 @@ export default {
                 // 登录KYC,kycAuditStatus:0未认证跳,需转到认证页面,1待审核,2审核通过,3审核不通过
                 // companyKycStatus 公司KYC开户状态，1开启 2未开启
                 if (res.invalid()) return res
-                localSet('loginNameType', state.loginNameType)
-                localSet('phoneArea', state.zone)
 
-                if (Number(res.data.companyKycStatus) === 1) {
-                    if (Number(res.data.kycAuditStatus === 0)) {
+                localSet('loginInfo', JSON.stringify({
+                    accountType: params.type,
+                    loginName: params.loginName,
+                    phoneArea: params.phoneArea || '',
+                }))
+
+                const resData = res.data
+                const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
+                const isReal = !lastAccountType || lastAccountType === 'real'
+                if (isReal && Number(resData.companyKycStatus) === 1) {
+                    if (Number(resData.kycAuditStatus === 0)) {
                         return Dialog.alert({
                             title: t('common.tip'),
                             confirmButtonText: t('login.goAuthenticate'),
@@ -256,7 +314,7 @@ export default {
                         }).then(() => {
                             toRoute('/authentication')
                         })
-                    } else if (Number(res.data.kycAuditStatus === 1)) {
+                    } else if (Number(resData.kycAuditStatus === 1)) {
                         return Dialog.alert({
                             title: t('common.tip'),
                             confirmButtonText: t('common.close'),
@@ -269,20 +327,20 @@ export default {
                                 location.reload()
                             })
                         })
-                    } else if (Number(res.data.kycAuditStatus === 3)) {
+                    } else if (Number(resData.kycAuditStatus === 3)) {
                         return Dialog.alert({
                             title: t('common.tip'),
                             confirmButtonText: t('common.reSubmit'),
-                            message: t('common.reviewFailed') + '\n' + t('common.reviewReson') + res.data.kycAuditRemark,
+                            message: t('common.reviewFailed') + '\n' + t('common.reviewReson') + resData.kycAuditRemark,
 
                         }).then(() => {
                             toRoute('/authentication')
                         })
-                    } else if (Number(res.data.kycAuditStatus === 2)) {
-                        noticeSetPwd(res.data.loginPassStatus)
+                    } else if (Number(resData.kycAuditStatus === 2)) {
+                        noticeSetPwd(resData.loginPassStatus)
                     }
-                } else if (Number(res.data.companyKycStatus) === 2) {
-                    noticeSetPwd(res.data.loginPassStatus)
+                } else if (Number(resData.companyKycStatus) === 2) {
+                    noticeSetPwd(resData.loginPassStatus)
                 }
             }).finally(() => {
                 state.loading = false
@@ -291,7 +349,9 @@ export default {
 
         // 显示密码设置弹窗
         const noticeSetPwd = (loginPassStatus) => {
-            if (parseInt(loginPassStatus) === 1 && !localGet('loginPwdIgnore')) {
+            const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
+            const isReal = !lastAccountType || lastAccountType === 'real'
+            if (isReal && parseInt(loginPassStatus) === 1 && !localGet('loginPwdIgnore')) {
                 state.loginPwdPop = true
             } else {
                 loginToPath()
@@ -337,23 +397,6 @@ export default {
             }
         }
 
-        // 检测客户是否开启GoogleMFA
-        const checkUserMfa = (val) => {
-            if (val) {
-                const param = {
-                    loginName: val,
-                    type: state.loginNameType === 'email' ? 1 : 2
-                }
-                if (state.loginNameType === 'mobile') param.phoneArea = state.zone
-                checkGoogleMFAStatus(param).then(res => {
-                    if (res.check()) {
-                        state.googleCodeVis = res.data > 0
-                    }
-                }).catch(err => {
-                    console.log('err', err)
-                })
-            }
-        }
         const getGooleVerifyCode = val => {
             state.googleCode = val
         }
@@ -361,17 +404,18 @@ export default {
         // 选择登录手机号区号
         const zoneSelect = (data) => {
             state.zone = data.code
+            state.countryCode = data.countryCode
             if (state.loginName) checkUserMfa(state.loginName)
         }
 
-        onMounted(() => {
-            if (isEmpty(countryList.value) && !isEmpty(thirdLoginArr.value)) {
-                // 获取国家区号
-                store.dispatch('getCountryListByParentCode')
-            }
-            // 获取三方登录配置
-            store.dispatch('_base/getLoginConfig')
+        const changeLoginType = type => {
+            state.accountType = type
+            state.inAnimation = true
+        }
 
+        onMounted(() => {
+            // 获取国家区号
+            store.dispatch('getCountryListByParentCode')
             // 获取支持企业注册国家
             store.dispatch('getCompanyCountry')
         })
@@ -391,7 +435,8 @@ export default {
             checkUserMfa,
             getGooleVerifyCode,
             onLoginNameKeyupEnter,
-            businessConfig
+            businessConfig,
+            changeLoginType
         }
     }
 }
@@ -399,13 +444,40 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
+.login-wrap {
+    position: relative;
+    padding: 40px 0;
+}
+.pageTitle {
+    margin: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0;
+    h5 {
+        color: var(--color);
+        font-size: 24px;
+        font-weight: normal;
+        &.opentype2 {
+            color: var(--primary);
+        }
+        &.opentype3 {
+            color: #EBB650;
+        }
+    }
+    a {
+        color: var(--color);
+        font-size: 14px;
+    }
+}
 .login {
+    position: relative;
     display: flex;
     flex-flow: column;
-    justify-content: space-between;
     height: 100%;
     font-size: 14px;
-    background: var(--bgColor);
+    background: var(--primaryAssistColor);
     .footer {
         padding-bottom: 16px;
         color: var(--minorColor);
@@ -415,58 +487,103 @@ export default {
     .main {
         width: 520px;
         margin: 0 auto;
-        padding: 40px 60px 60px;
+        padding: 30px 60px;
         background: var(--contentColor);
         border-radius: 10px;
-    }
-    .account-type {
-        display: flex;
-        align-items: center;
-        height: 44px;
-        margin-bottom: 30px;
-        padding: 0 2px;
-        background: var(--assistColor);
-        border-radius: 22px;
-        .btn {
-            display: flex;
-            flex: 1;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            color: var(--minorColor);
-            font-size: 18px;
-            background: none;
-            border-radius: 20px;
-            cursor: pointer;
-            &:hover {
-                color: var(--primary);
+        &.anim {
+            animation: showMsg 0.6s;
+        }
+        @keyframes showMsg {
+            0% {
+                transform: rotateY(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: rotateY(65deg);
+                opacity: 0;
+            }
+            100% {
+                transform: rotateY(0deg);
+                opacity: 1;
             }
         }
-        .active {
-            color: var(--primary);
-            font-weight: bold;
-            background: #FFF;
+        .logo {
+            width: 100px;
+            img {
+                width: 100%;
+            }
+        }
+    }
+    .account-type {
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+        .btn {
+            font-size: 14px;
+            background: none;
+            cursor: pointer;
+            padding: 0 10px;
+            border-right: solid 1px var(--placeholdColor);
+            &:last-child {
+                border: none;
+            }
+            &:hover {
+                color: var(--primary);
+                opacity: 0.8;
+            }
+            &.active {
+                color: var(--primary);
+                font-weight: bold;
+                background: #FFF;
+            }
         }
     }
 }
 .loginForm {
     margin-top: 34px;
     .field {
-        margin-top: 24px;
+        margin-top: 20px;
         :deep(.pcInputBar) {
             border-radius: 4px;
+            background: none;
+            border: solid 1px var(--lineColor);
+            &:hover,
+            &:focus {
+                border: solid 1px var(--primary);
+            }
         }
         :deep(.pcInput) {
             font-size: 16px;
+            padding: 0 16px;
         }
     }
-    .field-google :deep() {
+    .forget-link {
+        margin-top: 10px;
+        text-align: right;
+        display: inline-block;
+        width: 100%;
+        a {
+            color: var(--primary);
+        }
+    }
+    :deep(.field-google) {
         .form-item {
-            background: var(--assistColor);
+            border-radius: 4px;
+            //background: var(--assistColor);
+            border: solid 1px var(--lineColor);
+            &:hover,
+            &:focus {
+                border: solid 1px var(--primary);
+            }
         }
         .van-cell {
+            height: 48px;
             padding-left: 20px;
             background: none;
+            font-size: 16px;
+            &::after {
+                border-bottom: none;
+            }
         }
         .paste {
             display: none;
@@ -482,6 +599,16 @@ export default {
         margin-top: 40px;
         font-size: 20px;
         border-radius: 4px;
+        background: var(--primary);
+        color: #FFF;
+        &:hover {
+            opacity: 0.8;
+        }
+        :deep(.van-icon__image) {
+            margin-right: 4px;
+            width: 20px;
+            height: 20px;
+        }
     }
     .verifyCodeBtn {
         width: 90px;
@@ -498,28 +625,18 @@ export default {
     a {
         color: var(--color);
     }
-}
-.three-way-login {
-    margin-top: 50px;
-    .title {
-        margin-bottom: 10px;
-        color: var(--placeholdColor);
-        text-align: center;
-    }
-    .otherLogin {
-        display: flex;
-        justify-content: space-evenly;
-        width: 200px;
-        margin: 15px auto 0;
-        text-align: center;
+    .link {
+        color: var(--primary);
     }
 }
 .verifyCodeCell {
     :deep {
         .checkCodeBar {
-            background-color: var(--assistColor);
-            border-bottom: none;
+            border: solid 1px var(--lineColor);
             border-radius: 4px;
+            &:hover {
+                border: solid 1px var(--primary);
+            }
             .checkCodeInput {
                 font-size: 16px;
             }
@@ -529,7 +646,7 @@ export default {
                 font-size: 16px;
                 cursor: pointer;
                 &:disabled {
-                    color: var(--minorColor);
+                    color: var(--primary);
                     cursor: default;
                 }
             }
@@ -540,6 +657,11 @@ export default {
                 padding-left: 18px;
             }
         }
+    }
+}
+body.night {
+    .login {
+        background: none;
     }
 }
 </style>

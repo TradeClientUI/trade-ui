@@ -99,12 +99,7 @@ export default {
         }
 
         const back = (type) => {
-            router.push({
-                path: '/msg',
-                query: {
-                    from: state.type
-                }
-            })
+            router.back()
         }
 
         onBeforeMount(() => {

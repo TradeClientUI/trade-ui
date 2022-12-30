@@ -54,7 +54,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
-.fullWidth{
+.fullWidth {
     margin-top: 20px;
     padding: 50px 0;
     background: var(--contentColor);
@@ -93,7 +93,7 @@ export default {
                 font-weight: bold;
             }
             .describe {
-                 padding: 0 30px;
+                padding: 0 30px;
                 margin-top: 18px;
                 line-height: 22px;
                 font-size: 14px;
@@ -102,14 +102,13 @@ export default {
         }
     }
 }
-.descTitle{
-    font-family: "Microsoft Yahei";
+.descTitle {
     font-size: 32px;
     font-weight: bold;
     text-align: center;
     padding-bottom: 20px;
 }
-.descList{
+.descList {
     padding-top: 40px;
     padding-left: 16px;
     padding-right: 16px;
@@ -117,17 +116,17 @@ export default {
     text-align: center;
     display: flex;
     justify-content: space-between;
-    .row{
+    .row {
         margin-right: 64px;
         width: 245px;
-        &.last{
+        &.last {
             margin-right: 0;
         }
     }
-    .icon{
+    .icon {
         width: 56px;
     }
-    .descTitle{
+    .descTitle {
         padding-top: 10px;
         color: #1E2329;
         font-weight: 500;
@@ -135,7 +134,7 @@ export default {
         line-height: 28px;
         margin-bottom: 8px;
     }
-    .descContent{
+    .descContent {
         color: #474D57;
         font-weight: 400;
         font-size: 14px;

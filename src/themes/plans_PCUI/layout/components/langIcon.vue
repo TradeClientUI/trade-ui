@@ -48,12 +48,14 @@ export default {
                 const firstSlash = str.indexOf('/') + 1
                 const twoSlash = str.indexOf('/', firstSlash) // 第二个斜杠下标
                 const pathTemp = str.substring(twoSlash).substring(1, str.length)
-                location.pathname = lang + '/' + pathTemp
+                location.href = location.origin + '/' + lang + '/' + pathTemp + location.search
 
                 loadLocaleMessages(i18n, lang).then(() => {
                     locale.value = lang // change!
                     store.commit('del_cacheViews', 'Home')
                     store.commit('del_cacheViews', 'Layout')
+                    store.commit('Update_countryList', [])
+                    store.commit('Update_countryListAll', [])
                 })
 
                 setCookie('lang', lang, 'y10')

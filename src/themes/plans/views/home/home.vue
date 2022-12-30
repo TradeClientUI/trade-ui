@@ -1,216 +1,263 @@
 <template>
-    <div id='homeContent' ref='homeContent' class='home' :class='{ hasNav: $hasNav }'>
-        <!-- 公告 -->
-        <div class='topp-public'>
-            <van-notice-bar class='top-notice' left-icon='volume-o' :scrollable='false'>
-                <van-row>
-                    <van-col span='22'>
-                        <van-swipe
-                            :autoplay='3000'
-                            class='notice-swipe'
-                            :show-indicators='false'
-                            vertical
-                        >
-                            <van-swipe-item v-for='(item,index) in noticeData' :key='index' @click='goNoticeDetail(item.id)'>
-                                {{ item.title }}
-                            </van-swipe-item>
-                        </van-swipe>
-                    </van-col>
-                    <van-col v-if='!isUniapp' align='center' span='2'>
-                        <van-icon name='more-o' @click='publicLink' />
-                    </van-col>
-                </van-row>
-            </van-notice-bar>
+    <div id='homePage' class='homePage'>
+        <router-view />
+        <div class='banner'>
+            <div class='banner_full'>
+                <!-- 快速注册模块 -->
+                <new-quick />
+            </div>
         </div>
-        <PageComp :class="isUniapp ? '' : 'marginbottom'" :data='pageModules' />
-        <!-- 统一公告弹窗 -->
-        <NoticePublic />
+        <!-- 公告模块 -->
+        <new-notice />
+        <!-- 交易信号 -->
+        <!-- <trade-signal /> -->
+        <!--投资机会-->
+        <!-- <opportunities /> -->
+        <!--排行榜-->
+        <top-products />
+        <!--加入基金的优势-->
+        <advantages />
+        <!--现在是分批买入加密基金的好时机-->
+        <!-- <buy-now /> -->
+        <!--选择vitatoken-->
+        <choose-vitatoken />
+        <!--评价vitatoken-->
+        <said-about-vitatoken />
+        <!--3分钟开启投资-->
+        <start-investment />
+        <!--下载vitatoken-->
+        <download-vitatoken />
+
+        <!--faq-->
+        <faq />
+    </div>
+    <!-- 底部隐私协议 -->
+    <!-- <div v-if='privacyVis' class='privacy'>
+        <div class='close-wrap'>
+            <div class='close' @click='privacyVis=false'>
+                <svg class='icon-svg' height='10' viewBox='0 0 20 20' width='10' xmlns='http://www.w3.org/2000/svg'>
+                    <g><polygon points='18.096 19.174 19.497 17.747 1.7 .286 .3 1.714' /><polygon points='19.497 1.714 18.096 .286 .3 17.747 1.7 19.174' /></g>
+                </svg>
+            </div>
+        </div>
+        <div class='content'>
+            {{ $t('home.privacy.text1') }}
+            <a class='sc-AxiKw cJlLNA' color='light' href='javascript:;' rel='noopener' @click='openPrivacy'>
+                {{ $t('home.privacy.text2') }}
+            </a>
+        </div>
+        <div class='footer'>
+            <span class='agree' @click='agree'>
+                {{ $t('home.privacy.agree') }}
+            </span>
+            <div class='close-btn' @click='privacyVis=false'>
+                {{ $t('home.privacy.close') }}
+            </div>
+        </div>
+    </div> -->
+    <div class='serviceIcon' @click='toService'>
+        <!-- 置顶-->
+        <!-- <img v-if='showTop' alt='' class='img' src='../../images/home/top.png' @click='toTop' /> -->
+        <!-- 客服 -->
+        <i class='icon icon_xiaoxizhongxin'></i>
     </div>
 </template>
 
-<script>
-import { QuoteSocket } from '@/plugins/socket/socket'
-import { onActivated, computed, ref, toRefs, reactive, onMounted } from 'vue'
+<script setup>
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import newQuick from './components/new-quick.vue'
+import newNotice from './components/new-notice.vue'
+import tradeSignal from './components/tradeSignal.vue'
+import advantages from './components/advantages.vue'
+import buyNow from './components/buyNow.vue'
+import topProducts from './components/topProducts.vue'
+import chooseVitatoken from './components/chooseVitatoken.vue'
+import saidAboutVitatoken from './components/saidAboutVitatoken.vue'
+import meetVitatoken from './components/meetVitatoken.vue'
+import faq from './components/faq.vue'
+import opportunities from './components/opportunities.vue'
+import privacyTip from './components/privacy-tip.vue'
+import downloadVitatoken from './components/downloadVitatoken.vue'
+import startInvestment from './components/startInvestment.vue'
+import { localGet, localSet } from '@/utils/util'
+
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { NoticeBar } from 'vant' // vant公告组件
-import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getNoticeList } from '@/api/user'
-import { isEmpty, getCookie } from '@/utils/util'
-import NoticePublic from '@plans/components/noticePublic'
+const { t } = useI18n({ useScope: 'global' })
 
-export default {
-    name: 'Home',
-    components: {
-        NoticePublic
-    },
-    setup () {
-        const store = useStore()
-        const pageModules = ref([])
-        const router = useRouter()
-        const route = useRoute()
-        const { t } = useI18n({ useScope: 'global' })
-        const { isUniapp } = route.query
-        const customerGroupId = computed(() => store.getters.customerGroupId)
-        // 暂时只在319公司显示
-        const isCompanyIdShow = computed(() => Number(store.state._base.wpCompanyInfo.companyId) === 319)
+const router = useRouter()
+const store = useStore()
+const customerInfo = computed(() => store.state._user.customerInfo)
 
-        // 获取账户信息
-        const customInfo = computed(() => store.state._user.customerInfo)
-
-        const state = reactive({
-            data: {
-                loop: true,
-                items: [
-                    {
-                        src: require('@plans/images/banner/banner1.jpg'),
-                        href: { 'name': 'Quote' }
-                    },
-                    {
-                        src: require('@plans/images/banner/banner2.jpg'),
-                        href: { 'name': 'Quote' }
-                    },
-                    {
-                        src: require('@plans/images/banner/banner3.jpg'),
-                        href: { 'name': 'Quote' }
-                    }
-                ]
-            },
-            lang: getCookie('lang') || 'zh-CN',
-            currentNt: 1,
-            noticeData: []
-        })
-        const products = []
-
-        // 产品订阅
-        const sendSubscribe = () => {
-            if (products.length > 0) QuoteSocket.send_subscribe24H(products)
-        }
-
-        const publicLink = () => {
-            router.push('/msg')
-        }
-
-        // 获取公告列表
-        const getNoticeData = () => {
-            getNoticeList({
-                current: state.currentNt,
-                // pubTimeFrom: '',
-                // pubTimeTo: '',
-                lang: state.lang,
-                size: 3,
-                companyId: customInfo.value.companyId,
-                customerNo: customInfo.value.customerNo
-            }).then(res => {
-                if (res.check()) {
-                    if (res.data.records && res.data.records.length > 0) {
-                        // state.listNotice = state.listNotice.concat(res.data.records)
-                        state.noticeData = res.data.records
-                    }
-
-                    // // 数据全部加载完成
-                    // if (res.data.size * res.data.current >= res.data.total) {
-                    //     state.finishedNt = true
-                    // }
-                }
-            }).catch(err => {
-                state.errorTip = t('c.loadError')
-                state.pageLoading = false
-            })
-        }
-
-        const goNoticeDetail = (id) => {
-            if (isUniapp && uni) {
-                uni.postMessage({
-                    data: {
-                        action: 'message',
-                        type: 'notice_click',
-                        params: {
-                            path: `/noticeDetail?id=${id}&type=notice`
-                        }
-                    }
-                })
-            } else {
-                router.push({
-                    path: '/noticeDetail',
-                    query: {
-                        id: id,
-                        type: 'notice'
-                    }
-                })
-            }
-        }
-
-        store.dispatch('_base/getPageConfig', 'Home').then(res => {
-            pageModules.value = res
-            // 找到行情模块的产品，并开始订阅
-            const productModule = res.filter(el => ['productsSwipe', 'productsTimeSharing'].includes(el.tag))
-            if (productModule.length > 0) {
-                productModule.forEach(el => {
-                    const symbolKeys = Object.entries(el.data.product || {}).map(([tradeType, item]) => {
-                        const list = item[customerGroupId.value] || []
-                        return list.map(symbolId => `${symbolId}_${tradeType}`)
-                    }).flat()
-                    products.push(...symbolKeys)
-                })
-                sendSubscribe()
-            }
-        })
-
-        onActivated(() => {
-            // 订阅产品
-            sendSubscribe()
-        })
-        onMounted(() => {
-            getNoticeData()
-        })
-        return {
-            pageModules,
-            customInfo,
-            goNoticeDetail,
-            publicLink,
-            getNoticeData,
-            isCompanyIdShow,
-            ...toRefs(state),
-            isUniapp
-        }
+const bannerClick = () => {
+    // 游客去到开户界面，登录去V10
+    if (customerInfo.value) {
+        router.push('/fundV10/index')
+    } else {
+        router.push('/register')
     }
 }
+const privacyVis = ref(false)
+const agree = () => {
+    localSet('privacyFlag', true)
+    privacyVis.value = false
+}
+
+if (!localGet('privacyFlag')) {
+    privacyVis.value = true
+}
+
+const toService = () => {
+    router.push({
+        name: 'service',
+    })
+}
+// const showTop = ref(false)
+// const handleScroll = () => { // 显示回到顶部按钮
+//     if (document.documentElement.scrollTop > 900) { showTop.value = true } else showTop.value = false
+// }
+// onMounted(() => { // 绑定滚动事件
+//     window.addEventListener('scroll', handleScroll)
+// })
+// onBeforeUnmount(() => { // 移出滚动事件
+//     window.removeEventListener('scroll', handleScroll)
+// })
+// 回到顶部
+// const toTop = () => {
+//     window.scrollTo({
+//         top: 0,
+//         behavior: 'smooth' // 平滑滚动
+//     })
+// }
 </script>
 
-<style lang="scss" scoped >
-@import '~@/sass/mixin.scss';
-.home {
-    height: 100%;
-    //overflow: auto;
+<style lang='scss' scoped>
+@import '@/sass/mixin.scss';
+.homePage {
+    position: relative;
     background: var(--contentColor);
-    .marginbottom {
-        padding-bottom: rem(100px);
-    }
-    .top-notice {
-        width: 100%;
-        color: var(--color);
-        background: var(--primaryAssistColor);
-        .van-icon {
-            margin-top: rem(15px);
-            font-size: rem(36px);
-            vertical-align: middle;
-        }
-        .van-row {
-            font-size: rem(24px);
-        }
-    }
-    .notice-swipe {
-        height: 36px;
-        line-height: 38px;
-    }
-    :deep(.van-notice-bar__content) {
-        width: 100%;
+    color: var(--color);
+    .relativeFloor {
+        position: relative;
+        z-index: 101;
     }
 }
-.noticeBar,
-.newBar {
-    margin-top: rem(20px);
+// 内容模块
+.content-module {
+    padding-bottom: 4px;
+    overflow: auto;
+    background-color: var(--bgColor);
 }
-
+// banner文字
+.banner {
+    width: 100%;
+    background: url('../../images/home/new_version/banner_bgd.png') top center no-repeat;
+    background-size: 100% 100%;
+    padding: rem(100px) rem(32px) rem(60px);
+    &_full {
+        display: flex;
+        margin: auto;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .right {
+        height: 600px;
+        margin-left: 40px;
+        cursor: pointer;
+    }
+}
+.privacy {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    padding: rem(30px);
+    overflow: hidden;
+    font-size: rem(28px);
+    line-height: rem(50px);
+    background-color: rgb(250, 251, 252);
+    .close-wrap {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: rem(10px);
+        .close {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            align-self: flex-end;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            background-color: rgb(112, 133, 153);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0.5;
+            -webkit-box-align: center;
+            -webkit-box-pack: center;
+            .icon-svg {
+                cursor: pointer;
+                transition: fill 0.15s ease 0s;
+                fill: rgb(255, 255, 255);
+            }
+        }
+    }
+    a {
+        color: var(--primary);
+    }
+    .content {
+        padding: 0 0 10px;
+    }
+    .footer {
+        text-align: center;
+        .close-btn {
+            display: inline-block;
+            padding: 0 24px;
+            color: var(--primary);
+            border: solid 1px var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .agree {
+            display: inline-block;
+            width: fit-content;
+            margin-right: rem(40px);
+            padding: 0 24px;
+            color: rgb(255, 255, 255);
+            // font-size: 14px;
+            white-space: nowrap;
+            background-color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    }
+}
+.serviceIcon {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: rem(32px);
+    bottom: rem(160px);
+    background: var(--primary);
+    border-radius: 50%;
+    z-index: 109;
+    padding: rem(20px);
+    width: rem(80px);
+    height: rem(80px);
+    .icon {
+        font-size: rem(40px);
+        color: #FFF;
+        position: relative;
+    }
+}
+body.night {
+    .banner {
+        background: #21262F;
+    }
+}
 </style>

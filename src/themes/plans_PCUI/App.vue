@@ -25,7 +25,7 @@ import { Dialog } from 'vant'
 import { ElNotification } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { MsgSocket } from '@/plugins/socket/socket'
-import { getQueryVariable, sessionSet, unzip, computeHtmlTime } from '@/utils/util'
+import { getQueryVariable, sessionSet, unzip, computeHtmlTime, localSet } from '@/utils/util'
 import { configSystem } from '@/api/base'
 export default {
     setup () {
@@ -128,7 +128,9 @@ export default {
             }
         })
 
-        document.documentElement.classList.add(store.state.invertColor)
+        // 给body添加pc类，给/src/components下的功能组件区分
+        document.body.classList.add('pc')
+
         // 监听ws全局事件
         document.body.addEventListener('GotMsg_UserForceLogoutRet', kickOut, false)
         document.body.addEventListener('GotMsg_disconnect', disconnect, false)

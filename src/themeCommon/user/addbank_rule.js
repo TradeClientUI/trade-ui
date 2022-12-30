@@ -17,19 +17,27 @@ export default function (t) {
                 },
             }
         ],
-        bankCardNumber: [
+        // bankCardNumber: [
+        //     {
+        //         message: [t('bank.inputBankNo')],
+        //         validator: (rule, value, callback, source, options) => {
+        //             return !!value
+        //         },
+        //     },
+        //     {
+        //         message: [t('bank.inputRealBankNo')],
+        //         validator: (rule, value, callback, source, options) => {
+        //             return bankNoReg.test(value)
+        //         }
+
+        //     }
+        // ],
+        bankAccount: [
             {
-                message: [t('bank.inputBankNo')],
+                message: [t('bank.inputBankAccount')],
                 validator: (rule, value, callback, source, options) => {
                     return !!value
                 },
-            },
-            {
-                message: [t('bank.inputRealBankNo')],
-                validator: (rule, value, callback, source, options) => {
-                    return bankNoReg.test(value)
-                }
-
             }
         ],
         bankName: [
@@ -47,22 +55,22 @@ export default function (t) {
                     return !!value
                 },
             }
-        ],
-        province: [
-            {
-                message: [t('bank.inputOpenProvince')],
-                validator: (rule, value, callback, source, options) => {
-                    return !!value
-                },
-            }
-        ],
-        bankAddress: [
-            {
-                message: [t('bank.inputOpenAddress')],
-                validator: (rule, value, callback, source, options) => {
-                    return !!value
-                },
-            }
         ]
+        // province: [
+        //     {
+        //         message: [t('bank.inputOpenProvince')],
+        //         validator: (rule, value, callback, source, options) => {
+        //             return !!value
+        //         },
+        //     }
+        // ],
+        // bankAddress: [
+        //     {
+        //         message: [t('bank.inputOpenAddress')],
+        //         validator: (rule, value, callback, source, options) => {
+        //             return !!value
+        //         },
+        //     }
+        // ]
     }
 }

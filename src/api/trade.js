@@ -43,6 +43,7 @@ export function addMarketOrder (data) {
     return request({
         url: '/global/tradeapi.app.OrderApiService.addMarketOrder',
         method: 'post',
+        toastErr: false,
         headers: {
             version: '0.0.1',
             group: 'tradeApi'
@@ -56,6 +57,7 @@ export function addOrder (data) {
     return request({
         url: '/global/tradeapi.app.OrderApiService.addOrder',
         method: 'post',
+        toastErr: false,
         headers: {
             version: '0.0.1',
             group: 'tradeApi'
@@ -323,6 +325,34 @@ export function batchMarketPerformance (data) {
         url: '/global/report.app.ReportDatadDubboService.batchMarketPerformance',
         method: 'post',
         headers: {
+            version: '0.0.1'
+        },
+        data
+    })
+}
+
+/* 下单试算接口-全仓 */
+export function calculateMarketOrder (data) {
+    return request({
+        url: '/global/tradeapi.app.OrderApiService.calculateMarketOrder',
+        method: 'post',
+        toastErr: false,
+        headers: {
+            version: '0.0.1',
+            group: 'tradeApi',
+        },
+        data
+    })
+}
+
+/* 下单试算接口-逐仓 */
+export function calculateMarketOrder1 (data) {
+    return request({
+        url: '/global/tradeapi.app.OrderApiService.calculateMarketOrder',
+        method: 'post',
+        toastErr: false,
+        headers: {
+            group: 'tradeApi',
             version: '0.0.1'
         },
         data

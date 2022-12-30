@@ -95,13 +95,13 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
-.modifyProfitLoss{
+.modifyProfitLoss {
     .priceRange {
-        color: var(--minorColor);
+        color: var(--color);
         font-size: rem(22px);
     }
-    .label{
-        color: var(--color);
+    .label {
+        color: var(--minorColor);
     }
 }
 

@@ -32,9 +32,6 @@
                 </span>
             </div>
         </div>
-        <div v-if='list.length === 0' class='none-data'>
-            <van-empty :description='$t("common.noData")' image='/images/empty.png' />
-        </div>
     </div>
 </template>
 
@@ -250,14 +247,6 @@ const addOptional = ({ symbolId, tradeType }) => {
                 margin-top: 2px;
             }
         }
-    }
-    .none-data {
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: flex;
-        justify-content: center;
-        width: 100%;
     }
 }
 

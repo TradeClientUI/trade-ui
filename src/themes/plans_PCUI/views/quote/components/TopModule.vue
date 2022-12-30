@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted } from 'vue'
+import { computed, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { QuoteSocket } from '@/plugins/socket/socket'
@@ -40,9 +40,22 @@ const gotoOrder = (symbolKey) => {
 }
 // 产品列表
 const productMap = computed(() => store.state._quote.productMap)
-// const symbolKeys = ['1564_5', '706_5', '709_5', '714_5', '720_5'] // pre
-const symbolKeys = ['1_5', '20_5', '21_5', '38_5', '2_5'] // prd
-const unSubscribe = QuoteSocket.add_subscribe24H({ moduleId: 'topQuote', symbolKeys })
+
+let unSubscribe = () => {}
+const symbolKeys = computed(() => {
+    const isDemo = store.state._user.customerInfo?.companyType === 'demo'
+    return isDemo ? store.state.businessConfig?.productKeysDemo : store.state.businessConfig?.productKeys
+})
+// const symbolKeys = ['1353_1', '1352_1', '1351_1', '1350_1', '1349_1'] // pre
+// const symbolKeys = ['1_5', '20_5', '21_5', '38_5', '2_5'] // prd
+
+watch(() => symbolKeys.value, (val) => {
+    if (val) {
+        unSubscribe = QuoteSocket.add_subscribe({ moduleId: 'topQuote', symbolKeys: val })
+    }
+}, {
+    immediate: true
+})
 
 onUnmounted(() => {
     unSubscribe()
@@ -51,13 +64,13 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
-.header{
+.header {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
     margin-bottom: 40px;
-    .item{
+    .item {
         position: relative;
         display: flex;
         flex-direction: column;
@@ -69,26 +82,26 @@ onUnmounted(() => {
         border-radius: 10px;
         padding: 20px;
         cursor: pointer;
-        &:hover{
-            box-shadow: 0 0 0 999px rgba($color: #000000, $alpha: .097) inset;
+        &:hover {
+            box-shadow: 0 0 0 999px rgba($color: #000, $alpha: 0.097) inset;
         }
-        .name{
+        .name {
             font-size: 16px;
             font-weight: 400;
             line-height: 18px;
         }
-        .price{
+        .price {
             font-size: 24px;
             line-height: 26px;
         }
-        .change{
+        .change {
             height: 12px;
             line-height: 14px;
-            .upDownAmount{
+            .upDownAmount {
                 margin-right: 10px;
             }
         }
-        .currency-icon{
+        .currency-icon {
             position: absolute;
             right: 14px;
             top: 11px;

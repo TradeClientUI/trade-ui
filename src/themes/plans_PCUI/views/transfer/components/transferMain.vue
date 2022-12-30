@@ -167,7 +167,7 @@ export default {
                 tradeType: state.fromAccount.id
             }).then(res => {
                 if (res.check()) {
-                    state.maxTransfer = res.data.available
+                    state.maxTransfer = res.data.withdrawAmount
                 }
             }).catch(err => {
                 state.loading = false

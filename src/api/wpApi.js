@@ -1,4 +1,4 @@
-import { unzip, isEmpty } from '@/utils/util'
+import { unzip, getQueryVariable, localGetObj, getCookie, getQueryString, getToken, isUniapp, guid } from '@/utils/util'
 import request_wp from '@/utils/request_wp'
 import axios from 'axios'
 
@@ -14,7 +14,12 @@ export const wpFooter = () => pageConfig('Footer')
 /* 获取页面配置信息 */
 export function pageConfig (id) {
     const NODE_ENV = process.env.NODE_ENV
-    if (NODE_ENV === 'production') {
+    const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
+    const token = getToken()
+    const accountType = getQueryVariable('accountType')
+    const demoDomain = getQueryVariable('demoDomain')
+    const isDemo = (token && lastAccountType === 'demo') || (accountType === 'demo' && demoDomain) // 当前是否为demo账户
+    if (NODE_ENV === 'production' && !isDemo) {
         let data = ''
         switch (id) {
         case 'SelfSymbolIndex':
@@ -49,12 +54,25 @@ export function pageConfig (id) {
         }
         if (data) return Promise.resolve(JSON.parse(data))
     }
-    return request_wp(`/${id}.json?timestamp=${Date.now()}`).then(res => {
+
+    let url = ''
+    if (isDemo) {
+        const demo_domain = localGetObj('mockAccount', 'demo_domain')
+        const queryLang = getQueryString('lang')
+        const lang = getCookie('lang') || queryLang || 'en-US'
+        NODE_ENV === 'development'
+            ? url = 'https://' + demo_domain + '/' + lang + window.wp_apiPath
+            : url = 'https://' + demo_domain + '/' + window.wp_apiPath
+    }
+
+    return request_wp(`${url}/${id}.json?timestamp=${Date.now()}`).then(res => {
         const reg = /^(\{|\[)/
         let content = res?._content || res || []
         content = reg.test(content) || typeof (content) === 'object' ? content : unzip(content)
         const data = typeof (content) === 'string' ? JSON.parse(content) : content
-        if (id === 'SysSetting' && window['wp_SysSetting'] === '') window['wp_SysSetting'] = JSON.stringify(res)
+        // if (id === 'SysSetting') {
+        //     window['wp_SysSetting'] = JSON.stringify(res)
+        // }
         if (NODE_ENV === 'development' && id === 'SysSetting') {
             window['apiService'] = data.apiService
             window['quoteService'] = data.quoteService

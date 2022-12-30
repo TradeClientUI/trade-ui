@@ -23,7 +23,6 @@ export default {
         styleObject () {
             const data = this.data
             return Object.assign({}, data.styleObj, {
-                color: data.color,
                 fontSize: data.fontSize,
                 textAlign: data.textAlign,
             })

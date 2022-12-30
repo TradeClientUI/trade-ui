@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.loginMask{
+.loginMask {
     position: absolute;
     left: 0;
     top: 0;
@@ -43,14 +43,14 @@ export default {
     opacity: 0;
     visibility: hidden;
     transition: 0.25s ease-in-out;
-    .loginBtn{
+    .loginBtn {
         position: relative;
         font-size: 16px;
         color: var(--primary);
-        &:hover{
+        &:hover {
             opacity: 0.8;
         }
-        &:after{
+        &::after {
             position: absolute;
             content: '';
             bottom: -4px;
@@ -60,20 +60,20 @@ export default {
             background: var(--primary);
         }
     }
-    .or{
-        color: #fff;
+    .or {
+        color: #FFF;
         font-size: 16px;
     }
-    .registerBtn{
+    .registerBtn {
         border-radius: 5px;
         height: 40px;
         width: 140px;
         font-size: 16px;
-        &:hover{
-            background: #6b8fff;
-            border-color: #6b8fff;
+        &:hover {
+            opacity: 0.8;
         }
-        &:focus, &:active{
+        &:focus,
+        &:active {
             transform: scale(0.99);
             opacity: 1;
         }

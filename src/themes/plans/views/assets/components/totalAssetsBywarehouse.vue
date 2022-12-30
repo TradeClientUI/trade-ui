@@ -3,12 +3,17 @@
         <!-- v-if='assetsInfo && assetsInfo.totalBalance>0' -->
         <div class='totalAssetsBlock'>
             <div class='totalAssetsInfo'>
-                <p class='label'>
-                    <span> {{ $t('trade.freeMargin') }}({{ assetsInfo?.currency }}) </span>
+                <div class='label'>
+                    <p class='name'>
+                        <span @click='showExplain(5)'>
+                            {{ $t('trade.freeMargin') }}({{ assetsInfo?.currency }})
+                        </span>
+                        <van-icon class='question' name='question-o' @click='showExplain(5)' />
+                    </p>
                     <span class='tag'>
                         <i class='icon_zijinmingxi' @click="$router.push({ name:'Record',query:{ tradeType:tradeType, accountId:assetsInfo.accountId } })"></i>
                     </span>
-                </p>
+                </div>
                 <p class='totalAmount'>
                     {{ userAccount?.availableMargin || '--' }}
                 </p>
@@ -17,14 +22,35 @@
         <ul class='assetList'>
             <li class='item'>
                 <p class='muted'>
-                    {{ $t('trade.allOriginalMargin') }}
+                    <span @click='showExplain(6)'>
+                        {{ $t('trade.allOriginalMargin') }}
+                    </span>
+                    <van-icon class='question' name='question-o' @click='showExplain(6)' />
                 </p>
                 <p>{{ userAccount?.occupyMargin || '--' }}</p>
             </li>
         </ul>
 
-        <div v-if='assetsInfo && $store.state._base.plans.length>1' class='btns'>
+        <div class='btns'>
+            <template v-if='businessConfig?.tradeTypeShowCash.includes(Number(tradeType)) && customerInfo.companyType === "real"'>
+                <van-button
+                    class='mobile_assets_deposit_ga'
+                    size='mini'
+                    type='primary'
+                    @click='toDesposit'
+                >
+                    {{ $t('trade.desposit') }}
+                </van-button>
+                <van-button
+                    size='mini'
+                    type='primary'
+                    @click='toWirhdraw'
+                >
+                    {{ $t('trade.withdraw') }}
+                </van-button>
+            </template>
             <van-button
+                v-if='assetsInfo && $store.state._base.plans.length>1'
                 size='mini'
                 @click='toTransfer'
             >
@@ -32,17 +58,26 @@
             </van-button>
         </div>
     </div>
+
+    <!-- 说明弹窗 -->
+    <explain-popup
+        v-model='isExplain'
+        :explain-type='explainType'
+        :user-account='userAccount'
+    />
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { Toast } from 'vant'
 import { useI18n } from 'vue-i18n'
+import explainPopup from './explain-popup.vue'
 
 export default {
     components: {
+        explainPopup
     },
     setup () {
         const router = useRouter()
@@ -52,8 +87,15 @@ export default {
         const tradeType = computed(() => store.state._quote.curTradeType || plans.value[0].id)
         const assetsInfo = computed(() => store.state._user.customerInfo.accountList && store.state._user.customerInfo.accountList.find(el => Number(el.tradeType) === Number(tradeType.value)))
         const accountList = computed(() => store.state._user.customerInfo.accountList.filter(el => Number(el.tradeType) === Number(tradeType.value)))
-
+        const customerInfo = computed(() => store.state._user.customerInfo)
         const userAccount = computed(() => store.state._user.accountAssets[2])
+        const accountInfo = computed(() => accountList?.value[0])
+        const state = reactive({
+            // 是否显示说明弹窗
+            isExplain: false,
+            // 说明类型
+            explainType: 0
+        })
 
         // 跳转划转记录
         const toTransfer = () => {
@@ -77,11 +119,46 @@ export default {
             }
         }
 
+        // 显示说明弹窗
+        const showExplain = (type) => {
+            state.explainType = type
+            state.isExplain = true
+        }
+
+        // 跳转充值页面
+        const toDesposit = () => {
+            if (!checkAssets()) return
+            router.push({
+                path: '/depositChoose',
+                query: {
+                    tradeType: tradeType.value
+                }
+            })
+        }
+
+        // 跳转提现页面
+        const toWirhdraw = () => {
+            if (!checkAssets()) return
+            router.push({
+                path: '/withdrawAccount',
+                query: {
+                    accountId: accountInfo.value.accountId,
+                    currency: accountInfo.value.currency,
+                    tradeType: tradeType.value
+                }
+            })
+        }
+
         return {
             assetsInfo,
             userAccount,
             tradeType,
-            toTransfer
+            toTransfer,
+            showExplain,
+            toDesposit,
+            toWirhdraw,
+            customerInfo,
+            ...toRefs(state)
         }
     }
 }
@@ -93,6 +170,11 @@ export default {
     padding: rem(10px) rem(30px) rem(30px) rem(30px);
     background: var(--contentColor);
     border-radius: 4px;
+    .question {
+        margin-top: rem(-10px);
+        margin-left: rem(8px);
+        font-size: rem(32px);
+    }
 }
 .totalAssetsBlock {
     margin-bottom: rem(40px);
@@ -107,6 +189,10 @@ export default {
         color: var(--minorColor);
         font-size: rem(28px);
         line-height: rem(46px);
+        .name {
+            display: inline-flex;
+            align-items: center;
+        }
         .tag {
             color: var(--normalColor);
             font-size: rem(38px);
@@ -134,16 +220,17 @@ export default {
         margin-bottom: rem(30px);
     }
     .muted {
+        display: flex;
+        align-items: center;
         font-size: rem(24px);
     }
 }
 .btns {
     display: flex;
-    height: rem(65px);
     .van-button {
         display: block;
         width: 100%;
-        height: 100%;
+        height: rem(65px);
         margin-right: rem(20px);
         color: var(--primary);
         font-size: rem(28px);

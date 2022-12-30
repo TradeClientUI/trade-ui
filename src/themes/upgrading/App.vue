@@ -3,22 +3,11 @@
         <div class='container'>
             <div id='bm'></div>
             <div>
-                <template v-if="lang==='en-US'">
-                    <p v-if="lang==='en-US'" class='label'>
-                        Dear Customer
-                    </p>
-                    <p class='labelContent'>
-                        During system upgrade, all services are suspended until today <span id='endTime'></span>
-                    </p>
-                </template>
-                <template v-else>
-                    <p class='label'>
-                        亲爱的客户
-                    </p>
-                    <p class='labelContent'>
-                        系统维护中，暂停所有服务。预计于今天 <span id='endTime'></span> 恢复。
-                    </p>
-                </template>
+                <p class='label'>
+                    {{ $t('dear') }}
+                </p>
+                <p class='labelContent' v-html='upgrade'>
+                </p>
             </div>
         </div>
     </div>
@@ -29,10 +18,12 @@ import { getCookie, getQueryVariable } from '@/utils/util'
 import axios from 'axios'
 import lottie from 'lottie-web'
 import dayjs from 'dayjs'
+
 export default {
     data () {
         return {
-            lang: getCookie('lang')
+            lang: getCookie('lang'),
+            upgrade: ''
         }
     },
     mounted () {
@@ -66,8 +57,7 @@ export default {
                 }
             }).then(({ data }) => {
                 if (data && data.maintenance === false && navigatorType === 1 && backUrl) location.replace(backUrl)
-                var endTimeEl = document.querySelector('#endTime')
-                endTimeEl.innerHTML = dayjs(parseInt(data.endTime)).format('HH:mm')
+                this.upgrade = this.$t('upgrade', { time: dayjs(parseInt(data.endTime)).format('HH:mm') })
             })
         }
     },

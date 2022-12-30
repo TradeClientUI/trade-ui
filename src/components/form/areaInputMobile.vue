@@ -156,7 +156,6 @@ export default {
 }
 :deep(.selectWrap) {
     min-width: rem(150px);
-    margin-right: rem(20px);
     .icon_arrow-down {
         right: rem(25px);
     }

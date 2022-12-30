@@ -2,25 +2,23 @@
     <div class='register'>
         <topNav class='header' />
         <div class='container'>
-            <div class='content'>
-                <div class='login-link'>
-                    <router-link to='/login'>
-                        {{ $t('register.hasAccount') }}
-                    </router-link>
-                </div>
+            <div class='pageTitle'>
+                <!-- <h5 v-if='openAccountType===1' class='opentype1'>
+                    {{ $t('register.businessOpen') }}
+                </h5> -->
+                <h5 class='opentype2'>
+                    {{ $t("register.welcomeRegister") }}MagnaMarkets
+                </h5>
+            </div>
+            <div class='content' :class="inAnimation?'anim':''" @animationend='inAnimation=false'>
+                <!-- <div class='logo'>
+                    <img alt='' src='/images/logo_vitamin.png' srcset='' />
+                </div> -->
 
-                <div class='pageTitle'>
-                    <h5>{{ openAccountType===1 ? $t('register.businessOpen') : $t("register.openAccount") }}</h5>
-                </div>
-                <div class='banner'>
-                    <img alt='' src='https://testcms.ixmiddle.com/docs/registerBanner.png' srcset='' />
-                </div>
                 <van-tabs
                     v-model:active='openType'
                     class='openTypeTab'
-                    :color='style.primary'
-                    line-height='2px'
-                    :title-inactive-color='style.mutedColor'
+                    @click-tab='countryListVis=false'
                 >
                     <van-tab name='email' :title='$t("register.email")' />
                     <van-tab name='mobile' :title='$t("register.phoneNo")' />
@@ -39,15 +37,18 @@
                         type='business'
                         @zoneSelect='zoneSelect'
                     /> -->
-                    <div class='cell'>
+                    <!-- <div v-show="openType==='mobile'" class='cell'>
                         <el-select
                             v-model='countryVal'
                             class='select-conuntry'
+                            :filter-method='filterZone'
+                            filterable
                             :placeholder='$t("auth.countrySelect")'
                             @change='zoneOnSelect'
+                            @visible-change='zoneOnBlur'
                         >
                             <el-option
-                                v-for='item in countryList'
+                                v-for='item in filterList'
                                 :key='item.code'
                                 :label='item.displayName'
                                 :value='item.code'
@@ -62,13 +63,13 @@
                                 </span>
                             </el-option>
                         </el-select>
-                    </div>
-
+                    </div> -->
                     <div v-if="openType === 'mobile'" class='cell'>
                         <areaInputPc
                             v-model.trim='mobile'
                             v-model:zone='zone'
                             clear
+                            :country-code='countryCode'
                             :disabled='false'
                             :is-business='openAccountType === 1'
                             :placeholder='$t("common.inputPhone")'
@@ -93,6 +94,7 @@
                         <CheckCode
                             v-model.trim='mobileCheckCode'
                             clear
+                            ga-class='pc_signup_code_ga'
                             :label='$t("login.verifyCode")'
                             :loading='verifyCodeLoading'
                             @verifyCodeSend='verifyCodeSendHandler'
@@ -102,11 +104,32 @@
                         <CheckCode
                             v-model.trim='emailCheckCode'
                             clear
+                            ga-class='pc_signup_code_ga'
                             :label='$t("login.verifyCode")'
                             :loading='verifyCodeLoading'
                             @verifyCodeSend='verifyCodeSendHandler'
                         />
                     </div>
+                    <!--  推荐人id  -->
+                    <!-- <template v-if='openAccountType === 0'>
+                        <div class='invite-item' @click='inviteVis=!inviteVis'>
+                            <span>{{ $t("register.referrerID") }}</span>
+                            <el-icon size='18'>
+                                <CaretTop v-if='inviteVis' />
+                                <CaretBottom v-else />
+                            </el-icon>
+                        </div>
+
+                        <div v-if='inviteVis' class='cell customNo_cell'>
+                            <el-input
+                                v-model.trim='customerNo'
+                                class='customNo'
+                                :clear='!customerNoIsDisabled'
+                                :disabled='customerNoIsDisabled'
+                                :placeholder='$t("register.referrerID")'
+                            />
+                        </div>
+                    </template> -->
                     <div v-if='instructions' class='cell'>
                         <van-checkbox v-model='protocol' class='checkbox' shape='square'>
                             <span v-html='instructions'></span>
@@ -121,23 +144,35 @@
                 <div class='footerBtn'>
                     <van-button
                         block
-                        class='registerBtn'
+                        class='registerBtn pc_signup_ga'
                         :disabled='loading'
+                        icon='/images/icon-register.png'
                         @click='registerHandler'
                     >
-                        {{ $t('common.submit') }}
+                        {{ $t('c.register') }}
                     </van-button>
                 </div>
-                <div v-if='companyCountryVisible' class='businessOpen'>
-                    <a class='businessOpenBtn' href='javascript:;' @click='openAccountType=openAccountType===0 ? 1:0'>
+                <div class='to-login'>
+                    {{ $t('login.goLogin') }}
+                    <router-link to='/login'>
+                        {{ $t('login.loginBtn') }}
+                    </router-link>
+                </div>
+                <third-login v-if='openAccountType === 0' />
+                <!-- <div
+                    v-if='companyCountryVisible'
+                    class='businessOpen'
+                    :class='{ openType2: openAccountType===1 }'
+                    @click='changeOpentype'
+                >
+                    <a class='businessOpenBtn' href='javascript:;'>
                         {{ openAccountType===0 ? $t('register.businessOpen') : $t("register.openAccount") }}
                     </a>
-                </div>
+                </div> -->
             </div>
         </div>
         <userLayoutFooter />
         <router-view />
-
         <Loading :show='loading' />
     </div>
 </template>
@@ -152,9 +187,9 @@ import CheckCode from '@/components/form/checkCode'
 import areaInputPc from '@/components/form/areaInputPc'
 // import CurrencyAction from './components/currencyAction'
 // import TradeTypeAction from './components/tradeTypeAction'
-import { getDevice, getQueryVariable, setToken, getArrayObj, sessionGet, localSet } from '@/utils/util'
+import { getDevice, getQueryVariable, setToken, getArrayObj, sessionGet, localSet, guid, getCookie, getDefaultZoneIndex, localGet, localSetObj } from '@/utils/util'
 import { register, checkUserStatus } from '@/api/user'
-import { verifyCodeSend, findCompanyCountry, getCountryListByParentCode } from '@/api/base'
+import { verifyCodeSend, geoipCountry } from '@/api/base'
 import { useStore } from 'vuex'
 import { reactive, toRefs, computed, getCurrentInstance, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -165,6 +200,10 @@ import { setQuoteService } from '@/plugins/socket/socket'
 // import { pageConfig } from '@/api/wpApi'
 import { useI18n } from 'vue-i18n'
 import hooks from './hooks'
+import { ElMessage } from 'element-plus'
+import { activityRegister } from '../../api/activity'
+import thirdLogin from '@/themeCommon/components/thirdLogin'
+import { CaretBottom, CaretTop } from '@element-plus/icons'
 
 export default {
     components: {
@@ -172,7 +211,10 @@ export default {
         areaInputPc,
         CheckCode,
         Loading,
-        userLayoutFooter
+        userLayoutFooter,
+        thirdLogin,
+        CaretBottom,
+        CaretTop
         // CurrencyAction,
         // TradeTypeAction,
     },
@@ -190,6 +232,7 @@ export default {
         const state = reactive({
             options: [{ country: 'Canada', code: 'CA' }],
             zone: '',
+            customerNo: '', // 推荐人客户编号
             countryZone: '86',
             countryCode: 'ISO_3166_156',
             loading: false,
@@ -206,9 +249,15 @@ export default {
             visited: false, // 是否已点击过获取验证码
             countryVal: '',
             openAccountType: 0, // 开户类型 0:个人 1.企业 默认为个人
-            allCountry: [], // 所有国家列表
             emailToken: '',
-            mobileToken: ''
+            mobileToken: '',
+            filterValue: '', // 搜索内容
+            ipCountry: '', // 当前IP对应的国家
+            defaultCountry: '', // 根据语言获取到的默认国家
+            filterList: [], // 搜索列表
+            inviteVis: false,
+            theme: localGet('invertColor'),
+            inAnimation: false
         })
         // 设置默认开户类型
         if (businessConfig.value.enterpriseLogin && openAccountType) {
@@ -219,35 +268,27 @@ export default {
         //     state.pageui = res
         // })
         // 获取国家区号
-        store.dispatch('getCountryListByParentCode').then(res => {
-            if (res.check() && res.data.length) {
-                const countryList = store.state.countryList
-                const defaultZone = store.state._base.wpCompanyInfo?.defaultZone
-                const defaultZoneConfig = defaultZone?.code ? countryList.find(el => el.code === defaultZone.code) : countryList[0]
+        watch([() => store.state.countryList, () => store.state._base.wpCompanyInfo?.defaultZone], (value) => {
+            if (value[0] && value[0].length) {
+                const countryList = value[0]
+                const defaultZone = value[1]
+                const index = getDefaultZoneIndex(countryList, defaultZone?.code)
+                const defaultZoneConfig = (index === -1) ? countryList[0] : countryList[index]
                 if (defaultZoneConfig?.code) {
+                    state.defaultCountry = defaultZoneConfig
                     state.countryVal = defaultZoneConfig.code
                     state.zone = `${defaultZoneConfig.countryCode}`
                     state.countryCode = defaultZoneConfig.code
                     state.countryZone = defaultZoneConfig.countryCode
                 }
+                // findCountryByIP()
             }
-        })
-
-        // 获取支持企业注册国家
-        store.dispatch('getCompanyCountry')
+        }, { immediate: true })
 
         const countryList = computed(() => {
             const countryList = store.state.countryList
             return state.openAccountType === 0 ? countryList : store.getters.companyCountryList
         })
-
-        const getAllCountry = () => {
-            getCountryListByParentCode({ parentCode: '-1' }).then(res => {
-                if (res.check()) {
-                    state.allCountry = res.data
-                }
-            })
-        }
 
         const style = computed(() => store.state.style)
         // 手机正则表达式
@@ -255,14 +296,9 @@ export default {
         )
         // 开户须知内容
         const instructions = computed(() => {
-            const lang = locale.value || 'zh-CN'
-            const instructionMap = {
-                'zh-CN': 'instructions_zh',
-                'en-US': 'instructions_en',
-                'zh-HK': 'instructions_hk'
-            }
+            const lang = locale.value
             const wpCompanyInfo = store.state._base.wpCompanyInfo || {}
-            const protocol = wpCompanyInfo[instructionMap[lang]]
+            const protocol = wpCompanyInfo[lang === 'zh-CN' ? 'instructions_zh' : 'instructions_en']
             return protocol ? decodeURIComponent(unescape(protocol)) : ''
         })
         // 是否显示企业开户的入口
@@ -275,60 +311,110 @@ export default {
             }
         })
 
+        // 根据地址栏是否有ref字段(推荐id)判断是否禁用推荐客户id的输入框
+        const customerNoIsDisabled = route.query.hasOwnProperty('ref')
+        if (customerNoIsDisabled) state.customerNo = route.query.ref
+
         // 选择国家
         const zoneOnSelect = val => {
             const country = countryList.value.find(el => el.code === val)
-            state.zone = country.countryCode
-            state.countryZone = country.countryCode
-            state.countryCode = country.code
+            if (country) {
+                state.zone = country.countryCode
+                state.countryZone = country.countryCode
+                state.countryCode = country.code
+            }
+        }
+
+        const zoneOnBlur = (visible) => {
+            if (visible === false) {
+                state.filterValue = ''
+            }
         }
 
         const registerSubmit = (params) => {
             state.loading = true
-            register(params).finally(() => {
-                state.loading = false
-            }).then(res => {
-                // state.loading = false
-                if (res.check()) {
-                    // 注册成功
-                    sessionStorage.setItem('RegisterParams', JSON.stringify({ ...params, openType: state.openType }))
-                    sessionStorage.setItem('RegisterData', JSON.stringify(res))
-                    localSet('loginNameType', state.openType)
-                    localSet('loginZone', state.countryZone)
-                    localSet('phoneArea', state.countryZone)
-                    if (res.data.token) setToken(res.data.token)
+            // 系统注册成功的操作
+            const successful = (res) => {
+                // 注册成功
+                sessionStorage.setItem('RegisterParams', JSON.stringify({ ...params, openType: state.openType }))
+                sessionStorage.setItem('RegisterData', JSON.stringify(res))
+                if (state.openType === 'mobile') localSet('loginZone', state.countryZone)
+                // 缓存注册信息
+                localSet('loginInfo', JSON.stringify({
+                    accountType: params.type,
+                    loginName: params.loginName,
+                    phoneArea: params.phoneArea || params.emailArea || '',
+                }))
+                if (res.data.token) setToken(res.data.token)
 
-                    // 注册成功重新获取客户信息
-                    store.dispatch('_user/findCustomerInfo')
-                    // 重新登录清除账户信息
-                    store.commit('_user/Update_accountAssets', {})
-                    // 登录websocket
-                    instance.appContext.config.globalProperties.$MsgSocket.login()
+                // 注册成功重新获取客户信息
+                store.dispatch('_user/findCustomerInfo')
+                localSetObj('mockAccount', 'lastAccountType', 'real')
+                // 重新登录清除账户信息
+                store.commit('_user/Update_accountAssets', {})
+                // 登录websocket
+                instance.appContext.config.globalProperties.$MsgSocket.login()
 
-                    // 切换登录后的行情websocket
-                    setQuoteService()
+                // 切换登录后的行情websocket
+                setQuoteService()
 
-                    if (res.data.list.length > 0) {
-                        // 需要KYC认证
-                        sessionStorage.setItem('kycList', JSON.stringify(res.data.list))
-                        // 判断是个人KYC还是企业KYC
-                        if (params.openAccountType === 0) {
-                            router.replace({
-                                path: '/register/regKyc',
-                                query: { levelCode: res.data.list[0].levelCode }
-                            })
-                        } else {
-                            router.replace({
-                                path: '/businessKYC'
-                            })
-                        }
+                if (res.data.list.length > 0) {
+                    // 需要KYC认证
+                    sessionStorage.setItem('kycList', JSON.stringify(res.data.list))
+                    // 判断是个人KYC还是企业KYC
+                    if (params.openAccountType === 0) {
+                        router.replace({
+                            path: '/register/regKyc',
+                            query: { levelCode: res.data.list[0].levelCode }
+                        })
                     } else {
-                        router.replace({ name: 'RegisterSuccess' })
+                        router.replace({
+                            path: '/businessKYC'
+                        })
                     }
+                } else {
+                    router.replace({ name: 'RegisterSuccess' })
+                }
+            }
+
+            // 活动注册成功的操作
+            const activityRegisterSuccessful = (res) => {
+                if (res.check()) {
+                    // 提示 注册成功，请登录
+                    ElMessage({
+                        message: t('register.registerSuccessful'),
+                        type: 'success',
+                    })
+                    const loginTimer = setTimeout(() => {
+                        router.replace({
+                            path: '/login'
+                        })
+                        clearTimeout(loginTimer)
+                    }, 1000)
                 } else {
                     res.toast()
                 }
-            })
+            }
+
+            if (params.customerNo) {
+                activityRegister(params).finally(() => {
+                    state.loading = false
+                }).then(res => {
+                    // 缓存注册信息
+                    localSet('loginInfo', JSON.stringify({
+                        accountType: params.type,
+                        loginName: params.loginName,
+                        phoneArea: params.phoneArea || params.emailArea || '',
+                    }))
+                    activityRegisterSuccessful(res)
+                })
+            } else {
+                register(params).finally(() => {
+                    state.loading = false
+                }).then(res => {
+                    successful(res)
+                })
+            }
         }
 
         // 提交注册
@@ -340,30 +426,53 @@ export default {
             if ((state.openType === 'email' && !state.emailToken) || (state.openType === 'mobile' && !state.mobileToken)) {
                 return Toast(t('common.inputRealVerifyCode'))
             }
-            const params = {
-                type: state.openType === 'email' ? 1 : 2,
-                loginName: state.openType === 'email' ? state.email : state.mobile,
-                registerSource: getDevice(),
-                verifyCode: state.openType === 'email'　? state.emailCheckCode : state.mobileCheckCode,
-                // currency: state.currency,
-                // tradeType: state.tradeType,
-                sendToken: state.openType === 'email'　? state.emailToken : state.mobileToken,
-                utmSource: getQueryVariable('utm_source', entrySearch),
-                utmMedium: getQueryVariable('utm_medium', entrySearch),
-                utmCampaign: getQueryVariable('utm_campaign', entrySearch),
-                utmContent: getQueryVariable('utm_content', entrySearch),
-                utmTerm: getQueryVariable('utm_term', entrySearch),
-                protocol: state.protocol,
-                tradeTypeCurrencyList: getPlansByCountry(state.countryCode),
-                customerGroupId: getCustomerGroupIdByCountry(state.countryCode),
-                country: state.countryCode,
-                openAccountType: state.openAccountType
+            let params = {}
+            const countryCode = state.openType === 'email' ? state.defaultCountry.code : state.countryCode
+            // 判断是否填写了推荐id 设置不同的params
+            if (state.customerNo) {
+                params = {
+                    checkVerifyCode: true,
+                    companyId: sessionStorage.getItem('companyId'),
+                    country: countryCode,
+                    customerNo: state.customerNo,
+                    lang: getCookie('lang'),
+                    loginName: state.openType === 'email' ? state.email : state.mobile,
+                    registerSource: getDevice(),
+                    sendToken: state.openType === 'email' ? state.emailToken : state.mobileToken,
+                    trace: guid(),
+                    tradeTypeCurrencyList: getPlansByCountry(countryCode),
+                    type: state.openType === 'email' ? 1 : 2,
+                    verifyCode: state.openType === 'email' ? state.emailCheckCode : state.mobileCheckCode,
+                    timestamp: new Date().getTime().toString(),
+                    customerGroupId: getCustomerGroupIdByCountry(countryCode),
+                    protocol: state.protocol
+                }
+            } else {
+                params = {
+                    type: state.openType === 'email' ? 1 : 2,
+                    loginName: state.openType === 'email' ? state.email : state.mobile,
+                    registerSource: getDevice(),
+                    verifyCode: state.openType === 'email' ? state.emailCheckCode : state.mobileCheckCode,
+                    // currency: state.currency,
+                    // tradeType: state.tradeType,
+                    sendToken: state.openType === 'email' ? state.emailToken : state.mobileToken,
+                    utmSource: getQueryVariable('utm_source', entrySearch),
+                    utmMedium: getQueryVariable('utm_medium', entrySearch),
+                    utmCampaign: getQueryVariable('utm_campaign', entrySearch),
+                    utmContent: getQueryVariable('utm_content', entrySearch),
+                    utmTerm: getQueryVariable('utm_term', entrySearch),
+                    protocol: state.protocol,
+                    tradeTypeCurrencyList: getPlansByCountry(countryCode),
+                    customerGroupId: getCustomerGroupIdByCountry(countryCode),
+                    country: countryCode,
+                    openAccountType: state.openAccountType
+                }
             }
 
             if (state.openType === 'mobile') {
                 params.phoneArea = String(state.countryZone)
             } else {
-                params.emailArea = String(state.countryZone)
+                params.emailArea = String(state.defaultCountry.countryCode)
             }
 
             if (sessionGet('b_superiorAgent')) {
@@ -381,6 +490,7 @@ export default {
                     registerSubmit(params)
                 })
         }
+
         // 发送验证码
         const verifyCodeSendHandler = (callback) => {
             state.visited = true
@@ -395,7 +505,7 @@ export default {
             if (state.openType === 'mobile') {
                 verifyParams.phoneArea = String(state.zone)
             } else {
-                verifyParams.emailArea = String(state.zone)
+                verifyParams.emailArea = String(state.defaultCountry.countryCode)
             }
 
             const validator = new Schema(checkCustomerExistRule(t))
@@ -411,10 +521,11 @@ export default {
                             return Toast(msg)
                         } else {
                             // state.zone = res.data.phoneArea
+                            const countryCode = state.openType === 'email' ? state.defaultCountry.code : state.countryCode
                             const params = {
                                 bizType: state.openType === 'mobile' ? 'SMS_REGISTER_VERIFICATION_CODE' : 'EMAIL_REGISTER_VERIFICATION_CODE',
                                 toUser: state.openType === 'mobile' ? state.countryZone + ' ' + state.mobile : state.email,
-                                country: state.countryCode
+                                country: countryCode
                             }
                             verifyCodeSend(params).then(res => {
                                 state.verifyCodeLoading = false
@@ -445,6 +556,50 @@ export default {
             // state.countryCode = data.countryCode
         }
 
+        const filterZone = (value) => {
+            value = value.toUpperCase()
+            state.filterValue = value
+        }
+
+        const changeOpentype = () => {
+            state.inAnimation = true
+            state.openAccountType = state.openAccountType === 0 ? 1 : 0
+        }
+
+        watch([() => state.filterValue, countryList], (newVal) => {
+            const value = newVal[0]
+            const currentCountryList = newVal[1]
+            const list = (!value) ? currentCountryList : currentCountryList.filter(el => {
+                if ((el.code && el.code.toUpperCase().indexOf(value) !== -1) || (el.countryCode && el.countryCode.toUpperCase().indexOf(value) !== -1) || (el.displayName && el.displayName.toUpperCase().indexOf(value) !== -1)) {
+                    return true
+                } else {
+                    return false
+                }
+            })
+            state.filterList = list
+        }, { immediate: true })
+
+        // 根据IP获取当前国家
+        // const getGeoipCountry = () => {
+        //     geoipCountry().then(res => {
+        //         if (res.code === '0' && res.data?.iso_code) {
+        //             state.ipCountry = res.data
+        //             findCountryByIP()
+        //         }
+        //     })
+        // }
+
+        // // 根据IP国家查找country
+        // const findCountryByIP = () => {
+        //     if (!state.ipCountry || countryList.value.length === 0) return
+        //     const iso_code = state.ipCountry.iso_code
+        //     const findCode = countryList.value.find(el => el.nationalCode.toLowerCase() === iso_code.toLowerCase())
+        //     if (!findCode) return
+        //     state.countryVal = findCode.code
+        //     zoneOnSelect(findCode.code)
+        // }
+
+        // getGeoipCountry()
         onMounted(() => {
             const { mobile, email } = route.query
             if (mobile) {
@@ -454,7 +609,10 @@ export default {
                 state.email = email
                 state.openType = 'email'
             }
-            getAllCountry()
+            // 获取支持企业注册国家
+            store.dispatch('getCompanyCountry')
+            // 获取国家区号
+            store.dispatch('getCountryListByParentCode')
         })
 
         return {
@@ -465,9 +623,13 @@ export default {
             instructions,
             countryList,
             zoneOnSelect,
+            zoneOnBlur,
             zoneSelect,
             companyCountryVisible,
-            businessConfig
+            customerNoIsDisabled,
+            filterZone,
+            businessConfig,
+            changeOpentype
         }
     }
 }
@@ -476,51 +638,104 @@ export default {
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
 .register {
+    overflow: auto;
     position: relative;
     display: flex;
     flex-flow: column;
     height: 100%;
-    background: var(--bgColor);
+    background: var(--primaryAssistColor);
     .container {
-        display: flex;
-        flex: 1;
-        align-items: center;
-        justify-content: center;
-        overflow: auto;
+        //display: flex;
+        //flex: 1;
+        //align-items: center;
+        //justify-content: center;
+        // overflow: auto;
+        padding: 40px 0;
+        margin: 0 auto;
         .content {
-            width: 550px;
-            padding: 30px 60px 60px;
+            width: 520px;
+            padding: 30px 60px;
             background-color: var(--contentColor);
             border-radius: 10px;
-            .login-link {
-                margin-bottom: 20px;
-                text-align: right;
+            /* 3D变形 */
+            transform-style: preserve-3d;
+            -webkit-perspective: 1000;
+            -moz-perspective: 1000;
+            -ms-perspective: 1000;
+            perspective: 1000;
+            &.anim {
+                animation: showMsg 0.6s;
+            }
+            @keyframes showMsg {
+                0% {
+                    transform: rotateY(0deg);
+                    opacity: 1;
+                }
+                50% {
+                    transform: rotateY(65deg);
+                    opacity: 0;
+                }
+                100% {
+                    transform: rotateY(0deg);
+                    opacity: 1;
+                }
+            }
+            .logo {
+                width: 100px;
+                img {
+                    width: 100%;
+                }
             }
             .businessOpen {
+                cursor: pointer;
+                margin-top: 30px;
+                border: solid 1px var(--primary);
+                display: inline-block;
+                width: 100%;
+                line-height: 40px;
                 text-align: center;
+                border-radius: 4px;
+                &.openType2 {
+                    border: solid 1px var(--color);
+                    .businessOpenBtn {
+                        color: var(--color);
+                    }
+                }
+                &:hover {
+                    opacity: 0.5;
+                }
                 .businessOpenBtn {
                     display: inline-block;
                     color: var(--primary);
                     line-height: 1;
-                    border-bottom: 1px solid var(--primary);
                 }
             }
         }
     }
     .footerBtn {
-        height: 100px;
+        //height: 100px;
+        margin-bottom: 20px;
+        margin-top: 40px;
+    }
+    .to-login {
+        text-align: center;
+        >a {
+            color: var(--primary);
+        }
     }
 }
 .pageTitle {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding: 0;
+    justify-content: center;
+    text-align: center;
+    margin: 40px 0;
     h5 {
+        font-weight: normal;
         color: var(--color);
-        font-size: 32px;
-        font-family: Microsoft YaHei;
+        font-size: 24px;
+        &.opentype1 {
+            color: var(--primary);
+        }
     }
     a {
         color: var(--color);
@@ -535,7 +750,18 @@ export default {
     }
 }
 .form {
-    margin-top: rem(30px);
+    margin-top: 34px;
+}
+.invite-item {
+    cursor: pointer;
+    margin-bottom: 10px;
+    >span {
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+    .el-icon {
+        vertical-align: -4px;
+    }
 }
 .cell {
     display: flex;
@@ -550,10 +776,24 @@ export default {
         width: 152px;
         margin-right: 10px;
     }
+    &.customNo_cell {
+        margin: 10px 0;
+        .customNo {
+            border: solid 1px var(--lineColor);
+            border-radius: 4px;
+            :deep(input) {
+                height: 48px;
+                background: none;
+            }
+        }
+    }
     :deep {
         .inputWrapper {
-            background-color: var(--bgColor);
+            border: solid 1px var(--lineColor);
             border-radius: 4px;
+            &:hover {
+                border: solid 1px var(--primary);
+            }
             .input {
                 width: 100%;
                 height: 48px;
@@ -579,19 +819,30 @@ export default {
     }
 }
 .openTypeTab {
-    width: 40%;
+    width: 50%;
+
+    --van-padding-md: 0;
+    --van-tabs-card-height: 40px;
     :deep(.van-tabs__nav--line) {
         background-color: var(--contentColor);
     }
-    :deep(.van-tab) {
-        .van-tab__text {
-            color: var(--minorColor);
+    :deep(.van-tabs__nav) {
+        .van-tab {
+            flex: none;
+            margin: 0 10px;
             font-size: 16px;
         }
-        &.van-tab--active {
-            .van-tab__text {
-                color: var(--primary);
-            }
+        .van-tabs__line {
+            background: var(--primary);
+        }
+    }
+    :deep(.van-tab) {
+        margin-right: 20px;
+        border-radius: 4px;
+        line-height: 40px;
+        border: none;
+        .van-tabs__line {
+            background: var(--primary);
         }
     }
 }
@@ -624,6 +875,14 @@ export default {
     border-color: var(--primary);
     border-width: 1px 0 0;
     border-radius: 4px;
+    &:hover {
+        opacity: 0.8;
+    }
+    :deep(.van-icon__image) {
+        margin-right: 4px;
+        width: 20px;
+        height: 20px;
+    }
 }
 .checkbox {
     //align-items: flex-start;
@@ -634,12 +893,9 @@ export default {
         font-size: 14px;
     }
     :deep(.van-checkbox__icon) {
-        flex: none;
-        height: 16px;
-        font-size: 12px;
-        line-height: 16px;
-        background-color: var(--primary);
-        border-color: var(--primary);
+        align-self: flex-start;
+        margin-top: 1px;
+        font-size: 16px;
         border-radius: 4px;
         cursor: pointer;
     }
@@ -651,8 +907,10 @@ export default {
 .verifyCodeCell {
     :deep {
         .checkCodeBar {
-            background-color: var(--assistColor);
-            border-bottom: none;
+            border: solid 1px var(--lineColor);
+            &:hover {
+                border: solid 1px var(--primary);
+            }
             border-radius: 4px;
             .checkCodeInput {
                 font-size: 16px;
@@ -670,6 +928,11 @@ export default {
                 padding-left: 18px;
             }
         }
+    }
+}
+body.night {
+    .register {
+        background: none;
     }
 }
 </style>

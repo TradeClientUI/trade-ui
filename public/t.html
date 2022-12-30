@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Telegram Login JavaScript Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+
+  <style type="text/css">
+    .tg-login{
+        text-align: center;
+        padding-top: 100px;
+    }
+  </style>
+  </head>
+
+<body>
+
+
+    <div class="tg-login">
+        <div id="telegramRef"></div>
+        <script type="text/javascript">
+            //获取url参数
+            function getQueryString (name) {
+                var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+                var r = window.location.search.substr(1).match(reg)
+                if (r != null) return unescape(r[2]); return null
+            }
+
+            //授权成功回调
+            function onTelegramAuth(user) {
+                //alert('Logged in as ' + user.first_name + ' ' + user.last_name + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
+                const schemeName = getQueryString('schemeName')
+                const params =  encodeURIComponent(JSON.stringify(user))
+                setTimeout(function(){
+                    location.href = `${schemeName}://user=${params}`
+                },300)
+                
+            }
+
+            function renderBtn(){
+                const script = document.createElement('script')
+                script.async = true
+                script.src = 'https://telegram.org/js/telegram-widget.js?19'
+                script.setAttribute('data-size', 'large')
+                script.setAttribute('data-telegram-login', getQueryString('botName'))
+                script.setAttribute('data-request-access', 'write')
+                window.onTelegramAuth = onTelegramAuth
+                script.setAttribute('data-onauth', 'window.onTelegramAuth(user)')
+                document.getElementById('telegramRef').appendChild(script)
+            }
+            renderBtn()
+        </script>
+        
+    </div>
+</body>
+</html>
+
+

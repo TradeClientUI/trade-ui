@@ -61,12 +61,12 @@ const onSearch = (result) => {
     result.forEach(e => {
         if (!unref(productMap)[e.id + '_' + unref(tradeType)]) return
         list.push({
-                ...e,
-                symbolId: e.id,
-                symbolKey: e.id + '_' + unref(tradeType),
-                tradeType: unref(tradeType),
-                symbolCode: e.code,
-                symbolName: e.name
+            ...e,
+            symbolId: e.id,
+            symbolKey: e.id + '_' + unref(tradeType),
+            tradeType: unref(tradeType),
+            symbolCode: e.code,
+            symbolName: e.name
         })
     })
     searchList.value = list
@@ -133,6 +133,12 @@ onBeforeUnmount(() => {
     border-radius: 10px;
     .margin {
         margin-top: rem(30px);
+    }
+    :deep(.tabs) {
+        padding: 0;
+        .el-tabs__item {
+            font-size: 12px;
+        }
     }
 }
 </style>

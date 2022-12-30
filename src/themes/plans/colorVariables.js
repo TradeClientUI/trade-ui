@@ -2,37 +2,35 @@ import { localGet, getQueryString } from '@/utils/util'
 import store from './store'
 const colors = {
     common: {
-        primary: '#2B70AE',
-        warn: '#B72122',
-        success: '#26a69a',
+        primary: '#EA5A26',
+        riseColor: '#ef5353',
+        fallColor: '#03A66D',
+        warn: '#ef5353',
+        success: '#03A66D',
         quoteRiseBg: '#f8e8e8',
         quoteFallBg: '#e9f0f7',
         focusColor: '#f2a11b'
     },
     night: {
-        riseColor: '#B72122',
-        fallColor: '#2B70AE',
         primaryAssistColor: '#2c2e3b',
         color: '#eaebee',
         normalColor: '#9294a3',
         minorColor: '#9294a3',
         placeholdColor: '#515366',
-        contentColor: '#21262f',
-        bgColor: '#191e24',
+        contentColor: '#191a1e',
+        bgColor: '#0d0e12',
         assistColor: '#2c2e3b',
         lineColor: '#2c2e3b',
         mainColor: '#ffffff'
     },
     light: {
-        riseColor: '#B72122',
-        fallColor: '#0062FF',
         primaryAssistColor: '#f4f7fc',
         color: '#333333',
         normalColor: '#656667',
         minorColor: '#999999',
         placeholdColor: '#c2c2c2',
         contentColor: '#ffffff',
-        bgColor: '#f4f4f4',
+        bgColor: '#f1f2f6',
         assistColor: '#f4f4f4',
         lineColor: '#eeeeee',
         mainColor: '#000000'
@@ -66,10 +64,17 @@ const colors = {
 // 更新body类
 function updateBodyClass (themeColor) {
     const classList = document.body.classList
-    if (!themeColor || classList.contains(themeColor)) return false
+    const htmlClassList = document.documentElement.classList
+    if (!themeColor) return false
     classList.remove('light')
     classList.remove('night')
     classList.add(themeColor)
+
+    htmlClassList.remove('light')
+    htmlClassList.remove('night')
+    htmlClassList.remove('dark')
+    htmlClassList.add(themeColor)
+    if (themeColor === 'night') htmlClassList.add('dark')
 }
 
 // 设置root变量

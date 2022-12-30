@@ -2,37 +2,42 @@
     <div class='page-wrap'>
         <LayoutTop />
         <div class='page-content'>
-            <p class='head-text'>
-                {{ $t('withdraw.outAccount') }}
-            </p>
-            <div class='actionBar' @click='selectCurrency'>
-                <span class='currencySpan'>
-                    {{ outCurrency }}
-                </span>
-                <van-icon name='arrow' />
+            <div class='box'>
+                <p class='head-text'>
+                    {{ $t('withdraw.outAccount') }}
+                </p>
+                <div class='actionBar' @click='selectCurrency'>
+                    <span class='currencySpan'>
+                        {{ outCurrency }}
+                    </span>
+                    <van-icon name='arrow' />
+                </div>
             </div>
-            <p class='head-text'>
-                {{ $t('withdraw.inAccount') }}
-            </p>
-            <div class='actionBar' @click='selectInCurrency'>
-                <span class='currencySpan'>
-                    {{ inCurrency }}
-                </span>
-                <van-icon name='arrow' />
+            <div class='box'>
+                <p class='head-text'>
+                    {{ $t('withdraw.inAccount') }}
+                </p>
+                <div class='actionBar' @click='selectInCurrency'>
+                    <span class='currencySpan'>
+                        {{ inCurrency }}
+                    </span>
+                    <van-icon name='arrow' />
+                </div>
             </div>
-
-            <p v-if='withdrawMethodVis' class='head-text'>
-                {{ $t('withdraw.withdrawMethod') }}
-            </p>
-            <div v-if='withdrawMethodVis' class='actionBar' @click='selectWithdraw'>
-                <span class='currencySpan'>
-                    {{ withdrawMethodText }}
-                </span>
-                <van-icon name='arrow' />
+            <div class='box'>
+                <p v-if='withdrawMethodVis' class='head-text'>
+                    {{ $t('withdraw.withdrawMethod') }}
+                </p>
+                <div v-if='withdrawMethodVis' class='actionBar' @click='selectWithdraw'>
+                    <span class='currencySpan'>
+                        {{ withdrawMethodText }}
+                    </span>
+                    <van-icon name='arrow' />
+                </div>
             </div>
 
             <div class='footerBtn'>
-                <van-button block :disabled='disabled' type='primary' @click='next'>
+                <van-button block class='mobile_withdraw_next_ga' :disabled='disabled' type='primary' @click='next'>
                     {{ $t('common.nextStep') }}
                 </van-button>
             </div>
@@ -183,7 +188,7 @@ export default {
                 accountId: state.accountId
             }
 
-            if (['bank', 'otc365_cny'].includes(state.currentTab)) {
+            if (['bank', 'otc365_cny', 'micropay'].includes(state.currentTab)) {
                 // 跳转到提现银行卡页面
                 router.push({
                     path: '/withdrawMoney',
@@ -195,13 +200,13 @@ export default {
                     path: '/withdrawRedeem',
                     query
                 })
-            } else if (['GCash', 'Maya', 'APay_GCash'].includes(state.currentTab)) {
+            } else if (['GCash', 'Maya'].includes(state.currentTab)) {
                 // 跳转到提现pay8Account页面
                 router.push({
                     path: '/pay8Account',
                     query
                 })
-            } else if (['Bank_Account', 'APay_Bank'].includes(state.currentTab)) {
+            } else if (['Bank_Account'].includes(state.currentTab)) {
                 // 跳转到提现pay8Bank页面
                 router.push({
                     path: '/pay8Bank',
@@ -292,10 +297,13 @@ export default {
         margin-top: rem(20px);
         padding: 0 rem(30px);
         background: var(--contentColor);
+        .box {
+            margin-top: rem(60px);
+        }
         .head-text {
             color: var(--minorColor);
-            font-size: rem(28px);
-            line-height: rem(90px);
+            font-size: rem(26px);
+            margin-bottom: rem(12px);
         }
         .actionBar {
             position: relative;

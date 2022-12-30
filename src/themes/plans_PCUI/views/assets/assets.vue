@@ -24,12 +24,12 @@
                     </ul>
                 </div>
             </div>
-            <!-- 合约全仓 -->
+            <!-- 全仓合约 -->
             <contract-all
                 v-if='tradeType === 1'
                 :trade-type='tradeType'
             />
-            <!-- 合约逐仓 -->
+            <!-- 逐仓合约 -->
             <contract-by
                 v-if='tradeType === 2'
                 :trade-type='tradeType'

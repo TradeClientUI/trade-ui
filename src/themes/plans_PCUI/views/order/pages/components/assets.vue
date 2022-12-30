@@ -2,26 +2,63 @@
     <div class='orderAssets'>
         <van-row justify='space-between'>
             <van-col>{{ $t('trade.free') }}</van-col>
-            <van-col v-if='Number(product.tradeType) === 1' class='balance'>
-                {{ accountTradeType1?.availableMargin }}
-                {{ account.currency }}
-                <router-link v-if='$store.state._base.plans.length>1' :to='$route.path + "/transfer?tradeType="+ product.tradeType'>
+            <van-col class='balance'>
+                <template v-if='Number(product.tradeType) === 1'>
+                    {{ accountTradeType1?.availableMargin }}
+                    {{ account[direction].currency }}
+                </template>
+                <template v-else-if='Number(product.tradeType) === 2'>
+                    {{ accountTradeType2?.availableMargin }}
+                    {{ account[direction]?.currency }}
+                </template>
+                <template v-else>
+                    {{ account[direction]?.available }}
+                    {{ direction === 'buy' ? product.profitCurrency : product.baseCurrency }}
+                </template>
+                <van-popover
+                    v-if='(showDepositPopover && isReal)'
+                    v-model:show='showDepositPopover'
+                    class='depositPopover'
+                    :offset='[20,8]'
+                    placement='bottom-end'
+                    theme='dark'
+                >
+                    <p class='depositPopoverText' @click='showDepositPopover=false'>
+                        {{ $t('common.depositPopoverText') }}
+                    </p>
+                    <template #reference>
+                        <assetsDepositIcon :account='account[direction]' :product='product' />
+                    </template>
+                </van-popover>
+                <assetsDepositIcon v-else-if='isReal' :account='account[direction]' :product='product' />
+
+                <!-- <router-link v-if='$store.state._base.plans.length>1' :to='$route.path + "/transfer?tradeType="+ product.tradeType'>
                     {{ $t('trade.transfer') }}
-                </router-link>
+                </router-link> -->
             </van-col>
-            <van-col v-else-if='Number(product.tradeType) === 2' class='balance'>
-                {{ accountTradeType2?.availableMargin }}
-                {{ account[direction]?.currency }}
-                <router-link v-if='$store.state._base.plans.length>1' :to='$route.path + "/transfer?tradeType="+ product.tradeType'>
-                    {{ $t('trade.transfer') }}
-                </router-link>
+        </van-row>
+
+        <van-row v-if='[1,2].includes(product.tradeType)' justify='space-between'>
+            <van-col>{{ $t('common.previewMargin') }}</van-col>
+            <van-col class='balance'>
+                <span v-if='previewMargin'>
+                    {{ previewMargin + ' '+ account[direction].currency }}
+                </span>
+                <span v-else class='muted'>
+                    --
+                </span>
             </van-col>
-            <van-col v-else class='balance'>
-                {{ account[direction]?.available }}
-                {{ direction === 'buy' ? product.profitCurrency : product.baseCurrency }}
-                <router-link v-if='$store.state._base.plans.length>1' :to='$route.path + "/transfer?tradeType="+ product.tradeType'>
-                    {{ $t('trade.transfer') }}
-                </router-link>
+        </van-row>
+
+        <van-row v-if='[1,2].includes(product.tradeType)' justify='space-between'>
+            <van-col>{{ $t('common.previewFee') }}</van-col>
+            <van-col class='balance'>
+                <span v-if='previewFee'>
+                    {{ previewFee + ' '+ account[direction].currency }}
+                </span>
+                <span v-else class='muted'>
+                    --
+                </span>
             </van-col>
         </van-row>
 
@@ -65,12 +102,20 @@
 </template>
 
 <script>
-import { computed, reactive, ref, toRefs, watch } from 'vue'
+import { computed, reactive, ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { mul, div, toFixed } from '@/utils/calculation'
+import { localGet, localSet } from '@/utils/util'
+import { useRouter } from 'vue-router'
+import assetsDepositIcon from './assetsDepositIcon.vue'
+
 export default {
-    props: ['direction', 'product', 'volume', 'account'],
+    components: {
+        assetsDepositIcon,
+    },
+    props: ['direction', 'product', 'volume', 'account', 'previewFee', 'previewMargin'],
     setup (props, { emit }) {
+        const router = useRouter()
         const store = useStore()
         const checked = ref(2)
         const loanTradeType9 = ref(false)
@@ -81,15 +126,16 @@ export default {
         )
 
         const accountMap = computed(() => store.state._user.customerInfo?.accountMap)
+        const isReal = computed(() => store.state._user.customerInfo?.companyType === 'real')
 
-        // 合约全仓资产
+        // 全仓合约资产
         const accountTradeType1 = computed(() => {
             const accountAssets = store.state._user.accountAssets['1']
             const account = store.state._user.customerInfo?.accountList?.find(el => el.tradeType === parseInt(props.product?.tradeType))
             return Object.assign({}, account, accountAssets)
         })
 
-        // 合约逐仓资产
+        // 逐仓合约资产
         const accountTradeType2 = computed(() => store.state._user.accountAssets['2'])
 
         // 最大可借额度
@@ -117,7 +163,27 @@ export default {
             return toFixed(amount, props.account[props.direction].digits)
         })
 
+        const showDepositPopover = ref(false)
+        const actionsheetVisible = ref(false)
+
+        // 显示去充值的actionSheet弹窗
+        const showActionSheet = () => {
+            showDepositPopover.value = false
+            actionsheetVisible.value = true
+        }
+
+        onMounted(() => {
+            showDepositPopover.value = Boolean(!localGet('showDepositPopover') || false)
+        })
+
+        onBeforeUnmount(() => {
+            localSet('showDepositPopover', 'false')
+        })
+
         return {
+            showDepositPopover,
+            isReal,
+            showActionSheet,
             loanTradeType9,
             checked,
             maxBorrow,
@@ -129,11 +195,20 @@ export default {
 }
 </script>
 
+<style lang="scss">
+// .depositPopover {
+//     transform: translateX(20px);
+// }
+.depositPopoverText {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+</style>
+
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
 .orderAssets {
     margin-top: 10px;
-    margin-bottom: 16px;
     color: var(--minorColor);
     line-height: 1.5;
     .balance {

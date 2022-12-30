@@ -134,11 +134,12 @@ export default {
 }
 </script>
 
-<style lang="scss"
-       scoped>
+<style lang="scss" scoped>
 .pageComp {
+    background: var(--bgColor);
     &>div {
         position: relative;
+        border-radius: rem(10px);
         background: var(--contentColor);
     }
 }

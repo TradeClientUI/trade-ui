@@ -1,5 +1,5 @@
 <template>
-    <!-- 杠杆倍数设置 合约逐仓 -->
+    <!-- 杠杆倍数设置 逐仓合约 -->
     <van-popup
         v-model:show='show'
         class='custom-popup leverage-popup'

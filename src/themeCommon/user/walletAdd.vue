@@ -40,10 +40,10 @@
                         {{ $t('walletAdd.codeBtn') }}
                     </span>
                     <span v-else class='time'>
-                        {{ countDown }}{{ $t('walletAdd.codeHint') }}
+                        {{ countDown }}s
                     </span>
                 </div>
-                <div v-if='googleCodeVis' class='box'>
+                <div v-if='googleCodeVis' class='box google'>
                     <googleVerifyCode @getGooleVerifyCode='getGooleVerifyCode' />
                 </div>
             </div>
@@ -321,10 +321,15 @@ export default {
         font-size: rem(28px);
         background-color: var(--contentColor);
         border-bottom: 1px solid var(--lineColor);
-        :deep(.van-cell){
+        &.google {
+            .form-item {
+                margin-bottom: 0;
+            }
+        }
+        :deep(.van-cell) {
             padding-left: 0;
             padding-right: 0;
-            &::after{
+            &::after {
                 border: none;
             }
         }
@@ -335,14 +340,15 @@ export default {
         }
         .time {
             color: var(--minorColor);
-             line-height: rem(104px);
+            line-height: rem(104px);
         }
-        .get{
+        .get {
+            color: var(--primary);
             line-height: rem(104px);
         }
     }
-    .tip{
-        padding-top: rem(20px) ;
+    .tip {
+        padding-top: rem(20px);
         color: var(--normalColor);
     }
 }

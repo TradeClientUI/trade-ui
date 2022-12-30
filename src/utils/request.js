@@ -1,11 +1,14 @@
 import axios from 'axios'
 import CheckAPI from './checkAPI'
 import { login } from '@/api/user'
-import { guid, getLoginParams, getToken, removeLoginParams, getCookie } from '@/utils/util'
+import { guid, getLoginParams, getToken, removeLoginParams, getCookie, localRemoveKey } from '@/utils/util'
 import { encryptParams } from '@/utils/requestEncrypt'
 import { apiDomain } from '@/config'
 let router = null
 export const setRouter = r => (router = r)
+
+let pk = null
+export const setPk = s => (pk = s)
 
 // const baseURL = 'http://18.162.240.170:10000/cats-gateway'
 const realApiDomain = apiDomain && apiDomain.startsWith('http') ? apiDomain : apiDomain
@@ -27,9 +30,8 @@ service.interceptors.request.use(
         const companyId = sessionStorage.getItem('companyId')
         const token = getToken()
         const timestamp = Date.now()
-        const SysSetting = JSON.parse(window['wp_SysSetting'])
         config.toastErr = config.toastErr ?? true
-        headers.trace = SysSetting.pk ? 'x-' + guid() : guid()
+        headers.trace = pk ? 'x-' + guid() : guid()
         headers.timestamp = timestamp
         headers.lang = getCookie('lang')
         if (token) headers.token = token
@@ -42,7 +44,7 @@ service.interceptors.request.use(
             if (!config.isUpload) {
                 // config.data = Object.assign({}, postData)
                 if (development) { console.warn('%c 请求原参数 %c ' + config.url, 'background-color:#5e5', 'background-color:#fe6', config.data) }
-                config.data = SysSetting.pk ? { data: encryptParams(config.data, timestamp, SysSetting.pk) } : Object.assign({}, postData)
+                config.data = pk ? { data: encryptParams(config.data, timestamp, pk) } : Object.assign({}, postData)
             }
         }
         return config
@@ -62,6 +64,7 @@ service.interceptors.response.use(
         const routeName = router?.currentRoute?.value?.name
         // const isUserRoute = router?.currentRoute?.value?.meta?.roles?.includes('User')
         if (['GATEWAY_CODE_001', 'GATEWAY_CODE_005'].includes(data.code) && router && routeName && routeName !== 'Login') {
+            localRemoveKey('mockAccount', 'accountType')
             removeLoginParams()
             let backPath = location.pathname.split('/')
             backPath.splice(1, 1)
@@ -90,6 +93,7 @@ service.interceptors.response.use(
 // 修改请求地址
 export const modifybaseURL = (baseURL) => {
     console.log(baseURL)
+    if (development) baseURL = '/api'
     service.defaults.baseURL = baseURL + '/cats-gateway'
 }
 

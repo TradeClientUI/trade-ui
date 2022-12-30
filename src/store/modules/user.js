@@ -1,6 +1,7 @@
-import { login, findCustomerInfo, logout, switchAccount, queryCustomerOptionalList, addCustomerOptional, queryCustomerAssetsInfo, queryAccountAssetsInfo, addCustomerOptionalBatch, findAllBizKycList, increasAccount, thirdLogin } from '@/api/user'
+import { login, findCustomerInfo, logout, switchAccount, queryCustomerOptionalList, addCustomerOptional, queryCustomerAssetsInfo, queryAccountAssetsInfo, addCustomerOptionalBatch, findAllBizKycList, increasAccount, thirdLogin, switchUserAccount } from '@/api/user'
 import { removeCustomerOptional } from '@/api/trade'
-import { localSet, setToken, removeLoginParams, sessionSet, localRemove } from '@/utils/util'
+import { localSet, setToken, removeLoginParams, sessionSet, localRemove, localRemoveKey, localSetObj, localGetObj } from '@/utils/util'
+
 import { vue_set, assign } from '@/utils/vueUtil.js'
 import { compareAssets } from './storeUtil.js'
 export default {
@@ -71,6 +72,16 @@ export default {
         },
         Update_customerInfo (state, data) {
             if (!data) return false
+            const oldAccountList = state.customerInfo?.accountList || []
+            // queryAccountAssetsInfo接口可能已经拿到过availableLoan，
+            // 所以重新更新customerInfo的时候需要把之前的availableLoan存过来
+            if (oldAccountList.length) {
+                oldAccountList.forEach(oldAccount => {
+                    const newAccount = data.accountList.find(el => el.accountId === oldAccount.accountId)
+                    if (!newAccount) return false
+                    if (oldAccount.availableLoan) newAccount.availableLoan = oldAccount.availableLoan
+                })
+            }
             state.customerInfo = data
         },
         Update_accountInfo (state, data) {
@@ -137,10 +148,9 @@ export default {
             } else {
                 loginMethon = login
             }
-            return loginMethon(params).then((res) => {
+            return loginMethon(params).then(async res => {
                 if (res.check()) {
                     const data = res.data
-
                     sessionSet('customerNo', data.customerNo)
                     setToken(data.token)
                     // 清空之前的账户数据和产品数据
@@ -148,13 +158,30 @@ export default {
                     commit('_trade/Empty_data', null, { root: true })
                     commit('_quote/Empty_data', null, { root: true })
                     commit('Update_loginData', data)
-                    dispatch('saveCustomerInfo', { flag: true, data: res.data })
 
-                    // 对比用户的资产信息和wp配置的资产信息，自动给用户开增量资产
-                    if (data.kycAuditStatus === 2) {
-                        const compareAssetsResult = compareAssets(data, rootState._base.wpCompanyInfo.registList)
-                        if (compareAssetsResult) dispatch('increasAccount', compareAssetsResult)
+                    // 检测上次登录的是否是模拟账户
+                    const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
+                    if (lastAccountType === 'demo') {
+                        localSetObj('mockAccount', 'accountType', 'demo')
+                        await switchUserAccount().then(async res => {
+                            if (res.check()) {
+                                setToken(res.data.token)
+                                sessionSet('companyId', res.data.associationCompanyId)
+                                await dispatch('_base/initBaseConfig', null, { root: true })
+                                await dispatch('findCustomerInfo')
+                            }
+                        })
+                    } else {
+                        await dispatch('saveCustomerInfo', { flag: true, data: res.data })
+
+                        // 对比用户的资产信息和wp配置的资产信息，自动给用户开增量资产
+                        if (data.kycAuditStatus === 2) {
+                            const compareAssetsResult = compareAssets(data, rootState._base.wpCompanyInfo.registList)
+                            if (compareAssetsResult) dispatch('increasAccount', compareAssetsResult)
+                        }
                     }
+                } else {
+                    res.toast()
                 }
                 commit('Update_loginLoading', false)
                 return res
@@ -209,7 +236,6 @@ export default {
                 onlineService += `&userid=${customerNo}&name=${customerName}`
                 commit('_base/UPDATE_wpCompanyInfo', { onlineService }, { root: true })
             }
-
             if (flag) {
                 if (data.optional === 1) dispatch('queryCustomerOptionalList') // 如果添加过自选可以直接拉取自选列表，快速显示界面
                 dispatch('_quote/setProductAllList', null, { root: true }).then(productAllList => {
@@ -222,6 +248,7 @@ export default {
         logout ({ dispatch, commit, state, rootState }, params = {}) {
             return logout().then(res => {
                 if (res.check()) {
+                    localRemoveKey('mockAccount', 'accountType')
                     removeLoginParams()
                     commit('Empty_data')
                     commit('_trade/Empty_data', null, { root: true })
@@ -346,6 +373,6 @@ export default {
                     return res
                 }
             })
-        }
+        },
     }
 }

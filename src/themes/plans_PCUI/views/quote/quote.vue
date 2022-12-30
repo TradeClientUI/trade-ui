@@ -1,7 +1,7 @@
 <template>
     <router-view />
     <div class='quote'>
-        <!-- <TopModule /> -->
+        <TopModule />
         <Ranking />
         <Content />
     </div>
@@ -15,7 +15,7 @@ import Ranking from './ranking'
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
-.quote{
+.quote {
     width: 1200px;
     margin: 40px auto;
 }

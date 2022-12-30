@@ -111,9 +111,14 @@ export default {
     .infoBox {
         margin: rem(40px) rem(30px) 0;
         .qrcodeWrapper {
-            width: 128px;
-            height: 128px;
+            width: 150px;
             margin: rem(30px) auto rem(80px);
+            background: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
         }
     }
     .copyBtn {

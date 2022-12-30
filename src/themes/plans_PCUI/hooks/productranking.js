@@ -22,7 +22,7 @@ function productByLabel (symbolKey, productMap, symbolLabelMap) {
 export default (params) => {
     const store = useStore()
     const symbolLabelMap = ref({})
-    const sortPlans = ['5','3','2','1'];    // 取产品玩法的排序；现货 → 杠杆 → 合约全仓 → 合约逐仓
+    const sortPlans = ['5','3','2','1'];    // 取产品玩法的排序；现货 → 杠杆 → 全仓合约 → 逐仓合约
     const symbolKeyByPlans = ref([]);  // 按顺序取到的某个玩法的产品symbolKey列表
     const productListByLabel = ref([]);  // 产品根据标签分类
 

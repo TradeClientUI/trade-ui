@@ -190,7 +190,8 @@ export default {
                 transition: all 0.2s ease 0s;
                 font-size: 16px;
                 &:hover{
-                    background: #6b8fff;
+                    background: var(--primary);
+                    opacity: 0.8;
                 }
                 &:focus, &:active{
                     transform: scale(0.99);

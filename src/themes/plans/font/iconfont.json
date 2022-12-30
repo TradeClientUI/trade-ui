@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8445068",
+      "name": "05-股票",
+      "font_class": "-gupiao",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "11464307",
+      "name": "全热交换-01",
+      "font_class": "quanrejiaohuan-",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
       "icon_id": "23448270",
       "name": "手机下载",
       "font_class": "shoujixiazai",

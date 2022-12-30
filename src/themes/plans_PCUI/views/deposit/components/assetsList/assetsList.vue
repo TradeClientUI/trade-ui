@@ -15,7 +15,9 @@
                     {{ assetsMap[item.currency] }}
                 </p>
             </div>
-            <i v-if='curCurrency === item.currency' class='tick'></i>
+            <div v-if='curCurrency === item.currency' class='check'>
+                <van-icon color='#fff' name='success' />
+            </div>
         </li>
     </ul>
 </template>
@@ -72,25 +74,27 @@ export default {
 
 <style lang='scss' scoped>
 @import '@/sass/mixin.scss';
-.assets-list{
+.assets-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     width: 100%;
     max-height: 360px;
     padding: 15px;
-    background: var(--bgColor);
+    background: var(--contentColor);
     border: 1px solid var(--lineColor);
+    border-radius: 0 0 rem(10px) rem(10px);
+    box-shadow: 0 rem(5px) rem(10px) rgba(0,0,0,.1);
     position: absolute;
     left: 0;
-    top: rem(110px);
+    top: rem(112px);
     overflow-y: auto;
-    li{
+    li {
         @include hover();
         position: relative;
         padding-left: rem(30px);
         flex: 0 0 48%;
-        background: var(--contentColor);
+        background: var(--bgColor);
         border-radius: rem(10px);
         display: flex;
         align-items: center;
@@ -101,39 +105,36 @@ export default {
         .name {
             margin-left: rem(15px);
         }
-        .t1{
+        .t1 {
             font-size: rem(32px);
         }
-        .t2{
+        .t2 {
             color: var(--minorColor);
             font-size: rem(24px);
         }
-        &.active{
-            background: v-bind(bgColor);
+        &.active {
+            background: v-bind(bgcolor);
             border: rem(2px) solid var(--primary);
-            &::after{
+            &::after {
                 position: absolute;
-                content: '\e728';
                 width: rem(30px);
                 height: rem(30px);
-                background: var(--primary);
-                border-radius: 0px rem(10px) 0px rem(10px);
-                right: 0;
-                top: rem(-2px);
-                font-family: 'iconfont';
             }
         }
-        .tick{
+        .check {
             position: absolute;
-            right: rem(8px);
-            top: 0;
-            width: rem(10px);
-            height: rem(18px);
-            border-color: var(--contentColor);
-            border-style: solid;
-            border-width: 0 rem(4px) rem(4px) 0;
-            transform: rotate(45deg);
-            z-index: 99;
+            top: -1px;
+            right: -1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: rem(30px);
+            height: rem(30px);
+            background: var(--primary);
+            border-radius: 0 rem(10px) 0 rem(10px);
+            &:deep(.van-icon) {
+                margin-top: rem(-5px);
+            }
         }
     }
 }

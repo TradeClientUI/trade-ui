@@ -80,14 +80,16 @@ export default {
     width: 100%;
     overflow: hidden;
     .search-input {
-        width: 298px;
+        width: 100%;
         height: 40px;
-        :deep{
-            .el-input__inner{
+        padding: 0 10px;
+        font-size: 12px;
+        :deep {
+            .el-input__inner {
                 border-color: transparent;
-                background: var(--assistColor);
-                &:focus{
-                    border-color: var(--el-input-focus-border,var(--primary));
+                //background: var(--assistColor);
+                &:focus {
+                    border-color: var(--primary);
                 }
             }
         }

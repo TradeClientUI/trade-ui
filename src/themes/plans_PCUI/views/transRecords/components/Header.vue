@@ -270,7 +270,7 @@ const onSelect = val => {
                 .el-input__inner{
                     width: 145px;
                     height: 32px;
-                    background: var(--assistColor);
+                    //background: var(--assistColor);
                     border-radius: 4px;
                     border-radius: 4px;
                     border: 0;

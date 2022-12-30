@@ -9,7 +9,9 @@
     >
         <div class='header'>
             <div class='header-title'>
-                {{ $t('assets.assets') }}
+                <span v-if='!hiddenTitle'>
+                    {{ title || $t('assets.assets') }}
+                </span>
             </div>
             <i class='icon_guanbi' @click='close'></i>
         </div>
@@ -18,10 +20,10 @@
                 <li
                     v-for='(item, i) in accountList'
                     :key='i'
-                    :class='{ active: curCurrency === item.currency }'
+                    :class="[flex === 1 ? 'item-flex-1' : 'item-flex-2', { active: curCurrency === item.currency }]"
                     @click='checkCurrency(item)'
                 >
-                    <CurrencyIcon :currency='item.currency' :size='24' />
+                    <CurrencyIcon v-if='flex === 2' :currency='item.currency' :size='24' />
                     <div class='name'>
                         <p class='t1'>
                             {{ item.currency }}
@@ -46,12 +48,45 @@ export default {
     components: {
         CurrencyIcon
     },
-    props: ['show', 'currency', 'tradeType', 'accountList'],
+    props: {
+        // 是否显示弹窗
+        show: {
+            type: Boolean,
+            default: false
+        },
+        // 当前标题
+        title: {
+            type: String,
+            default: ''
+        },
+        // 当前选择资产
+        currency: {
+            type: String,
+            default: ''
+        },
+        // 玩法类型
+        tradeType: {
+            type: [Number, String],
+            default: ''
+        },
+        // 资产列表
+        accountList: {
+            type: Array,
+            default: () => []
+        },
+        // 是否隐藏标题
+        hiddenTitle: {
+            type: Boolean,
+            default: false
+        },
+        // 排列方式 1.一行一个 2.一行两个
+        flex: {
+            type: Number,
+            default: 2
+        }
+    },
     setup (props, context) {
         const store = useStore()
-        // const accountList = computed(() => {
-        //     return store.state._user.customerInfo.accountList.filter(el => Number(el.tradeType) === Number(props.tradeType))
-        // })
         const style = computed(() => store.state.style)
         const state = reactive({
             popupShow: props.show,
@@ -70,10 +105,8 @@ export default {
         // 选择币种
         const checkCurrency = (currency) => {
             state.curCurrency = currency.currency
-
             currency.fullName = state.assetsMap[currency.currency]
             context.emit('update:currency', currency)
-            // state.popupShow = false
         }
         const bgColor = style.value.primary + '0D'
         return {
@@ -89,23 +122,23 @@ export default {
 
 <style lang="scss">
 @import '@/sass/mixin.scss';
-.custom-dialog{
+.custom-dialog {
     display: flex;
     flex-direction: column;
     height: 92%;
     overflow: hidden;
-    background: var(--bgColor);
-    .header{
+    background: var(--assistColor) !important;
+    .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: rem(37px) rem(30px) rem(50px);
-        .header-title{
-            font-size: rem(48px);
+        .header-title {
+            font-size: rem(42px) !important;
             font-weight: bold;
             color: var(--color);
         }
-        .icon_guanbi{
+        .icon_guanbi {
             font-size: rem(30px);
             font-weight: bold;
         }
@@ -115,19 +148,17 @@ export default {
 
 <style lang='scss' scoped>
 @import '@/sass/mixin.scss';
-.popup-wrap{
+.popup-wrap {
     overflow-y: scroll;
     padding: 0 rem(30px);
-    .assets-list{
+    .assets-list {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         width: 100%;
         /* padding-bottom: rem(220px); */
-        li{
+        li {
             position: relative;
-            padding-left: rem(30px);
-            flex: 0 0 48%;
             background: var(--contentColor);
             border-radius: rem(10px);
             display: flex;
@@ -138,29 +169,28 @@ export default {
             .name {
                 margin-left: rem(20px);
             }
-            .t1{
+            .t1 {
                 font-size: rem(32px);
             }
-            .t2{
+            .t2 {
                 color: var(--minorColor);
                 font-size: rem(24px);
             }
-            &.active{
-                background: v-bind(bgColor);
+            &.active {
                 border: rem(2px) solid var(--primary);
-                &::after{
+                &::after {
                     position: absolute;
                     content: '\e728';
                     width: rem(30px);
                     height: rem(30px);
                     background: var(--primary);
-                    border-radius: 0px rem(10px) 0px rem(10px);
+                    border-radius: 0 rem(10px) 0 rem(10px);
                     right: 0;
                     top: rem(-2px);
                     font-family: 'iconfont';
                 }
             }
-            .tick{
+            .tick {
                 position: absolute;
                 right: rem(8px);
                 top: 0;
@@ -172,6 +202,15 @@ export default {
                 transform: rotate(45deg);
                 z-index: 99;
             }
+        }
+        .item-flex-1 {
+            flex: 0 0 100%;
+            justify-content: center;
+            text-align: center;
+        }
+        .item-flex-2 {
+            flex: 0 0 48%;
+            padding-left: rem(20px);
         }
     }
 }

@@ -7,6 +7,7 @@
             v-model='pendingPrice'
             :direction='direction'
             :product='product'
+            @change='onChange'
         />
         <!-- <van-row align='center' class='pendingOrderSet' justify='space-between'>
             <van-col>
@@ -52,7 +53,7 @@ export default {
         PendingBar,
     },
     props: ['modelValue', 'product', 'direction'],
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'change'],
     setup (props, { emit }) {
         const store = useStore()
         const { t } = useI18n({ useScope: 'global' })
@@ -91,7 +92,6 @@ export default {
         const state = reactive({
             num: props.modelValue
         })
-        const change = val => emit('update:modelValue', val)
         const priceIntroduce = () => {
             Dialog.alert({
                 title: t('trade.priceIntroduce'),
@@ -102,6 +102,7 @@ export default {
             const defaultPendingPrice = pendingRang.value[props.direction === 'buy' ? 'defaultBuyPrice' : 'defaultSellPrice']
             if (defaultPendingPrice && !isNaN(defaultPendingPrice)) emit('update:modelValue', defaultPendingPrice)
         }
+        const onChange = val => emit('change', val)
         onMounted(() => {
             firstChange()
         })
@@ -111,7 +112,7 @@ export default {
             warn,
             pendingRang,
             pendingPrice,
-            change,
+            onChange,
             priceIntroduce,
             firstChange,
         }

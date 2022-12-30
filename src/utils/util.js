@@ -3,6 +3,10 @@ import pako from 'pako'
 export const mobileReg = /^(13|14|15|16|17|18|19)\d{9}$/
 export const emailReg = new RegExp('^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$')
 export const bankNoReg = /^([1-9]{1})(\d{11}|\d{15}|\d{16}|\d{17}|\d{18})$/
+export const pwdReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,18}$/ // 至少8个字符，至少1个大写字母，至少1个字母，1个数字和1个特殊字符
+
+// 判断当前环境是否在uniapp内运行
+export const isUniapp = getQueryVariable('isUniapp') === 'true' || getQueryVariable('isApp') === '1' || navigator.userAgent.toLowerCase().includes('uni-app')
 
 export const randomId = () => {
     const r = Math.random() + Math.random() + Math.random()
@@ -39,24 +43,10 @@ export function zip (str) {
 }
 // 获取设备类型
 export function getDevice () {
-    let openFrom = 1 // h5
     const checkUA = navigator.userAgent.match(/(\(.+?\))/)
-    if (!checkUA) {
-        openFrom = 1 // H5
-    } else if (/iPhone/i.test(checkUA[0])) {
-        openFrom = 1 // H5
-    } else if (/windows/i.test(checkUA[0])) {
-        openFrom = 4 // PCUI_Windows
-    } else if (/Mac OS/i.test(checkUA[0])) {
-        openFrom = 5 // PCUI_Mac
-    } else if (window.JsHook && window.JsHook.appGoDeposit) {
-        openFrom = 6 // APP_Andorid
-    } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.appGoDeposit) {
-        openFrom = 7 // APP_IOS
-    } else if (window.JsHook && JsHook.appOpenBrower) {
-        openFrom = 2 // H5_Android
-    } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.appOpenBrower) {
-        openFrom = 3 // H5_IOS
+    let openFrom = 1 // h5
+    if (/windows/i.test(checkUA[0])) {
+        openFrom = 2 // PC
     }
     return openFrom
 }
@@ -82,21 +72,25 @@ export function getLoginParams () {
 // 删除登录参数
 export function removeLoginParams () {
     localStorage.removeItem('loginParams')
-    sessionStorage.removeItem('token')
+    localStorage.removeItem('token')
 }
 // 设置登录token
 export function setToken (token) {
-    return sessionStorage.setItem('token', token)
+    return localStorage.setItem('token', token)
 }
 // 获取登录token
 export function getToken () {
-    return sessionStorage.getItem('token')
+    return localStorage.getItem('token')
 }
 export function localSet (key, val) {
     return localStorage.setItem(key, val)
 }
 export function localGet (key) {
     return localStorage.getItem(key)
+}
+// 设置本地存储json字符串数据
+export function localSetJSON (key, val) {
+    return localStorage.setItem(key, JSON.stringify(val))
 }
 // 获取本地存储json字符串类型
 export function localGetJSON (key, defaultValue = null) {
@@ -115,6 +109,40 @@ export function sessionSet (key, val) {
 }
 export function sessionGet (key) {
     return sessionStorage.getItem(key)
+}
+
+// localstorage 保存对象
+export function localSetObj (objKey, key, val) {
+    let localObj = localGet(objKey)
+    if (!isEmpty(localObj)) {
+        localObj = JSON.parse(localObj)
+        localObj[key] = val
+        localSet(objKey, JSON.stringify(localObj))
+    } else {
+        localSet(objKey, JSON.stringify({
+            [key]: val
+        }))
+    }
+}
+
+// localStorage 根据 key 获取对象中的值
+export function localGetObj (objKey, key) {
+    const localObj = localGet(objKey)
+    if (!isEmpty(localObj)) {
+        return JSON.parse(localObj)[key]
+    } else {
+        return ''
+    }
+}
+
+// localStorage 根据 key 删除对象的
+export function localRemoveKey (objKey, key) {
+    const localObj = localGet(objKey)
+    if (!isEmpty(localObj)) {
+        var temp = JSON.parse(localObj)
+        delete temp[key]
+        localSet(objKey, JSON.stringify(temp))
+    }
 }
 
 // 格式化价格
@@ -437,4 +465,75 @@ export function getQueryString (name) {
     var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
     var r = window.location.search.substr(1).match(reg)
     if (r != null) return unescape(r[2]); return null
+}
+
+/* 获取默认区号索引 */
+export function getDefaultZoneIndex (countryList, defaultZone) {
+    let index = -1
+    if (!Array.isArray(countryList) || countryList.length === 0) return index
+    const language = navigator.language // 当前系统语言
+    // 根据语言优先显示默认区号
+    if (index === -1 && language) {
+        let langCode = language.substring(language.lastIndexOf('-') + 1, language.length)
+        langCode = langCode.toUpperCase()
+        switch (langCode) {
+        case 'ZH':
+            langCode = 'CN'
+            break
+        case 'JA':
+            langCode = 'JP'
+            break
+        case 'EN':
+            langCode = 'US'
+            break
+        case 'VI':
+            langCode = 'VN'
+            break
+        case 'MS':
+            langCode = 'MY'
+            break
+        case 'KO':
+            langCode = 'KR'
+            break
+        case 'DA':
+            langCode = 'DK'
+            break
+        }
+        index = countryList.findIndex(el => el.nationalCode === langCode)
+    }
+    if (index === -1 && defaultZone) {
+        index = countryList.findIndex(el => el.code === defaultZone)
+    }
+    return index
+}
+
+// 判断字符串是否为 json格式
+export function isJSON (str) {
+    if (typeof str === 'string') {
+        try {
+            var obj = JSON.parse(str)
+            if (typeof obj === 'object' && obj) {
+                return true
+            } else {
+                return false
+            }
+        } catch (e) {
+            return false
+        }
+    }
+}
+
+// 禁止鼠标滚轮事件
+export function stopScrollFun (evt) {
+    evt = evt || window.event
+    if (evt.preventDefault) {
+        // Firefox
+        evt.preventDefault()
+        evt.stopPropagation()
+    } else {
+        // IE
+        evt.cancelBubble = true
+        evt.returnValue = false
+    }
+    return false
 }

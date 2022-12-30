@@ -1,7 +1,8 @@
 import { pageConfig, wpCompanyConfig, wpNav, wpFooter, wpSelfSymbolIndex } from '@/api/wpApi'
-import { localSet, localGet, getCookie, sessionSet, setCookie, isEmpty } from '@/utils/util'
+import { localSet, localGet, getCookie, sessionSet, setCookie, isEmpty, localSetObj } from '@/utils/util'
 import { formatPlans } from './storeUtil.js'
 import { getThirdLoginConfig } from '@/api/base'
+import { setPk } from '@/utils/request.js'
 
 export default {
     namespaced: true,
@@ -13,8 +14,9 @@ export default {
         wpNav: null, //   wordpress公司配置信息
         wpFooter: null, //   wordpress公司配置PCUI的页脚信息
         plansNames: {}, // 完成类型，从语言包里面获取
-        plans: [], // [{ id: 1, name: 'CFD合约全仓' }, { id: 2, name: 'CFD合约逐仓' }, { id: 3, name: '现货杠杆全仓' }, { id: 9, name: 'ABCC现货撮合' }]
-        thirdLoginConfig: []
+        plans: [], // [{ id: 1, name: 'CFD合约全仓' }, { id: 2, name: 'CFD逐仓合约' }, { id: 3, name: '现货杠杆全仓' }, { id: 9, name: 'ABCC现货撮合' }]
+        thirdLoginConfig: [],
+        companyType: ''
     },
     mutations: {
         UPDATE_inited (state, data) {
@@ -59,14 +61,22 @@ export default {
     },
     actions: {
         // 初始化基础配置信息，如公司配置、底部导航配置、自选产品配置、产品板块配置
-        initBaseConfig ({ dispatch, commit }) {
+        initBaseConfig ({ dispatch, commit, rootGetters, rootState }) {
+            const companyType = rootState._user.customerInfo?.companyType
+            const demo_domain = rootState._base.wpCompanyInfo?.demo_domain
+
+            if (demo_domain) {
+                localSetObj('mockAccount', 'demo_domain', demo_domain)
+            }
             const baseList = [
                 dispatch('getCompanyInfo'),
                 dispatch('getChannelSett'),
-                dispatch('getNav'),
                 dispatch('getWpSelfSymbols'),
                 dispatch('getProductCategory')
             ]
+            if (!window.isPC) {
+                baseList.push(dispatch('getNav'))
+            }
             return Promise.all(baseList).then(res => {
                 commit('UPDATE_inited', true)
                 return dispatch('_quote/setProductAllList', null, { root: true })
@@ -76,13 +86,15 @@ export default {
         getCompanyInfo ({ commit }) {
             return wpCompanyConfig().then(data => {
                 if (data) {
+                    delete data.onlineService
+                    setPk(data.pk)
                     commit('UPDATE_wpCompanyInfo', data)
                 }
                 return data
             })
         },
         // 获取渠道配置信息
-        getChannelSett ({ commit }) {
+        getChannelSett ({ commit },) {
             return pageConfig('ChannelSett').then(data => {
                 if (data) {
                     data.customerGroupId = '2' // 游客客户组
@@ -175,6 +187,9 @@ export default {
                 }).catch(err => {
                 })
             }
+        },
+        update_basePlans ({ state, commit, rootGetters }, data) {
+            commit('Update_plans', data)
         }
     }
 }

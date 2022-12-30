@@ -34,12 +34,6 @@ export default {
             default: ''
         },
         {
-            name: 'color',
-            label: '字体颜色',
-            type: 'Input',
-            default: '#333333'
-        },
-        {
             name: 'fontSize',
             label: '字体大小',
             type: 'Input',

@@ -3,8 +3,8 @@
         <div class='checkCodeInput'>
             <input
                 :id='id'
-                class='input'
                 v-bind='$attrs'
+                class='input'
                 :placeholder='label'
                 type='text'
                 :value='modelValue'
@@ -17,7 +17,7 @@
         <a v-if='clear' v-show='modelValue.length' class='van-icon van-icon-clear' href='javascript:;' @click='onClear'></a>
         <button ref='getCodeBtn' class='getCodeBtn' :disabled='disabled' type='button' @click='getCode'>
             <van-loading v-if='loading' size='20px' />
-            <span v-else>
+            <span v-else :class='gaClass'>
                 {{ getCodeText }}
             </span>
         </button>
@@ -54,6 +54,10 @@ export default {
         },
         // 类型：login / fund
         type: {
+            type: String
+        },
+        // 埋点类名
+        gaClass: {
             type: String
         }
     },
@@ -112,20 +116,22 @@ export default {
     align-items: center;
     width: 100%;
     border-bottom: solid 1px var(lineColor);
+    :root .pc &:hover {
+        border: solid 1px var(--primary);
+    }
     .checkCodeInput {
         position: relative;
         flex: 1;
         font-size: rem(26px);
-
     }
     .getCodeBtn {
         margin-left: rem(20px);
-        color: var(--color);
+        color: var(--primary);
         font-size: rem(26px);
         background: none;
         cursor: pointer;
         &:disabled {
-            color: var(--minorColor);
+            color: var(--primary);
         }
     }
 }

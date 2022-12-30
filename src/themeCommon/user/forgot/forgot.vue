@@ -14,12 +14,11 @@
         <div class='tabs-wrap'>
             <van-tabs
                 v-model:active='active'
-                :color='style.primary'
-                line-height='2px'
-                line-width='20px'
-                :title-active-color='style.color'
-                :title-inactive-color='style.mutedColor'
-                type='line'
+                class='openTypeTab mtop10'
+                :color='style.assistColor'
+                shrink
+                :title-active-color='$style.primary'
+                type='card'
                 @click='handleTabChange'
             >
                 <van-tab :name='1' :title='$t("forgot.retrievedByEmail")' />
@@ -33,6 +32,7 @@
                         v-model.trim='mobile'
                         v-model:zone='phoneArea'
                         clear
+                        :country-code='countryCode'
                         :country-list='countryList'
                         :placeholder='$t("common.inputPhone")'
                         @onBlur='checkUserMfa'
@@ -103,9 +103,11 @@
                 </div>
             </form>
         </div>
-        <van-button block class='next-btn' type='primary' @click='next'>
-            <span>{{ $t('common.nextStep') }}</span>
-        </van-button>
+        <div class='btn-wrap'>
+            <van-button block class='next-btn' type='primary' @click='next'>
+                <span>{{ $t('common.nextStep') }}</span>
+            </van-button>
+        </div>
     </div>
 </template>
 
@@ -113,7 +115,7 @@
 import Top from '@/components/top'
 import InputComp from '@/components/form/input'
 import { reactive, toRefs, computed, watch } from 'vue'
-import areaInputMobile from '@/components/form/areaInputMobile'
+import areaInputMobile from '@/themeCommon/user/register/components/areaInput'
 import checkCode from '@/components/form/checkCode'
 import { Toast } from 'vant'
 import { useRouter, useRoute } from 'vue-router'
@@ -123,7 +125,7 @@ import RuleFn from './rule'
 import { useStore } from 'vuex'
 import { verifyCodeSend, verifyCodeCheck } from '@/api/base'
 import { checkUserStatus, checkGoogleMFAStatus } from '@/api/user'
-import { isEmpty, getArrayObj, localGet } from '@/utils/util'
+import { isEmpty, getArrayObj, localGetJSON } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import googleVerifyCode from '@/themeCommon/components/googleVerifyCode.vue'
 
@@ -148,7 +150,8 @@ export default {
             checkCode: '',
             email: '',
             emailCode: '',
-            phoneArea: localGet('phoneArea') || '',
+            phoneArea: '',
+            formatPhoneArea: '',
             curTab: 1,
             tips: {
                 flag: true,
@@ -158,7 +161,8 @@ export default {
             active: 1,
             loading: false,
             googleCodeVis: false,
-            googleCode: ''
+            googleCode: '',
+            countryCode: ''
         })
 
         const bizTypeMap = {
@@ -175,28 +179,46 @@ export default {
         const customerInfo = computed(() => store.state._user.customerInfo)
         // 国家列表
         const countryList = computed(() => {
-            // let countryList = state.tabActive === 1 ? store.getters.companyCountryList : store.state.countryList
-            let countryList = store.state.countryList
-            countryList = countryList.map(item => {
-                return {
-                    ...item,
-                    name: item.name + ' (' + item.countryCode + ')'
-                }
-            })
-            return countryList
+            return store.state.countryList
         })
-        watch(
-            () => countryList.value,
-            newval => {
-                // 处理用户第一次进入页面，缓存为空的区号显示问题
-                if (state.phoneArea === '' && newval.length) {
-                    state.phoneArea = newval[0].countryCode
-                } else if (state.phoneArea && newval.length) {
-                    const curPhoneArea = newval.find(el => el.countryCode === state.phoneArea)
-                    if (!curPhoneArea) state.phoneArea = newval[0].countryCode
+
+        watch([() => countryList.value, () => store.state._base.wpCompanyInfo?.defaultZone], (value) => {
+            const countryList = value[0]
+            const defaultZone = value[1]
+            // 如果有缓存则显示缓存信息
+            let index = -1
+            const loginInfo = localGetJSON('loginInfo')
+            if (loginInfo?.phoneArea) {
+                index = countryList.findIndex(el => el.countryCode === loginInfo.phoneArea)
+            }
+            if (loginInfo?.accountType) {
+                if (loginInfo.accountType === 2) {
+                    // state.mobile = loginInfo?.loginName || ''
+                    state.curTab = 0
+                    state.active = 0
+                } else {
+                    // state.email = loginInfo?.loginName || ''
+                    state.curTab = 1
+                    state.active = 1
                 }
             }
-        )
+            const language = navigator.language // 当前系统语言
+            // 根据语言优先显示默认区号
+            if (index === -1 && language) {
+                const langCode = language.substring(language.lastIndexOf('-') + 1, language.length)
+                index = countryList.findIndex(el => el.nationalCode === langCode.toUpperCase())
+            }
+            if (index === -1 && defaultZone?.code) {
+                index = countryList.find(el => el.code === defaultZone.code)
+            }
+            if (countryList.length > 0) {
+                const defaultZoneConfig = (index === -1) ? countryList[0] : countryList[index]
+                state.phoneArea = defaultZoneConfig.countryCode
+                state.formatPhoneArea = defaultZoneConfig.formatName
+                state.countryCode = defaultZoneConfig.code
+            }
+        }, { immediate: true })
+
         // 获取白标企业开户登录的国家区号列表
         // store.dispatch('getCompanyCountry')
         // 获取国家区号
@@ -339,9 +361,9 @@ export default {
             if ((isEmpty(state.checkCode) && state.curTab === 0) || (isEmpty(state.emailCode) && state.curTab === 1)) {
                 return Toast(t('common.inputVerifyCode'))
             }
-            if (isEmpty(state.sendToken)) {
-                return Toast(t('common.getVerifyCode'))
-            }
+            // if (isEmpty(state.sendToken)) {
+            //     return Toast(t('common.getVerifyCode'))
+            // }
             handleVerifyCode()
         }
 
@@ -409,7 +431,8 @@ export default {
 
         const zoneSelect = (data) => {
             state.phoneArea = data.countryCode
-            state.countryCode = data.countryCode
+            state.formatPhoneArea = data.formatName
+            state.countryCode = data.code
             if (state.mobile) checkUserMfa(state.mobile)
         }
         const back = () => {
@@ -445,18 +468,42 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin: rem(40px) rem(30px);
+        margin: rem(20px) rem(30px);
     }
     .pageTitle {
         margin-bottom: rem(10px);
-        font-weight: normal;
-        font-size: rem(50px);
+        font-weight: bold;
+        font-size: rem(40px);
     }
     .tabs-wrap {
-        width: 40%;
-        margin: rem(60px) auto 0;
-        :deep(.van-tabs__nav--line) {
-            background: var(--contentColor);
+        .openTypeTab {
+            padding: rem(40px) rem(30px) 0 rem(30px);
+            width: 80%;
+
+            --van-padding-md: 0;
+            --van-tabs-card-height: 30px;
+            :deep(.van-tabs__nav--line) {
+                background-color: var(--contentColor);
+            }
+            :deep(.van-tabs__nav) {
+                border: none;
+            }
+            :deep(.van-tab) {
+                margin-right: rem(20px);
+                border-radius: 4px;
+                line-height: rem(40px);
+                padding: 0 rem(30px);
+                border: none;
+                .van-tab__text {
+                    color: var(--minorColor);
+                    font-size: rem(26px);
+                }
+                &.van-tab--active {
+                    .van-tab__text {
+                        color: var(--primary);
+                    }
+                }
+            }
         }
     }
 }
@@ -473,7 +520,11 @@ export default {
         position: relative;
         display: flex;
         flex: 1;
+        line-height: rem(80px);
         align-items: center;
+        border: solid 1px var(--lineColor);
+        padding: 0 rem(20px);
+        border-radius: rem(8px);
         &:not(:first-of-type) {
             margin-top: rem(30px);
         }
@@ -481,7 +532,23 @@ export default {
             justify-content: space-between;
         }
         &.field-google {
-            padding: 0 rem(10px);
+            padding: 0 0 0 rem(20px);
+            height: rem(80px);
+            :deep(.form-item) {
+                border: none;
+                margin-bottom: 0;
+                border-radius: rem(8px);
+            }
+            :deep(.van-cell) {
+                --van-cell-vertical-padding: 8px;
+                padding-left: 0;
+                &::after {
+                    border-bottom: none;
+                }
+                input {
+                    padding: 0 rem(10px);
+                }
+            }
         }
         .title {
             padding-left: rem(10px);
@@ -524,14 +591,22 @@ export default {
         }
     }
 }
-.next-btn {
-    position: absolute;
-    bottom: 0;
-    background: var(--bgColor);
-    border-color: var(--lineColor);
-    span {
-        color: var(--color);
-        font-size: rem(30px);
+.btn-wrap {
+    padding: 0 rem(30px);
+    .next-btn {
+        border-radius: rem(8px);
+        background: var(--primary);
+        border-color: var(--lineColor);
+        span {
+            font-size: rem(30px);
+        }
+    }
+    .remeber {
+        margin-top: rem(40px);
+        text-align: center;
+        >a {
+            color: var(--primary);
+        }
     }
 }
 

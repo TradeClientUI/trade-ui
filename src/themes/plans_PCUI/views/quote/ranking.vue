@@ -7,7 +7,7 @@
             <van-icon name='arrow' />
         </a>
         <div>
-            <rankingModule :max='3' :show-label-tab='false' type='module' />
+            <rankingModule :max='3' type='module' />
         </div>
     </div>
 </template>
@@ -29,41 +29,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.ranking{
+.ranking {
     position: relative;
     margin: 40px 0;
     padding: 10px 20px 0;
     background: var(--contentColor);
     border-radius: 5px;
     font-size: 12px;
-    .title{
+    .title {
         height: 56px;
         line-height: 56px;
         font-size: 24px;
     }
-    .rightMore{
+    .rightMore {
         position: absolute;
         right: 20px;
         top: 25px;
         font-size: 24px;
         color: var(--color);
     }
-    .labelTabs{
+    .labelTabs {
         margin-top: 10px;
     }
-    .rankContent{
+    .rankContent {
         margin-top: 10px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-column-gap: 30px;
     }
-    .lastLabel{
+    .lastLabel {
         text-align: right;
     }
-    .symbolCurrencyIcon{
-        margin-right: .2em;
+    .symbolCurrencyIcon {
+        margin-right: 0.2em;
     }
-    .symbolCurrency{
+    .symbolCurrency {
         display: inline-block;
         line-height: 16px;
         vertical-align: middle;

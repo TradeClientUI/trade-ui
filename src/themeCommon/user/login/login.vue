@@ -1,22 +1,22 @@
 <template>
+    <LayoutTop :menu='false' :show-title='false' />
     <div class='pageWrap'>
-        <Top :right-action='rightAction' @back="$router.push('/')" @rightClick='changeLoginType' />
-
-        <div v-if='businessConfig.enterpriseLogin' class='account-type'>
-            <button :class="['btn', { 'active': tabActive === 0 }]" @click='tabActive = 0'>
-                {{ $t('login.loginByPersonal') }}
-            </button>
-            <button v-if='businessConfig.enterpriseLogin' :class="['btn', { 'active': tabActive === 1 }]" @click='tabActive = 1'>
+        <div class='page-title'>
+            <span v-if='tabActive === 0' class='openType1'>
+                {{ $t('login.welcomeLogin') }}MagnaMarkets
+            </span>
+            <span v-else class='openType2'>
                 {{ $t('login.loginByCorporate') }}
-            </button>
+            </span>
         </div>
 
         <van-tabs
             v-model:active='loginNameType'
-            class='mtop10'
-            :color='$style.primary'
+            class='openTypeTab mtop10'
+            :color='$style.assistColor'
             shrink
             :title-active-color='$style.primary'
+            type='card'
             @change='loginNameTypeChange'
         >
             <van-tab name='email' :title='$t("register.email")' />
@@ -34,6 +34,7 @@
                     v-model.trim='loginName'
                     v-model:zone='phoneArea'
                     clear
+                    :country-code='countryCode'
                     :country-list='countryList'
                     :placeholder="$t('common.inputPhone')"
                     @onBlur='checkUserMfa'
@@ -53,30 +54,40 @@
             <div v-if='googleCodeVis' class='field field-google'>
                 <googleVerifyCode @getGooleVerifyCode='getGooleVerifyCode' />
             </div>
-            <van-button block class='loginBtn' :disabled='loading' type='primary' @click='loginHandle'>
-                {{ $t('login.loginBtn') }}
-            </van-button>
-            <div class='toolBtns'>
-                <a class='btn' href='javascript:;' @click="$router.push({ name:'Register' })">
-                    {{ $t('login.register') }}
-                </a>
-                <Vline />
+            <div class='forget-bar'>
                 <a class='btn' href='javascript:;' @click="$router.push({ name:'Forgot',query: { type: 'login' } })">
                     {{ $t('login.forgot') }}
                 </a>
             </div>
-        </form>
 
-        <div v-if='thirdLoginArr && thirdLoginArr.length > 0' class='three-way-login'>
-            <p class='title'>
-                {{ $t('login.otherLogin') }}
-            </p>
-            <div class='otherLogin'>
-                <LoginByGoogle v-if="thirdLoginArr.includes('google')" />
-                <LoginByFacebook v-if="thirdLoginArr.includes('facebook')" />
-                <LoginByTwitter v-if="thirdLoginArr.includes('twitter')" />
+            <van-button block class='loginBtn' :disabled='loading' type='primary' @click='loginHandle'>
+                {{ $t('login.loginBtn') }}
+            </van-button>
+            <div class='toolBtns'>
+                <span class='btn'>
+                    {{ $t('login.goRegister') }}
+                    <a class='mobile_signin_signup_ga' href='javascript:;' @click="$router.push({ name:'Register' })">
+                        {{ $t('register.registerBtn') }}
+                    </a>
+                </span>
+                <a class='btn' href='javascript:;' @click='changeLoginType'>
+                    {{ $t(loginType === 'password' ? 'login.loginByCode' : 'login.loginByPwd') }}
+                </a>
             </div>
-        </div>
+        </form>
+        <third-login v-if='thirdLoginArr && thirdLoginArr.length > 0 && tabActive === 0' />
+        <!-- <div
+            v-if='businessConfig.enterpriseLogin'
+            class='account-type'
+            :class='{ openType2: tabActive===1 }'
+        >
+            <div v-if='tabActive === 1' class='ac-item' @click='tabActive = 0'>
+                {{ $t('login.loginByPersonal') }}&nbsp;&nbsp;>>
+            </div>
+            <div v-if='tabActive === 0' class='ac-item' @click='tabActive = 1'>
+                {{ $t('login.loginByCorporate') }}&nbsp;&nbsp;>>
+            </div>
+        </div> -->
 
         <!-- <footer class='footer'>
             <a class='link' href='javascript:;'>
@@ -118,16 +129,14 @@
 
 <script>
 import Schema from 'async-validator'
-import areaInputMobile from '@/components/form/areaInputMobile'
+import areaInputMobile from '@/themeCommon/user/register/components/areaInput'
 import InputComp from '@/components/form/input'
 import Vline from '@/components/vline'
 import CheckCode from '@/components/form/checkCode'
-import LoginByGoogle from '@/themeCommon/user/login/components/loginByGoogle.vue'
-import LoginByFacebook from '@/themeCommon/user/login/components/loginByFacebook.vue'
-import LoginByTwitter from '@/themeCommon/user/login/components/loginByTwitter.vue'
+import thirdLogin from '@/themeCommon/components/thirdLogin'
 
 import Top from '@/components/top'
-import { getDevice, localGet, localSet, getArrayObj, sessionGet, isEmpty } from '@/utils/util'
+import { getDevice, localGet, localSet, getArrayObj, localGetObj, isEmpty, localGetJSON, getDefaultZoneIndex } from '@/utils/util'
 import { verifyCodeSend } from '@/api/base'
 import { computed, reactive, toRefs, getCurrentInstance, onUnmounted, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -147,12 +156,10 @@ export default {
         Vline,
         areaInputMobile,
         InputComp,
-        LoginByGoogle,
-        LoginByFacebook,
-        LoginByTwitter,
         CheckCode,
         Top,
-        googleVerifyCode
+        googleVerifyCode,
+        thirdLogin
     },
     setup () {
         // const { getPlansByCountry, getCustomerGroupIdByCountry } = hooks()
@@ -170,15 +177,17 @@ export default {
             loginName: '',
             email: '',
             pwd: '',
-            phoneArea: localGet('loginPhoneArea') || '',
+            phoneArea: '',
+            formatPhoneArea: '', // 区号和国家 用于显示
             checkCodeMobile: '', // 手机号验证码
             checkCodeEmail: '', // 邮箱验证码
             loginType: 'password', // checkCode
-            loginNameType: localGet('loginNameType') || 'email',
+            loginNameType: 'email',
             bindAddShow: false,
             userId: '',
             googleCodeVis: false,
-            googleCode: ''
+            googleCode: '',
+            countryCode: '' // 国家编码
         })
         let token = ''
         const rightAction = computed(() => {
@@ -189,27 +198,58 @@ export default {
 
         // 国家列表
         const countryList = computed(() => {
-            let countryList = state.tabActive === 1 ? store.getters.companyCountryList : store.state.countryList
-            countryList = countryList.map(item => {
-                return {
-                    ...item,
-                    name: item.name + ' (' + item.countryCode + ')'
-                }
-            })
-            return countryList
+            return state.tabActive === 1 ? store.getters.companyCountryList : store.state.countryList
         })
-        watch(
-            () => countryList.value,
-            newval => {
-                // 处理用户第一次进入页面，缓存为空的区号显示问题
-                if (state.phoneArea === '' && newval.length) {
-                    state.phoneArea = newval[0].countryCode
-                } else if (state.phoneArea && newval.length) {
-                    const curPhoneArea = newval.find(el => el.countryCode === state.phoneArea)
-                    if (!curPhoneArea) state.phoneArea = newval[0].countryCode
+
+        // 检测客户是否开启GoogleMFA
+        const checkUserMfa = (val) => {
+            if (val) {
+                checkGoogleMFAStatus({
+                    loginName: val,
+                    phoneArea: state.phoneArea,
+                    type: state.loginNameType === 'email' ? 1 : 2
+                }).then(res => {
+                    if (res.check()) {
+                        state.googleCodeVis = res.data > 0
+                    }
+                }).catch(err => {
+                    console.log('err', err)
+                })
+            }
+        }
+
+        // 初始化区号
+        watch([countryList, () => store.state._base.wpCompanyInfo?.defaultZone], (value) => {
+            const countryList = value[0]
+            const defaultZone = value[1]
+            // 如果有缓存则显示缓存信息
+            let index = -1
+            const loginInfo = localGetJSON('loginInfo')
+            if (loginInfo?.phoneArea) {
+                index = countryList.findIndex(el => el.countryCode === loginInfo.phoneArea)
+            }
+            if (loginInfo?.accountType) {
+                if (loginInfo.accountType === 1) {
+                    state.email = loginInfo?.loginName || ''
+                    state.loginNameType = 'email'
+                } else {
+                    state.loginName = loginInfo?.loginName || ''
+                    state.loginNameType = 'mobile'
                 }
             }
-        )
+            if (index === -1) {
+                index = getDefaultZoneIndex(countryList, defaultZone?.code)
+            }
+            if (countryList.length > 0) {
+                const defaultZoneConfig = (index === -1) ? countryList[0] : countryList[index]
+                state.phoneArea = defaultZoneConfig.countryCode
+                state.formatPhoneArea = defaultZoneConfig.formatName
+                state.countryCode = defaultZoneConfig.code
+            }
+            if (loginInfo?.loginName) {
+                checkUserMfa(loginInfo?.loginName)
+            }
+        }, { immediate: true })
 
         const thirdLoginArr = computed(() => store.state._base.wpCompanyInfo?.thirdLogin || [])
         // 获取白标企业开户登录的国家区号列表
@@ -236,11 +276,17 @@ export default {
         // 切换手机号邮箱登录方式
         const loginNameTypeChange = () => {
             state.pwd = ''
+            const loginName = state.loginNameType === 'email' ? state.email : state.loginName
+            if (loginName) {
+                checkUserMfa(loginName)
+            }
         }
 
         // 选择登录手机号区号
         const zoneSelect = (data) => {
             state.phoneArea = data.countryCode
+            state.formatPhoneArea = data.formatName
+            state.countryCode = data.code
         }
 
         const loginHandle = () => {
@@ -284,8 +330,9 @@ export default {
 
         // 登录成功跳转
         const loginToPath = () => {
-            // const toURL = route.query.back ? decodeURIComponent(route.query.back) : '/'
-            router.replace('/')
+            const toURL = route.query.back ? decodeURIComponent(route.query.back) : '/'
+            const backURL = route.query.activityBack ? decodeURIComponent(route.query.activityBack) : toURL // 返回活动页面的链接
+            router.replace(backURL)
         }
 
         // 发送登录接
@@ -296,19 +343,27 @@ export default {
                 if (res.invalid()) return false
 
                 // 切换登录后的行情websocket
-                setQuoteService()
+                // setQuoteService()
 
                 // 登录websocket
                 instance.appContext.config.globalProperties.$MsgSocket.login()
                 store.commit('del_cacheViews', 'Home')
                 store.commit('del_cacheViews', 'Layout')
-                localSet('loginNameType', state.loginNameType)
-                localSet('loginPhoneArea', state.phoneArea)
+
+                // 缓存注册信息
+                localSet('loginInfo', JSON.stringify({
+                    accountType: params.type,
+                    loginName: params.loginName,
+                    phoneArea: params.phoneArea || '',
+                }))
 
                 // 登录KYC,kycAuditStatus:0未认证跳,需转到认证页面,1待审核,2审核通过,3审核不通过
                 // companyKycStatus 公司KYC开户状态，1开启 2未开启
-                if (Number(res.data.companyKycStatus) === 1) {
-                    if (Number(res.data.kycAuditStatus === 0)) {
+                const resData = res.data
+                const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
+                const isReal = !lastAccountType || lastAccountType === 'real'
+                if (isReal && Number(resData.companyKycStatus) === 1) {
+                    if (Number(resData.kycAuditStatus === 0)) {
                         return Dialog.alert({
                             title: t('common.tip'),
                             confirmButtonText: t('login.goAuthenticate'),
@@ -317,7 +372,7 @@ export default {
                         }).then(() => {
                             router.push('/authentication')
                         })
-                    } else if (Number(res.data.kycAuditStatus === 1)) {
+                    } else if (Number(resData.kycAuditStatus === 1)) {
                         return Dialog.alert({
                             title: t('common.tip'),
                             confirmButtonText: t('common.close'),
@@ -330,27 +385,29 @@ export default {
                                 location.reload()
                             })
                         })
-                    } else if (Number(res.data.kycAuditStatus === 3)) {
+                    } else if (Number(resData.kycAuditStatus === 3)) {
                         return Dialog.alert({
                             title: t('common.tip'),
                             confirmButtonText: t('common.reSubmit'),
-                            message: t('common.reviewFailed') + '\n' + t('common.reviewReson') + res.data.kycAuditRemark,
+                            message: t('common.reviewFailed') + '\n' + t('common.reviewReson') + resData.kycAuditRemark,
 
                         }).then(() => {
                             router.push('/authentication')
                         })
-                    } else if (Number(res.data.kycAuditStatus === 2)) {
-                        noticeSetPwd(res.data.loginPassStatus)
+                    } else if (Number(resData.kycAuditStatus === 2)) {
+                        noticeSetPwd(resData.loginPassStatus)
                     }
-                } else if (Number(res.data.companyKycStatus) === 2) {
-                    noticeSetPwd(res.data.loginPassStatus)
+                } else if (Number(resData.companyKycStatus) === 2) {
+                    noticeSetPwd(resData.loginPassStatus)
                 }
             })
         }
 
         // 设置登录密码弹窗
         const noticeSetPwd = (loginPassStatus) => {
-            if (parseInt(loginPassStatus) === 1 && !localGet('loginPwdIgnore')) {
+            const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
+            const isReal = !lastAccountType || lastAccountType === 'real'
+            if (isReal && parseInt(loginPassStatus) === 1 && !localGet('loginPwdIgnore')) {
                 state.loginPwdPop = true
             } else {
                 loginToPath()
@@ -359,23 +416,6 @@ export default {
 
         const topRightClick = () => {
             console.log('rightClick')
-        }
-
-        // 检测客户是否开启GoogleMFA
-        const checkUserMfa = (val) => {
-            if (val) {
-                checkGoogleMFAStatus({
-                    loginName: val,
-                    phoneArea: state.phoneArea,
-                    type: state.loginNameType === 'email' ? 1 : 2
-                }).then(res => {
-                    if (res.check()) {
-                        state.googleCodeVis = res.data > 0
-                    }
-                }).catch(err => {
-                    console.log('err', err)
-                })
-            }
         }
 
         // 发送验证码
@@ -453,10 +493,14 @@ export default {
         // 获取三方登录配置
         store.dispatch('_base/getLoginConfig')
 
+        onMounted(() => {
+            if (route.query.loginType) {
+                state.loginType = route.query.loginType
+            }
+        })
         return {
             ...toRefs(state),
             changeLoginType,
-            rightAction,
             countryList,
             tabActiveChange,
             loginNameTypeChange,
@@ -482,7 +526,24 @@ export default {
 .pageWrap {
     position: relative;
     height: 100%;
+    padding-top: rem(110px);
     background: var(--contentColor);
+    .logo {
+        display: inline-block;
+        padding-left: rem(30px);
+        margin-bottom: rem(10px);
+        img {
+            width: rem(180px);
+        }
+    }
+    .page-title {
+        padding-left: rem(30px);
+        font-size: rem(40px);
+        font-weight: bold;
+        .openType2 {
+            color: var(--primary);
+        }
+    }
     .header {
         display: flex;
         align-items: center;
@@ -497,8 +558,8 @@ export default {
     .support {
         position: absolute;
         bottom: rem(30px);
-        left: 50%;
         width: rem(300px);
+        left: 50%;
         margin-left: rem(-150px);
         color: var(--placeholdColor);
         font-size: rem(20px);
@@ -511,11 +572,21 @@ export default {
     .account-type {
         display: flex;
         align-items: center;
+        justify-content: center;
         height: rem(76px);
-        margin: rem(60px) rem(200px) rem(60px);
+        margin: rem(60px) rem(30px) rem(60px);
         padding: 0 rem(10px);
-        background: var(--assistColor);
-        border-radius: rem(44px);
+        border-radius: rem(8px);
+        border: solid 1px var(--primary);
+        color: var(--primary);
+        &.openType2 {
+            border: solid 1px var(--color);
+            color: var(--color);
+        }
+        .ac-item {
+            width: 100%;
+            text-align: center;
+        }
         .btn {
             display: flex;
             flex: 1;
@@ -538,6 +609,35 @@ export default {
         }
     }
 }
+.openTypeTab {
+    padding: rem(40px) rem(30px) 0 rem(30px);
+    width: 50%;
+
+    --van-padding-md: 0;
+    --van-tabs-card-height: 30px;
+    :deep(.van-tabs__nav--line) {
+        background-color: var(--contentColor);
+    }
+    :deep(.van-tabs__nav) {
+        border: none;
+    }
+    :deep(.van-tab) {
+        margin-right: rem(20px);
+        border-radius: 4px;
+        line-height: rem(40px);
+        padding: 0 rem(30px);
+        border: none;
+        .van-tab__text {
+            color: var(--minorColor);
+            font-size: rem(26px);
+        }
+        &.van-tab--active {
+            .van-tab__text {
+                color: var(--primary);
+            }
+        }
+    }
+}
 .icon_icon_close_big {
     position: absolute;
     top: rem(30px);
@@ -546,11 +646,14 @@ export default {
     font-size: rem(34px);
 }
 .loginForm {
-    margin: rem(30px) rem(30px) rem(50px);
+    margin: rem(45px) rem(30px) rem(50px);
     .field {
         position: relative;
         display: flex;
         align-items: center;
+        padding: 0 rem(10px);
+        border: solid 1px var(--lineColor);
+        border-radius: rem(8px);
         &:not(:first-of-type) {
             margin-top: rem(45px);
         }
@@ -593,24 +696,39 @@ export default {
             font-size: rem(36px);
         }
         &.field-google {
+            height: 100%;
+            :deep(.form-item) {
+                border: none;
+                margin-bottom: 0;
+            }
             :deep(.van-cell) {
+                --van-cell-vertical-padding: 8px;
                 padding-left: 0;
+                &::after {
+                    border-bottom: none;
+                }
                 input {
                     padding: 0 rem(10px);
                 }
             }
         }
     }
+    .forget-bar {
+        text-align: right;
+        margin-top: rem(20px);
+        >a {
+            color: var(--primary);
+        }
+    }
     .loginBtn {
         width: 100%;
         height: rem(100px);
-        margin-top: rem(90px);
-        color: var(--color);
+        margin-top: rem(60px);
+        color: #FFF;
         font-size: rem(30px);
         line-height: rem(80px);
-        background: var(--lineColor);
-        border-color: var(--lineColor);
-        border-radius: rem(4px);
+        background: var(--primary);
+        border-radius: rem(8px);
         &.light {
             margin-top: rem(40px);
             color: var(--primary);
@@ -628,18 +746,36 @@ export default {
     }
 }
 .three-way-login {
-    margin-top: rem(200px);
+    margin-top: rem(100px);
+    padding: 0 rem(30px);
     .title {
-        margin-bottom: rem(20px);
-        color: var(--placeholdColor);
+        display: flex;
+        align-items: center;
         text-align: center;
+        color: var(--placeholdColor);
+        margin-bottom: rem(20px);
+        .text {
+            padding: 0 rem(30px);
+        }
+        &::after {
+            background: #E9EBF2;
+            content: '';
+            flex: 1;
+            height: 1px;
+        }
+        &::before {
+            background: #E9EBF2;
+            content: '';
+            flex: 1;
+            height: 1px;
+        }
     }
     .otherLogin {
+        text-align: center;
         display: flex;
         justify-content: space-evenly;
         width: rem(470px);
         margin: rem(30px) auto 0;
-        text-align: center;
     }
 }
 .footer {
@@ -654,12 +790,17 @@ export default {
     }
 }
 .toolBtns {
+    display: flex;
+    justify-content: space-between;
     margin-top: rem(30px);
     text-align: center;
     .btn {
         @include active();
         color: var(--color);
         vertical-align: middle;
+        >a {
+            color: var(--primary);
+        }
     }
 }
 .popContainer {
@@ -698,7 +839,7 @@ export default {
         color: var(--color);
         font-size: rem(34px);
         text-align: center;
-        background: var(--bgColor);
+        background: var(--contentColor);
         border-top: 1px solid var(--lineColor);
         &::after {
             position: absolute;

@@ -1,9 +1,6 @@
 <template>
     <div class='page-wrap'>
-        <LayoutTop :back='true' :custom-back='true' :menu='false' :title='$t("route.mine")' @back='$router.push("/mine")' />
-        <p class='header'>
-            {{ $t('cRoute.securitySetting') }}
-        </p>
+        <LayoutTop :back='true' :custom-back='true' :menu='false' :title='$t("cRoute.securitySetting")' @back='$router.push("/")' />
         <van-cell-group :border='false' class='cellGroup'>
             <van-cell
                 class='cellItem'
@@ -77,16 +74,6 @@
             <van-cell
                 class='cellItem'
                 is-link
-                :title='$t("api.title")'
-                to='/apiManage/list'
-            >
-                <template #right-icon>
-                    <van-icon name='arrow' />
-                </template>
-            </van-cell>
-            <van-cell
-                class='cellItem'
-                is-link
                 :title='$t("mfa.routeTitile")'
                 to='/googleMFA/status'
             >
@@ -97,29 +84,17 @@
                     <van-icon name='arrow' />
                 </template>
             </van-cell>
-            <van-cell
-                v-if='customInfo'
-                class='cellItem'
-                is-link
-                :title='$t("common.quitLogin")'
-                value=''
-                @click='handleLogout'
-            />
         </van-cell-group>
     </div>
 </template>
 
 <script>
-import Top from '@/components/top'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { Dialog } from 'vant'
 import { useRouter } from 'vue-router'
 import { onBeforeMount, computed, reactive, getCurrentInstance, toRefs, onUnmounted } from 'vue'
 export default {
-    components: {
-        Top,
-    },
     setup (props, context) {
         const instance = getCurrentInstance()
         const { t, locale } = useI18n({ useScope: 'global' })
@@ -129,29 +104,8 @@ export default {
         const customInfo = computed(() => store.state._user.customerInfo)
         const state = reactive({})
 
-        const handleLogout = () => {
-            Dialog.confirm({
-                confirmButtonText: t('common.sure'),
-                cancelButtonText: t('common.cancel'),
-                title: t('common.tip'),
-                message: t('setting.logoutConfirm'),
-            }).then(() => {
-                state.loading = true
-                // 退出登录
-                instance.appContext.config.globalProperties.$MsgSocket.logout()
-                return store.dispatch('_user/logout')
-            }).then(() => {
-                return router.push('/')
-            }).then(() => {
-                location.reload()
-            }).catch(() => {
-                // on cancel
-            })
-        }
-
         return {
-            customInfo,
-            handleLogout
+            customInfo
         }
     },
 }
@@ -174,13 +128,15 @@ export default {
             align-items: center;
             height: rem(120px);
             font-size: rem(32px);
-            line-height: rem(120px);
             background: var(--contentColor);
             background: var(--contentColor);
             border-top: solid rem(10px) var(--bgColor);
             //margin-top: rem(10px);
             &::after {
                 border: none;
+            }
+            :deep(.van-cell__value){
+                display: none;
             }
             :deep(.van-cell__title) {
                 color: var(--color);

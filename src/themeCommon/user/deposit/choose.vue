@@ -1,607 +1,236 @@
 <template>
     <div class='page-wrap'>
-        <!-- 头部导航栏 -->
-        <LayoutTop
-            :custom-back='true'
-            :custom-style='{
-                "background": $style.bgColor
-            }'
-            :title='$t("trade.desposit")'
-            @back='onBack'
-        >
-            <template #right>
-                <span @click='toDespositList'>
-                    {{ $t('deposit.depositRecord') }}
-                </span>
-            </template>
-        </LayoutTop>
-        <!-- 页面加载状态 -->
-        <Loading :show='loading' />
-        <!-- 页面内容 -->
-        <div class='page-content'>
-            <!-- 资产账户 -->
-            <div class='asset-account'>
-                <h3 class='title'>
-                    {{ $t('deposit.assetAccount') }}
-                </h3>
-                <div class='action-bar' @click='pickerShow = true'>
-                    <div v-if='accountInfo' class='left'>
-                        <CurrencyIcon :currency='accountInfo.currency' :size='24' />
-                        <div class='name'>
-                            <p class='t1'>
-                                {{ accountInfo?.currency }}
-                            </p>
-                            <p class='t2'>
-                                {{ accountInfo?.fullName }}
-                            </p>
-                        </div>
-                    </div>
-                    <div v-else class='left'>
-                        <CurrencyIcon :currency='accountInfo.currency' :size='24' />
-                        <div class='name'>
-                            <p class='t1'>
-                                {{ $t('deposit.chooseCurrency') }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <van-icon name='arrow' />
-                </div>
+        <LayoutTop />
+        <div class='payment-module'>
+            <div v-if='(paymentList.length > 0)' class='payment-list'>
+                <p class='title'>
+                    {{ $t('deposit.selectRechargeWay') }}
+                </p>
+                <ul>
+                    <li
+                        v-for='(item, index) in paymentList'
+                        :key='index'
+                        :class="{ 'active': paymentInfo.id === item.id }"
+                        @click='switchPayment(item)'
+                    >
+                        <img class='img' :src='item.imgUrl' />
+                        <p class='name'>
+                            {{ item.alias || item.paymentTypeAlias || item.paymentType }}
+                        </p>
+                    </li>
+                    <li v-if='paymentList.length % 2 !== 0' class='empty-li'></li>
+                </ul>
+                <div class='line'></div>
             </div>
-            <!-- 充值操作 -->
-            <div class='recharge-handle'>
-                <h3 class='title'>
-                    {{ $t('deposit.rechargeWay') }}
-                </h3>
-                <div class='recharge-way'>
-                    <div :class="['item', { 'active': way === 1, 'disable': disable || directDisable }]" @click='switchDirect'>
-                        <div class='check'>
-                            <van-icon color='#fff' name='success' />
-                        </div>
-                        <i class='icon icon_zhichong'></i>
-                        <div class='text'>
-                            <span class='name'>
-                                {{ $t('deposit.direct') }}
-                            </span>
-                            <span class='des'>
-                                {{ $t('deposit.directDes') }}
-                            </span>
-                        </div>
-                    </div>
-                    <div :class="['item', { 'active': way === 2, 'disable': disable || exchangeDisable }]" @click='switchExchange'>
-                        <div class='check'>
-                            <van-icon color='#fff' name='success' />
-                        </div>
-                        <i class='icon icon_huidui'></i>
-                        <div class='text'>
-                            <span class='name'>
-                                {{ $t('deposit.exchange') }}
-                            </span>
-                            <span class='des'>
-                                {{ $t('deposit.exchangeDes') }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <van-empty
+                v-else-if='paymentList.length === 0 && !loading'
+                :description="$t('deposit.noneChannel')"
+                image='/images/empty.png'
+            />
         </div>
-        <div class='btn-wrap'>
-            <div :class="['recharge-btn', { 'disable': disable }]" @click='goRecharge'>
-                <span>{{ $t('deposit.immediateRecharge') }}</span>
-                <van-icon class='arrow' name='arrow' />
-            </div>
+
+        <div v-if='rechargeType' class='handle-module'>
+            <!-- 直充 -->
+            <direct-module v-if='rechargeType === 1' />
+            <!-- 汇兑 -->
+            <exchange-module v-else />
+            <!-- 充值记录 -->
+            <deposit-record-module ref='depositRecordRef' :currency='currency' :type='rechargeType.toString()' />
+            <!-- 相关问题 -->
+            <answer-explain />
         </div>
     </div>
-
-    <!-- 资产列表 -->
-    <assetsList
-        v-if='pickerShow'
-        :account-list='accountList'
-        :currency='accountInfo?.currency'
-        :show='pickerShow'
-        :trade-type='tradeType'
-        @update:currency='onCurrencyConfirm'
-        @update:show='updatePopupVis'
-    />
 </template>
 
 <script>
-import CurrencyIcon from '@/components/currencyIcon'
-import { computed, reactive, toRefs, onMounted } from 'vue'
+import { computed, ref, reactive, toRefs, onMounted, provide } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { checkKycApply, queryPayType, getDepositCoinList, queryMC900Url } from '@/api/user'
-import { localSet, getToken, localRemove, getCookie } from '@/utils/util'
-import { Toast, Dialog } from 'vant'
-import assetsList from '@/themeCommon/components/assetsList/assetsList.vue'
+import { localGet, localRemove } from '@/utils/util'
+import { checkKyc, checkCustomerDeposit, getPayTypes } from '@/hooks/deposit'
+import exchangeModule from './components/exchange-module.vue'
+import directModule from './components/direct-module.vue'
+import depositRecordModule from './components/deposit-record-module.vue'
+import answerExplain from './components/answer-explain.vue'
+
 export default {
     components: {
-        CurrencyIcon,
-        assetsList
+        exchangeModule,
+        directModule,
+        depositRecordModule,
+        answerExplain
     },
     setup () {
         const store = useStore()
-        const route = useRoute()
-        const router = useRouter()
         const { t } = useI18n({ useScope: 'global' })
-        const { query } = route
         const state = reactive({
             // 页面加载状态
-            loading: false,
-            // 当前语言
-            lang: getCookie('lang') || 'zh-CN',
-            // 玩法类型
-            tradeType: query.tradeType,
-            // 支付通道列表
-            paymentTypes: [],
-            // 当前选中币种账户
-            accountInfo: '',
-            // 当前选中充值方式 1.直充 2.汇兑
-            way: '',
-            // 是否禁用所有按钮
-            disable: true,
-            // 直充是否禁用
-            directDisable: true,
-            // 汇兑是否禁用
-            exchangeDisable: true,
-            // 当前直充支付通道
-            paymentInfo: '',
-            // 存款币种列表
-            accountList: '',
-            // 当前选择的存款币种
-            pickerShow: false,
-            // 收银台地址
-            cashierUrl: '',
-            // 收银台地址提示
-            cashierMsg: ''
+            loading: true,
+            // 通道列表
+            paymentList: [],
+            // 当前选择的账户币种
+            currency: ''
         })
-
         // 颜色变量
         const style = computed(() => store.state.style)
-        // 客户信息
-        const customerInfo = computed(() => store.state._user.customerInfo)
+        // 组件ref
+        const depositRecordRef = ref(null)
+        // 当前选择的通道
+        const paymentInfo = ref({})
+        // 当前充值方式 1:直充 2.汇兑
+        const rechargeType = ref('')
 
-        // 返回页面
-        const onBack = () => {
-            router.replace({ path: '/assets' })
-        }
-
-        // 获取支付通道
-        const getPayTypes = () => {
-            state.disable = true
-            state.way = ''
-            const accountInfo = state.accountInfo
-            const params = {
-                tradeType: state.tradeType,
-                companyId: customerInfo.value.companyId,
-                customerNo: customerInfo.value.customerNo,
-                customerGroupId: customerInfo.value.customerGroupId,
-                country: customerInfo.value.country,
-                clientType: 'mobile',
-                accountCurrency: accountInfo.currency,
-                accountId: accountInfo.accountId
+        // 切换支付通道
+        const switchPayment = (item) => {
+            if (item.id !== paymentInfo.value.id) {
+                rechargeType.value = item.paymentCode === 'coin_mdpay' ? 1 : 2
+                paymentInfo.value = item
             }
-            Toast.loading({
-                message: t('common.loading'),
-                forbidClick: true,
-                duration: 0
-            })
-            queryPayType(params).then(res => {
-                if (res.check()) {
-                    state.paymentTypes = res.data
-                    state.cashierUrl = ''
-                    state.cashierMsg = ''
-                    const existMC900 = res.data.find(el => el.paymentCode === 'antpay')
-                    // 获取MC900收银台地址
-                    if (existMC900) {
-                        getMC900Url()
-                    } else {
-                        // 过滤支付通道数据
-                        filterPayment()
-                    }
-                } else {
-                    state.paymentTypes = []
-                    filterPayment()
-                }
-            }).catch(() => {
-                Toast.clear()
-            })
         }
 
-        // 过滤支付通道数据
-        const filterPayment = () => {
-            Toast.clear()
-            const paymentTypes = state.paymentTypes
-            state.paymentInfo = ''
-            if (paymentTypes.length === 0) {
-                state.disable = true
-                state.way = ''
+        // 更新充值记录数据
+        const updateRecord = (currency) => {
+            if (currency) {
+                state.currency = currency
             } else {
-                state.disable = false
-                state.directDisable = true
-                state.exchangeDisable = true
-                paymentTypes.map(elem => {
-                    // 直充
-                    if (elem.rechargeType?.indexOf('1') !== -1) {
-                        state.directDisable = false
-                        if (!state.paymentInfo) state.paymentInfo = elem
-                    }
-                    // 汇兑
-                    if (elem.rechargeType?.indexOf('2') !== -1) {
-                        state.exchangeDisable = false
-                    }
-                })
-                // 设置默认选中充值方式
-                state.way = state.directDisable ? 2 : 1
+                depositRecordRef.value.refresh()
             }
-        }
-
-        // 充值方式切换为直充
-        const switchDirect = () => {
-            if (state.disable || state.directDisable) return
-            state.way = 1
-        }
-
-        // 充值方式切换汇兑
-        const switchExchange = () => {
-            if (state.disable || state.exchangeDisable) return
-            state.way = 2
-        }
-
-        // 跳转到充值页面
-        const goRecharge = () => {
-            switch (state.way) {
-                // 跳转到直充页面
-                case 1:
-                    localSet('paymentInfo', JSON.stringify(state.paymentInfo))
-                    router.push({
-                        path: '/depositDirect',
-                        query: {
-                            currency: state.accountInfo.currency,
-                            paymentCode: state.paymentInfo.paymentCode
-                        }
-                    })
-                    break
-                // 跳转到汇兑页面
-                case 2:
-                    if (state.cashierMsg) {
-                        Toast(state.cashierMsg)
-                    } else if (state.cashierUrl) {
-                        console.log(window.location)
-                        const callbackUrl = `${window.location.protocol}//${window.location.host}/${state.lang}/depositChoose?tradeType=5`
-                        const url = state.cashierUrl + '&accountCurrency=' + state.accountInfo.currency + '&token=' + getToken() + '&source=2&backUrl=' + callbackUrl
-                        window.location.href = url
-                    } else {
-                        localRemove('proposalNo')
-                        router.push({
-                            path: '/deposit',
-                            query: {
-                                tradeType: state.tradeType,
-                                currency: state.accountInfo.currency,
-                                accountId: state.accountInfo.accountId
-                            }
-                        })
-                    }
-                    break
-            }
-        }
-
-        // 检查是否需要KYC认证
-        const checkKyc = () => {
-            Toast.loading({
-                message: t('common.loading'),
-                forbidClick: true,
-                duration: 0
-            })
-            checkKycApply({ businessCode: 'cashin', openAccountType: customerInfo.value.openAccountType }).then(res => {
-                Toast.clear()
-                if (res.check()) {
-                    if (Number(res.data) !== 2) {
-                        return Dialog.alert({
-                            title: t('common.tip'),
-                            confirmButtonText: Number(res.data) === 1 ? t('common.goLook') : t('login.goAuthenticate'),
-                            message: Number(res.data) === 2 ? t('deposit.KYCReviewing') : t('deposit.needKYC'),
-                        }).then(() => {
-                            router.replace({
-                                name: 'Authentication',
-                                query: {
-                                    businessCode: 'cashin'
-                                }
-                            })
-                        })
-                    }
-                }
-            }).catch(err => {
-                Toast.clear()
-            })
-        }
-
-        const onCurrencyConfirm = val => {
-            state.accountInfo = val
-            getPayTypes()
-            state.pickerShow = false
-        }
-        const updatePopupVis = val => {
-            state.pickerShow = val
-        }
-        const bgColor = style.value.primary + '0D'
-
-        // 获取客户支持的存款币种列表
-        const queryDepositCoinList = () => {
-            getDepositCoinList({ clientType: 'mobile' }).then(res => {
-                const accountList = store.state._user.customerInfo.accountList.filter(el => Number(el.tradeType) === Number(query.tradeType))
-                const data = res.data
-                state.accountList = accountList.filter(el => data.includes(el.currency))
-                // 设置默认选择币种
-                if (query.accountId && query.currency) {
-                    state.accountInfo = state.accountList.find(el => el.currency === query.currency) || ''
-                    if (state.accountInfo) {
-                        getPayTypes()
-                    }
-                }
-            })
-        }
-
-        // 获取MC900收银台地址
-        const getMC900Url = () => {
-            state.cashierUrl = ''
-            state.cashierMsg = ''
-            queryMC900Url({
-                companyId: customerInfo.value.companyId,
-                customerNo: customerInfo.value.customerNo,
-                customerGroupId: customerInfo.value.customerGroupId
-            }).then(res => {
-                Toast.clear()
-                filterPayment()
-                if (res.check()) {
-                    state.cashierUrl = res.data
-                } else {
-                    state.cashierMsg = res.msg
-                }
-            }).catch(() => {
-                Toast.clear()
-            })
-        }
-
-        // 跳转到存款记录页面
-        const toDespositList = () => {
-            router.push({
-                path: '/depositRecord'
-            })
         }
 
         onMounted(() => {
             // 检查是否需要KYC认证
             checkKyc()
-            queryDepositCoinList()
+            // 验证客户是否可存款
+            checkCustomerDeposit()
+            // 获取所有支付通道列表
+            getPayTypes().then(data => {
+                state.loading = false
+                if (data.length > 0) {
+                    const paymentId = localGet('paymentId')
+                    let index = data.findIndex(el => el.id === Number(paymentId))
+                    index = index !== -1 ? index : 0
+                    const item = data[index]
+                    rechargeType.value = item.paymentCode === 'coin_mdpay' ? 1 : 2
+                    state.paymentList = data
+                    paymentInfo.value = item
+                    localRemove('paymentId')
+                }
+            }).catch(() => {
+                state.loading = false
+            })
         })
+
+        // 传递数据给子组件
+        provide('rechargeType', rechargeType)
+        provide('paymentInfo', paymentInfo)
+        provide('updateRecord', updateRecord)
 
         return {
             ...toRefs(state),
-            switchDirect,
-            switchExchange,
-            goRecharge,
-            updatePopupVis,
-            onCurrencyConfirm,
-            bgColor,
-            toDespositList,
-            onBack
+            rechargeType,
+            paymentInfo,
+            style,
+            depositRecordRef,
+            switchPayment
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-
 .page-wrap {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
+    overflow: auto;
     padding-top: rem(110px);
 }
-.page-content {
-    position: relative;
-    flex: 1;
-    padding: 0 rem(30px);
-    overflow-y: auto;
-}
-// 资产账户
-.asset-account {
-    margin-top: rem(30px);
+.payment-module {
+    width: rem(690px);
+    margin: rem(30px) auto;
     .title {
-        margin-bottom: rem(32px);
+        margin-bottom: rem(16px);
+        font-size: rem(32px);
         color: var(--color);
-        font-weight: normal;
-        font-size: rem(48px);
-        line-height: 1;
     }
-    .action-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: rem(110px);
-        margin-bottom: rem(80px);
-        padding: 0 rem(30px);
-        color: var(--color);
-        background: var(--contentColor);
-        border-radius: rem(10px);
-        .left {
-            display: flex;
-            align-items: center;
-            .name {
-                margin-left: rem(15px);
-                .t1 {
-                    font-size: rem(32px);
-                    vertical-align: middle;
-                }
-                .t2 {
-                    color: var(--minorColor);
-                }
-            }
-        }
-        .van-icon {
-            color: var(--minorColor);
-        }
-    }
-    .list {
+}
+.payment-list {
+    padding: rem(50px) rem(30px);
+    border-radius: rem(16px);
+    background: var(--contentColor);
+    border: 1px solid var(--lineColor);
+    ul {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        .item {
-            display: flex;
-            align-items: center;
-            width: rem(330px);
-            height: rem(110px);
-            margin-bottom: rem(30px);
-            padding-left: rem(30px);
-            background: var(--contentColor);
-            border: 1px solid transparent;
-            border-radius: rem(10px);
-            img {
-                width: rem(48px);
-                height: rem(48px);
-                margin-right: rem(20px);
-                background: var(--assistColor);
-                border-radius: 50%;
-            }
-            .text {
-                display: flex;
-                flex-direction: column;
-                .name {
-                    color: var(--color);
-                    font-size: rem(32px);
-                }
-                .alias {
-                    margin-top: rem(4px);
-                    color: var(--minorColor);
-                    font-size: rem(24px);
-                }
-            }
-        }
-        .active {
-            position: relative;
-            background: v-bind(bgcolor);
-            border: 1px solid var(--primary);
-            .check {
-                position: absolute;
-                top: -1px;
-                right: -1px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: rem(30px);
-                height: rem(30px);
-                background: var(--primary);
-                border-radius: 0 rem(10px) 0 rem(10px);
-                &:deep(.van-icon) {
-                    margin-top: rem(-5px);
-                }
-            }
-        }
+        border: 1px solid var(--lineColor);
+        border-radius: rem(16px);
+        overflow: hidden;
     }
-}
-// 充值操作
-.recharge-handle {
-    margin-top: rem(80px);
-    .title {
-        margin-bottom: rem(32px);
-        color: var(--color);
-        font-weight: normal;
-        font-size: rem(48px);
-        line-height: 1;
-    }
-    .recharge-way {
-        .item {
-            position: relative;
-            display: flex;
-            align-items: center;
-            height: rem(130px);
-            margin-bottom: rem(30px);
-            padding: 0 rem(36px);
-            background: var(--contentColor);
-            border: 1px solid transparent;
-            border-radius: rem(10px);
-            &:last-of-type {
-                margin-bottom: 0;
-            }
-            .check {
-                display: none;
-            }
-            .icon {
-                margin-right: rem(36px);
-                color: var(--color);
-                font-size: rem(40px);
-            }
-            .text {
-                display: flex;
-                flex-direction: column;
-                .name {
-                    color: var(--color);
-                    font-size: rem(32px);
-                }
-                .des {
-                    margin-top: rem(4px);
-                    color: var(--minorColor);
-                    font-size: rem(24px);
-                }
-            }
-        }
-        .active {
-            background: v-bind(bgcolor);
-            border: 1px solid var(--primary);
-            .check {
-                position: absolute;
-                top: -1px;
-                right: -1px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: rem(30px);
-                height: rem(30px);
-                background: var(--primary);
-                border-radius: 0 rem(10px) 0 rem(10px);
-                &:deep(.van-icon) {
-                    margin-top: rem(-5px);
-                }
-            }
-        }
-        .disable {
-            background: var(--lineColor);
-            opacity: 0.5;
-        }
-    }
-}
-.btn-wrap {
-    position: absolute;
-    bottom: rem(30px);
-    width: 100%;
-    padding: 0 rem(30px);
-    .recharge-btn {
-        display: flex;
-        align-items: center;
+    li {
+        display: inline-flex;
+        flex-direction: column;
         justify-content: center;
-        width: 100%;
-        height: rem(80px);
-        background: var(--primary);
-        border-radius: rem(6px);
-        span {
-            margin-right: rem(10px);
-            color: #FFF;
-            font-size: rem(30px);
+        align-items: center;
+        width: 50%;
+        height: rem(144px);
+        box-sizing: border-box;
+        position: relative;
+        border-top: 1px solid var(--lineColor);
+        transition: all 0.12s ease 0s;
+        &:nth-of-type(even) {
+            border-left: 1px solid var(--lineColor);
         }
-        .arrow {
-            margin-top: rem(-6px);
-            color: #FFF;
-            font-size: rem(30px);
+        &:nth-of-type(1) {
+            border-top: none;
+            &::after {
+                border-top-left-radius: rem(16px);
+            }
         }
-        &.disable {
-            opacity: 0.5;
+        &:nth-of-type(2) {
+            border-top: none;
+            &::after {
+                border-top-right-radius: rem(16px);
+            }
+        }
+        &:nth-last-of-type(1) {
+            &::after {
+                border-bottom-right-radius: rem(16px);
+            }
+        }
+        &:nth-last-of-type(2) {
+            &::after {
+                border-bottom-left-radius: rem(16px);
+            }
+        }
+        .img {
+            width: rem(56px);
+            height: rem(56px);
+            margin-bottom: rem(8px);
+        }
+        .name {
+            @include ellipsis();
+            font-size: rem(28px);
+            font-weight: bold;
+            color: var(--color);
         }
     }
+    .active {
+        background: var(--primaryBg);
+        &::after {
+            content: '';
+            width: calc(100% - 2px);
+            height: calc(100% - 2px);
+            border: 1px solid var(--primary);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+    .line {
+        margin-top: rem(40px);
+        margin-bottom: rem(10px);
+        border-top: 1px dashed var(--lineColor);
+    }
 }
-
-@import '@/sass/mixin.scss';
-
+.handle-module {
+    padding: 0 rem(30px);
+    margin-bottom: rem(30px);
+}
 </style>

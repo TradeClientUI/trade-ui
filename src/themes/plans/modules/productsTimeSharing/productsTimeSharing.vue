@@ -76,7 +76,7 @@ export default {
                     symbol_id: item.symbolId,
                     trade_type: item.tradeType,
                     trade_mode: item.dealMode,
-                    kline_type: 4,
+                    kline_type: 7,
                     query_kline_num: 50,
                     kline_timestamp_end: Math.round(new Date().getTime() / 1000).toString()
                 }
@@ -141,30 +141,30 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/sass/mixin.scss';
-.swipe-wrap{
+.swipe-wrap {
     background: var(--contentColor);
-    padding:0 rem(30px);
-    .products-wrap{
+    padding: 0 rem(30px);
+    .products-wrap {
         display: flex;
         justify-content: flex-start;
-        .product-item{
+        .product-item {
             overflow: hidden;
             // width: 100%;
             // flex: 1;
             padding: rem(23px);
             margin-right: rem(30px);
-            .text1{
+            .text1 {
                 @include ellipsis();
                 width: 98%;
             }
-            .text1,.text3{
+            .text1,
+            .text3 {
                 font-size: rem(24px);
                 margin-bottom: rem(8px);
             }
-            .text2{
+            .text2 {
                 font-size: rem(40px);
             }
-
         }
     }
 }

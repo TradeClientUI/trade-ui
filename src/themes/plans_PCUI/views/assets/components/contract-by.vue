@@ -3,21 +3,43 @@
         <div class='assets-header'>
             <ul class='assets-ul'>
                 <li>
-                    <span>{{ $t('trade.freeMargin') }}</span>
-                    <strong>{{ userAccount?.availableMargin || '--' }}</strong>
+                    <p class='muted'>
+                        <span>{{ $t('trade.freeMargin') }}</span>
+                        <van-icon class='question' name='question-o' @click='showExplain(5)' />
+                    </p>
+                    <p class='value'>
+                        <strong>{{ userAccount?.availableMargin || '--' }}</strong>
+                    </p>
                 </li>
                 <li>
-                    <span>{{ $t('trade.allOriginalMargin') }}</span>
-                    <strong>{{ userAccount?.occupyMargin || '--' }}</strong>
+                    <p class='muted'>
+                        <span>{{ $t('trade.allOriginalMargin') }}</span>
+                        <van-icon class='question' name='question-o' @click='showExplain(6)' />
+                    </p>
+                    <p class='value'>
+                        <strong>{{ userAccount?.occupyMargin || '--' }}</strong>
+                    </p>
                 </li>
                 <li>
-                    <span>{{ $t('trade.positionProfit') }}</span>
-                    <strong :class="userAccount?.profitLoss > 0 ? 'riseColor': 'fallColor'">
-                        {{ userAccount?.profitLoss || '--' }}
-                    </strong>
+                    <p class='muted'>
+                        <span>{{ $t('trade.positionProfit') }}</span>
+                    </p>
+                    <p class='value'>
+                        <strong :class="{ 'riseColor': userAccount?.profitLoss > 0 , 'fallColor': userAccount?.profitLoss < 0 }">
+                            {{ userAccount?.profitLoss || '--' }}
+                        </strong>
+                    </p>
                 </li>
             </ul>
             <div class='assets-handle'>
+                <template v-if='businessConfig?.tradeTypeShowCash.includes(Number(tradeType)) && customerInfo.companyType === "real"'>
+                    <button class='btn pc_assets_deposit_ga' @click='goDesposit'>
+                        {{ $t('trade.desposit') }}
+                    </button>
+                    <button class='btn' @click='goWithdraw'>
+                        {{ $t('trade.withdraw') }}
+                    </button>
+                </template>
                 <button v-if='$store.state._base.plans.length>1' class='btn' @click='goTransfer'>
                     {{ $t('trade.transfer') }}
                 </button>
@@ -32,7 +54,7 @@
                 <el-table-column :label="$t('common.symbolName')" :min-width='minWidth' prop='symbolName' />
                 <el-table-column :label="$t('trade.profit') + '('+ assetsInfo.currency +')'" :min-width='minWidth'>
                     <template #default='scope'>
-                        <span :class="parseFloat(scope.row.profitLoss) > 0 ? 'riseColor': 'fallColor'">
+                        <span :class="{ 'riseColor': parseFloat(scope.row.profitLoss) > 0 , 'fallColor': parseFloat(scope.row.profitLoss) < 0 }">
                             {{ scope.row.profitLoss }}
                         </span>
                     </template>
@@ -60,19 +82,50 @@
                         <span>{{ Number(scope.row.direction) === 1 ? currentProduct(scope.row)?.sell_price : currentProduct(scope.row)?.buy_price }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('trade.prospectMandatory')" :min-width='160'>
+                <el-table-column :min-width='160'>
+                    <template #header>
+                        <div class='header-cell'>
+                            <span>{{ $t('trade.prospectMandatory') }}</span>
+                            <van-icon class='question' name='question-o' @click='showExplain(7)' />
+                        </div>
+                    </template>
                     <template #default='scope'>
                         <span>{{ scope.row.previewStopPrice || '--' }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('trade.originalMargin')" :min-width='minWidth'>
+                <el-table-column :min-width='160'>
+                    <template #header>
+                        <div class='header-cell'>
+                            <span>{{ $t('trade.originalMargin') }}</span>
+                            <van-icon class='question' name='question-o' @click='showExplain(8)' />
+                        </div>
+                    </template>
                     <template #default='scope'>
                         <span> {{ scope.row.occupyTheMargin || '--' }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('trade.holdMargin')" :min-width='minWidth'>
+                <el-table-column :min-width='160'>
+                    <template #header>
+                        <div class='header-cell'>
+                            <span>{{ $t('trade.holdMargin') }}</span>
+                            <van-icon class='question' name='question-o' @click='showExplain(9)' />
+                        </div>
+                    </template>
                     <template #default='scope'>
                         <span>{{ scope.row.maintenanceMargin || '--' }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column :min-width='minWidth'>
+                    <template #header>
+                        <div class='header-cell'>
+                            <span>风险状态</span>
+                            <van-icon class='question' name='question-o' @click='showExplain(10)' />
+                        </div>
+                    </template>
+                    <template #default='scope'>
+                        <span :class='["riskLevel", "riskLevel" + scope.row.riskStatus]'>
+                            {{ riskLevelMap[scope.row.riskStatus] }}
+                        </span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="$t('trade.stopLossPrice')" :min-width='minWidth'>
@@ -111,9 +164,14 @@
                     </template>
                 </el-table-column>
                 <template #empty>
-                    <span class='emptyText'>
-                        {{ $t('c.noData') }}
-                    </span>
+                    <div class='none-data'>
+                        <button @click='onTrade'>
+                            {{ $t('common.startTrade') }}
+                        </button>
+                        <p class='tip'>
+                            {{ $t('trade.positionEmpty') }}
+                        </p>
+                    </div>
                 </template>
             </el-table>
         </div>
@@ -125,6 +183,12 @@
     <close-position ref='closePosition' />
     <!-- 止盈止损 -->
     <sltp ref='sltp' />
+    <!-- 说明弹窗 -->
+    <explain-popup
+        v-model='isExplain'
+        :explain-type='explainType'
+        :user-account='userAccount'
+    />
 </template>
 
 <script>
@@ -132,17 +196,20 @@
 import adjustMargin from './adjust-margin.vue'
 import closePosition from './close-position.vue'
 import sltp from './sltp.vue'
+import explainPopup from './explain-popup.vue'
 
-import { computed, ref } from 'vue'
+import { computed, ref, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { minus } from '@/utils/calculation'
 
 export default {
     components: {
         adjustMargin,
         closePosition,
-        sltp
+        sltp,
+        explainPopup
     },
     props: {
         // 玩法类型
@@ -154,6 +221,7 @@ export default {
     setup (props) {
         const store = useStore()
         const router = useRouter()
+        const { t } = useI18n({ useScope: 'global' })
         const adjustMargin = ref(null)
         const closePosition = ref(null)
         const sltp = ref(null)
@@ -168,9 +236,33 @@ export default {
         const assetsInfo = computed(() => customerInfo.value.accountList?.find(el => Number(el.tradeType) === props.tradeType))
         // 持仓列表数据
         const positionList = computed(() => store.state._trade.positionList[props.tradeType])
+
+        // 配置文件
+        const businessConfig = computed(() => store.state.businessConfig)
+
+        // 账户列表
+        const accountList = computed(() => {
+            return store.state._user?.customerInfo?.accountList && store.state._user?.customerInfo?.accountList.filter(item => Number(item.tradeType) === Number(props.tradeType))
+        })
+
+        // 账户信息
+        const accountInfo = computed(() => accountList?.value[0])
+
         // 获取当产品数据
         const currentProduct = (row) => {
             return productMap.value[row.symbolId + '_' + row.tradeType]
+        }
+        const state = reactive({
+            // 是否显示说明弹窗
+            isExplain: false,
+            // 说明类型
+            explainType: 0
+        })
+        // 风险状态等级文案
+        const riskLevelMap = {
+            1: t('riskLevel.safety'),
+            2: t('riskLevel.warn'),
+            3: t('riskLevel.danger')
         }
 
         // 跳转到划转页面
@@ -213,6 +305,38 @@ export default {
             sltp.value.open(row)
         }
 
+        // 显示说明弹窗
+        const showExplain = (type) => {
+            state.explainType = type
+            state.isExplain = true
+        }
+
+        // 跳转充值页面
+        const goDesposit = () => {
+            router.push({
+                path: '/depositChoose',
+                query: {
+                    tradeType: props.tradeType
+                }
+            })
+        }
+
+        // 跳转提现页面
+        const goWithdraw = () => {
+            router.push({
+                path: '/assets/withdrawAccount',
+                query: {
+                    accountId: accountInfo.value.accountId,
+                    tradeType: props.tradeType
+                }
+            })
+        }
+
+        // 去交易
+        const onTrade = () => {
+            router.push('quote')
+        }
+
         return {
             minus,
             productMap,
@@ -228,7 +352,15 @@ export default {
             openClosePosition,
             sltp,
             openSltp,
-            minWidth
+            minWidth,
+            ...toRefs(state),
+            showExplain,
+            riskLevelMap,
+            customerInfo,
+            businessConfig,
+            goDesposit,
+            goWithdraw,
+            onTrade
         }
     }
 }

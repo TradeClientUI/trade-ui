@@ -1,16 +1,15 @@
 <template>
-    <div class='mobileBar van-hairline--bottom'>
+    <div class='mobileBar'>
         <div v-if='zoneShow' class='zone' :class='{ disabled: disabled }'>
-            <!-- <VueSelect
-                v-model='zoneVal'
-                :actions='countryList'
-                :show-select='showSelect'
-                text='code'
-                value='code'
-                @select='zoneOnSelect'
-            /> -->
             <div class='selectWrap'>
-                <span class='selectval' @click='zoneOnSelect'>
+                <img
+                    v-if='countryCode'
+                    alt=''
+                    class='icon-country'
+                    :src="cdnUrl+'/images/countries_flags/' + countryCode +'.png'"
+                    srcset=''
+                />
+                <span class='selectval' @click='handleVisible(true)'>
                     {{ zoneVal }}
                     <van-icon v-if='showSelect' name='arrow-down' />
                 </span>
@@ -19,140 +18,137 @@
         <div class='inputWrapper'>
             <input
                 :id='id'
-                class='input'
                 v-bind='$attrs'
+                class='input'
                 required
                 :type='inputType'
                 :value='modelValue'
+                @blur='onBlur'
                 @input='onInput'
             />
             <label v-if='label' class='label' :for='id'>
                 {{ label }}
             </label>
         </div>
-        <a v-if='clear' v-show='modelValue.length' class='van-icon van-icon-clear' href='javascript:;' @click='onClear'></a>
+        <a
+            v-if='clear'
+            v-show='modelValue.length'
+            class='van-icon van-icon-clear'
+            href='javascript:;'
+            tabindex='-1'
+            @click='onClear'
+        ></a>
     </div>
+    <!-- 选择国家的弹窗 -->
+    <CountrySheet v-model='countryVisible' :account-type='accountType' @select='zoneOnSelect' />
 </template>
 
 <script>
-import VueSelect from '@/components/select'
+import { ref, computed } from 'vue'
 import { randomId } from '@/utils/util'
+import CountrySheet from './countrySheet.vue'
+import { cdnUrl } from '@/config'
 export default {
     components: {
-        VueSelect
+        CountrySheet
     },
     props: {
         modelValue: {
             type: [Number, String],
             default: ''
         },
+        accountType: {
+            type: Number,
+            default: 0
+        },
         clear: {
             type: Boolean,
             default: false
         },
-        zoneShow: {
+        zoneShow: { // 是否显示国家区号
             type: Boolean,
             default: true
         },
-        zone: {
+        zone: { //  国家区号
             type: [Number, String],
             default: ''
         },
-        inputType: {
+        inputType: { // 表单类型
             type: [String, Number],
             default: 'tel'
         },
-        label: {
+        label: { // 其他文案
             type: [String, Number],
             default: ''
         },
-        disabled: {
+        disabled: { // 禁用下拉框
             type: Boolean,
             default: false
         },
         showSelect: {
-            type: Boolean,
+            type: Boolean, // 是否下拉箭头
             default: true
         },
-        openAccountType: {
-            type: [Number],
-            default: 0
-        },
-        allCountry: {
-            type: Boolean,
-            default: false
+        countryCode: {
+            type: String,
+            default: ''
         }
     },
-    data () {
-        return {
-            value: '',
-            id: this.$attrs.id || randomId(),
-            allCountryList: []
-        }
-    },
-    computed: {
-        countryList () {
-            if (this.allCountry) {
-                return this.allCountryList
-            } else {
-                const countryList = this.$store.state.countryList || []
-                const tempArr = []
-                countryList.forEach(item => {
-                    tempArr.push({
-                        name: item.name + ' (' + item.countryCode + ')',
-                        code: item.countryCode,
-                        countryCode: item.code,
-                        countryName: item.name
-                    })
-                })
-                return tempArr
-            }
-        },
-        zoneVal: {
-            get () {
-                return this.zone
-            },
-            set (value) {
-                if (!this.disabled) {
-                    this.$emit('update:zone', value)
+    emits: ['update:modelValue', 'update:zone', 'input', 'zoneSelect', 'onBlur'],
+    setup (props, { emit, attrs }) {
+        const id = ref(attrs.id || randomId)
+
+        const zoneVal = computed({
+            get: () => props.zone,
+            set: val => {
+                if (!props.disabled) {
+                    emit('update:modelValue', val)
                 }
             }
-        }
-    },
-    emits: ['update:modelValue', 'update:zone', 'input', 'zoneSelect'],
-    mounted () {
-        this.$store.dispatch('getCountryListByParentCode').then(res => {
-            if (res.data.length > 0) {
-                const tempArr = []
-                res.data.forEach(item => {
-                    tempArr.push({
-                        name: item.name + ' (' + item.countryCode + ')',
-                        code: item.countryCode,
-                        countryCode: item.code,
-                        countryName: item.name
-                    })
-                })
-                this.allCountryList = tempArr
-            }
         })
-    },
-    methods: {
-        onClear () {
-            this.$emit('update:modelValue', '')
-            this.$emit('input', '')
-        },
-        onInput ($event) {
-            this.$emit('update:modelValue', $event.target.value)
-            this.$emit('input', $event.target.value)
-        },
-        zoneOnSelect (item) {
-            if (!this.disabled) {
-                // this.$emit('update:zone', item.code)
-                this.$emit('zoneSelect', item)
+
+        // 选择国家弹窗
+        const countryVisible = ref(false)
+
+        const handleVisible = (type) => {
+            countryVisible.value = type
+        }
+
+        const zoneOnSelect = (item) => {
+            if (!props.disabled) {
+                handleVisible(false)
+                emit('zoneSelect', item)
             }
+        }
+
+        const onClear = () => {
+            emit('update:modelValue', '')
+            emit('input', '')
+        }
+
+        const onInput = ($event) => {
+            emit('update:modelValue', $event.target.value)
+            emit('input', $event.target.value)
+        }
+
+        const onBlur = ($event) => {
+            emit('onBlur', $event.target.value)
+        }
+
+        return {
+            id,
+            zoneVal,
+            onInput,
+            onClear,
+            onBlur,
+            handleVisible,
+            countryVisible,
+            zoneOnSelect,
+            cdnUrl
         }
     }
 }
+
 </script>
 
 <style lang="scss" scoped>
@@ -249,6 +245,8 @@ export default {
     // }
 }
 .selectWrap {
+    display: flex;
+    justify-content: center;
     position: relative;
     align-items: center;
     width: 100%;
@@ -256,6 +254,12 @@ export default {
         position: absolute;
         top: rem(25px);
         right: rem(10px);
+    }
+    .icon-country {
+        margin-right: rem(10px);
+        width: rem(50px);
+        height: rem(38px);
+        border: solid 1px var(--lineColor);
     }
 }
 </style>

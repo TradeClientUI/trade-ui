@@ -17,28 +17,28 @@ export const baseLangURL = {
 }
 
 export function newsListByType (data, lang = 'en-US', newsArea = 1) {
-    const baseURL = baseLangURL[newsArea][lang]
+    const baseURL = baseLangURL[newsArea][lang] || baseLangURL[newsArea]['en-US']
     return request({
         url: baseURL + '/api/article/newsListByType',
         data
     })
 }
 export function newsListByTypeByPage (data, lang = 'en-US', newsArea = 1) {
-    const baseURL = baseLangURL[newsArea][lang]
+    const baseURL = baseLangURL[newsArea][lang] || baseLangURL[newsArea]['en-US']
     return request({
         url: baseURL + '/api/article/newsListByTypeByPage',
         data
     })
 }
 export function canlendarListByDate (data, lang = 'en-US', newsArea = 1) {
-    const baseURL = baseLangURL[newsArea][lang]
+    const baseURL = baseLangURL[newsArea][lang] || baseLangURL[newsArea]['en-US']
     return request({
         url: baseURL + '/api/canlendar/listByDate',
         data
     })
 }
 export function articleDetail (data, lang = 'en-US', newsArea = 1) {
-    const baseURL = baseLangURL[newsArea][lang]
+    const baseURL = baseLangURL[newsArea][lang] || baseLangURL[newsArea]['en-US']
     return request({
         url: baseURL + '/api/article/detail',
         data

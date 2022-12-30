@@ -35,11 +35,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/sass/mixin.scss';
-.typeBar{
+.typeBar {
     margin-top: 16px;
     .cellBar {
-    // align-items: center;
-    color: var(--minorColor);
+        // align-items: center;
+        color: var(--minorColor);
         .titleCol {
             width: rem(150px);
             padding-top: rem(20px);
@@ -52,9 +52,8 @@ export default {
         }
     }
     .btn {
-
         padding: 6px 12px;
-        color: var(color);
+        color: var(--color);
         font-size: rem(24px);
         line-height: 1;
         text-align: center;

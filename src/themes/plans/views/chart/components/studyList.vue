@@ -140,7 +140,7 @@ export default {
         flex-direction: column;
         width: 100%;
         padding: rem(50px) 0 0;
-        background-color: var(--bgColor);
+        background-color: var(--contentColor);
         .type {
             margin: rem(10px) 0;
             padding: 0 rem(30px);

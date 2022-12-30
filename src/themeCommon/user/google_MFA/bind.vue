@@ -4,7 +4,7 @@
         <div class='formBox'>
             <div v-if='customerInfo.phone' class='cell'>
                 <p class='label'>
-                    {{ $t('common.sendToYou') }}{{ customerInfo.phone }}
+                    {{ $t('common.sendToYou') }} {{ customerInfo.phone }}
                 </p>
                 <van-field
                     v-model.trim='verifyCodeSMS'
@@ -19,7 +19,7 @@
 
             <div v-if='customerInfo.email' class='cell'>
                 <p class='label'>
-                    {{ $t('common.sendToYou') }}{{ customerInfo.email }}
+                    {{ $t('common.sendToYou') }} {{ customerInfo.email }}
                 </p>
                 <van-field
                     v-model.trim='verifyCodeEmail'

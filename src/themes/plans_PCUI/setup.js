@@ -49,7 +49,7 @@ export default function (app) {
 // 获取当前国际化语言
 function getI18nLang () {
     const lang = getCookie('lang') || 'zh-CN'
-    let result = ''
+    let result = 'en'
     switch (lang) {
     case 'zh-CN':
         result = 'zh-cn'
@@ -59,6 +59,9 @@ function getI18nLang () {
         break
     case 'en-US':
         result = 'en'
+        break
+    case 'th-TH':
+        result = 'th'
         break
     }
     return result

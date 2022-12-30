@@ -1,7 +1,7 @@
 <template>
     <div class='svg-wrap'>
         <svg :height='height' :width='width'>
-            <polyline :points='points' :stroke='$style[product.upDownColor] || $style.minorColor' stroke-width='1.5' style='fill: none;' />
+            <polyline :points='points' :stroke='color || $style[product.upDownColor] || $style.minorColor' stroke-width='1.5' style='fill: none;' />
         </svg>
 
         <!-- <svg fill='none' height='26' width='80' xmlns='http://www.w3.org/2000/svg'>
@@ -27,6 +27,10 @@ export default {
         height: {
             type: Number,
             default: 30
+        },
+        color: {
+            type: String,
+            default: ''
         }
     },
     setup (props) {

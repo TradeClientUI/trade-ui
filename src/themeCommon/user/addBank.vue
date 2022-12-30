@@ -3,28 +3,30 @@
         <top left-icon='arrow-left' :menu='false' :right-action='false' :show-center='true' />
         <div class='filed-wrap'>
             <van-cell-group>
-                <van-field v-model.trim='firstName' :label='$t("bank.bankPersonFirstName")' :placeholder='$t("bank.bankPersonFirstName")' />
-                <van-field v-model.trim='lastName' :label='$t("bank.bankPersonLastName")' :placeholder='$t("bank.bankPersonLastName")' />
-                <van-field v-model.trim='bankNo' :label='$t("bank.bankNo")' :placeholder='$t("bank.inputBankNo")' type='number' />
+                <van-field
+                    v-model.trim='countryName'
+                    :label="$t('bank.bankCountry')"
+                    readonly
+                    required
+                    right-icon='arrow-down'
+                    @click='countryShow = true'
+                />
+                <van-field v-model.trim='firstName' :label='$t("bank.bankPersonFirstName")' :placeholder='$t("bank.bankPersonFirstName")' required />
+                <van-field v-model.trim='lastName' :label='$t("bank.bankPersonLastName")' :placeholder='$t("bank.bankPersonLastName")' required />
+                <!-- <van-field v-model.trim='bankNo' :label='$t("bank.bankNo")' :placeholder='$t("bank.inputBankNo")' type='number' /> -->
+                <van-field v-model.trim='bankAccount' :label='$t("bank.bankAccount")' :placeholder='$t("bank.inputBankAccount")' required />
                 <van-field
                     v-model.trim='bankName'
                     :label='$t("bank.bankName")'
                     :placeholder='$t("bank.inputBankName")'
                     readonly
+                    required
                     right-icon='arrow-down'
-                    @click='bankShow = true'
+                    @click='openBankDialog'
                 />
-                <!-- <van-field
-                    v-model='currency'
-                    label='银行卡币种'
-                    placeholder='请输入银行卡币种'
-                    readonly
-                    right-icon='arrow-down'
-                    @click='currencyShow=true'
-                /> -->
                 <CurrencyAction v-model='currency' v-model:show='currencyShow' class='cellRow' input-align='left' />
 
-                <van-field
+                <!-- <van-field
                     v-model.trim='area'
                     :label='$t("bank.openAddress")'
                     :placeholder='$t("bank.inputOpenAddressText")'
@@ -32,14 +34,17 @@
                     right-icon='arrow-down'
                     @click='areaShow = true'
                 />
-                <van-field v-model.trim='bankArea' :label='$t("bank.branchAddress")' :placeholder='$t("bank.inputBranchAddress")' />
+                <van-field v-model.trim='bankArea' :label='$t("bank.branchAddress")' :placeholder='$t("bank.inputBranchAddress")' /> -->
+                <van-field v-model.trim='swiftCode' label='Swift Code' :placeholder='$t("bank.swiftCode")' />
+                <van-field v-model.trim='otherCode' label='Other Code' :placeholder='$t("bank.otherCode")' />
             </van-cell-group>
         </div>
-        <van-button block class='confirm-btn' type='primary' @click='handleConfirm'>
+        <van-button block class='confirm-btn mobile_withdraw_choose_bankcard_ga' type='primary' @click='handleConfirm'>
             <span>{{ $t('common.sure') }}</span>
         </van-button>
     </div>
 
+    <!-- 区域弹窗 -->
     <van-popup v-model:show='areaShow' position='bottom'>
         <van-picker
             ref='picker'
@@ -49,21 +54,29 @@
             @confirm='areaConfirm'
         />
     </van-popup>
-
+    <!-- 国家列表弹窗 -->
+    <van-action-sheet
+        v-model:show='countryShow'
+        :actions='countryList'
+        :round='false'
+        @select='countryConfirm'
+    />
+    <!-- 银行卡列表弹窗 -->
     <van-popup
         v-model:show='bankShow'
         class='popup-bank'
         position='right'
         :style="{ height: '100%' }"
     >
-        <div class='bank-list'>
-            <div v-for='item in bankDict' :key='item.code' class='bank-item' @click='onSelectBank(item)'>
-                <i class='bank-icons-sm' :class="'bk-'+ item.code"></i>
-                {{ item.name }}
+        <div v-if='(bankList.length > 0)' class='bank-list'>
+            <div v-for='item in bankList' :key='item.code' class='bank-item' @click='onSelectBank(item)'>
+                <van-icon class='card' name='card' />
+                <span>{{ item.name }}</span>
             </div>
         </div>
+        <van-empty v-else :description='$t("bank.bankCountryTip")' image='/images/empty.png' />
     </van-popup>
-
+    <!-- 添加成功弹窗 -->
     <van-dialog
         v-model:show='addSuccessShow'
         :cancel-button-text='$t("common.cancel")'
@@ -86,13 +99,13 @@
 <script>
 import { useRouter } from 'vue-router'
 import top from '@/components/top'
-import { reactive, toRefs, computed, ref, watch } from 'vue'
+import { reactive, toRefs, computed, ref, watch, watchEffect, onMounted } from 'vue'
 import RuleFn from './addbank_rule'
 import { useStore } from 'vuex'
 import Schema from 'async-validator'
 import { Toast } from 'vant'
-import { addBank } from '@/api/user'
-import { getCountryListByParentCode } from '@/api/base'
+import { addInternationalBank } from '@/api/user'
+import { getCountryListByParentCode, getListByParentId } from '@/api/base'
 import CurrencyAction from '@/components/currencyAction'
 import { useI18n } from 'vue-i18n'
 
@@ -106,15 +119,29 @@ export default {
         const store = useStore()
         const picker = ref(null)
         const { t } = useI18n({ useScope: 'global' })
-        const bankDict = computed(() => store.state.bankDict)
+        // 用户信息
         const customInfo = computed(() => store.state._user.customerInfo)
+        // 国家列表
+        const countryList = computed(() => {
+            return store.state.countryList
+        })
+        // 当前选择的国家名称
+        const countryName = computed(() => {
+            const item = countryList.value.find(el => el.code === state.countryCode)
+            return item?.displayName || ''
+        })
+        // 国家银行卡列表数据
+        const countryBanks = computed(() => store.state.bankDict)
 
         const state = reactive({
+            countryCode: customInfo.value.country, // 当前选择的国家code
+            countryShow: false, // 是否显示选择国家弹窗
+            bankList: [], // 当前可选择的银行卡列表数据
             firstName: '',
             lastName: '',
             bankNo: '',
             bankName: '',
-            currency: 'USD',
+            currency: '',
             area: '',
             bankArea: '',
             areaShow: false,
@@ -123,9 +150,35 @@ export default {
             currencyShow: false,
             addSuccessShow: false,
             showCancel: false,
-            provinceCities: []
+            provinceCities: [],
+            bankAccount: '',
+            swiftCode: '',
+            otherCode: ''
         })
 
+        // 获取银行卡列表数据
+        const getBankList = () => {
+            const item = countryBanks.value.find(el => el.code === (state.countryCode + '_bank'))
+            if (item) {
+                getListByParentId({
+                    parentId: item.id
+                }).then(res => {
+                    state.bankName = ''
+                    state.checkedBankCode = ''
+                    if (res.check()) {
+                        state.bankList = res.data || []
+                    } else {
+                        state.bankList = []
+                    }
+                })
+            } else {
+                state.bankName = ''
+                state.checkedBankCode = ''
+                state.bankList = []
+            }
+        }
+
+        // 获取省市区列表数据
         const getProvinceCities = async (parentCode) => {
             state.loading = true
             await getCountryListByParentCode({ parentCode }).then(res => {
@@ -153,7 +206,7 @@ export default {
             })
         }
 
-        await getProvinceCities(customInfo.value.country)
+        // await getProvinceCities(customInfo.value.country)
         if (state.provinceCities.length > 0) {
             getProvinceCities(state.provinceCities[0]?.code)
         }
@@ -194,15 +247,12 @@ export default {
             const params = {
                 firstName: state.firstName,
                 lastName: state.lastName,
-                bankCardNumber: state.bankNo,
                 bankName: state.bankName,
                 bankCurrency: state.currency,
-                bankAddress: province + city,
-                bankBranch: state.bankArea,
-                country: customInfo.value.country,
-                province: province,
-                city: city,
-                bankCode: state.checkedBankCode
+                bankCode: state.checkedBankCode,
+                bankAccount: state.bankAccount,
+                swiftCode: state.swiftCode,
+                otherCode: state.otherCode
             }
 
             const validator = new Schema(RuleFn(t))
@@ -215,12 +265,18 @@ export default {
             })
         }
 
+        // 确认选择国家
+        const countryConfirm = (item) => {
+            state.countryCode = item.code
+            state.countryShow = false
+        }
+
         const handleAddBank = (params) => {
             const toast = Toast.loading({
                 message: t('common.loading'),
                 forbidClick: true,
             })
-            addBank(params).then(res => {
+            addInternationalBank(params).then(res => {
                 toast.clear()
                 if (res.check()) {
                     state.addSuccessShow = true
@@ -228,8 +284,12 @@ export default {
             })
         }
 
-        const toBankList = () => {
-            router.push('/bankList')
+        // 打开选择银行弹窗
+        const openBankDialog = () => {
+            if (state.bankList.length === 0) {
+                return Toast(t('bank.bankCountryTip'))
+            }
+            state.bankShow = true
         }
 
         const cancel = () => {
@@ -247,15 +307,30 @@ export default {
             state.area = val.map(el => el.text).join()
         }
 
-        store.dispatch('getBankDictList')
+        // 监听countryCode
+        watchEffect(() => {
+            if (state.countryCode && countryBanks.value.length > 0) {
+                // 获取银行卡列表数据
+                getBankList()
+            }
+        })
+
+        onMounted(() => {
+            // 获取国家区号
+            store.dispatch('getCountryListByParentCode')
+            // 获取国家银行卡列表
+            store.dispatch('getBankDictList')
+        })
 
         return {
+            countryName,
+            countryList,
+            countryConfirm,
+            openBankDialog,
             onSelectBank,
             onSelectCurrency,
             ...toRefs(state),
             handleConfirm,
-            toBankList,
-            bankDict,
             cancel,
             picker,
             onChangeArea,
@@ -270,6 +345,14 @@ export default {
 .page-wrap {
     flex: 1;
     background-color: var(--bgColor);
+    :deep {
+        .van-cell {
+            font-size: rem(26px);
+        }
+        .van-field__label {
+            width: rem(200px);
+        }
+    }
     .confirm-btn {
         height: rem(90px);
         position: absolute;
@@ -288,19 +371,19 @@ export default {
 <style lang="scss">
 @import '@/sass/mixin.scss';
 .popup-bank {
+    width: rem(600px);
     background-color: var(--bgColor);
     .bank-list {
-        min-width: rem(400px);
-        //min-width: 2.66667rem;
-        padding: rem(30px) rem(50px) 0 rem(50px);
+        padding: rem(30px) 0;
         background-color: var(--contentColor);
         .bank-item {
+            display: flex;
+            align-items: center;
+            height: rem(120px);
             position: relative;
-            padding: rem(15px) 0 rem(15px) 0;
+            padding: 0 rem(40px);
             color: var(--color);
-            font-size: rem(30px);
-            line-height: rem(80px);
-            line-height: rem(60px);
+            font-size: rem(28px);
             text-align: left;
             &::after {
                 position: absolute;
@@ -318,7 +401,18 @@ export default {
                 content: '';
                 pointer-events: none;
             }
+            .card {
+                margin-top: rem(-12px);
+                margin-right: rem(14px);
+                color: var(--minorColor);
+                font-size: rem(48px);
+            }
         }
+    }
+    .van-empty__description {
+        text-align: center;
+        padding: 0 rem(60px);
+        font-size: rem(26px);
     }
 }
 .action-sheet-area {

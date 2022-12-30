@@ -34,7 +34,7 @@
                     type='declineRanking'
                 />
             </div>
-            <div v-if="'cryptocurrency'===activeLabelCode" class='item'>
+            <div v-if='false' class='item'>
                 <RankingItem
                     v-model:currency='amountCurrency'
                     :currency-list='profitCurrencyList'
@@ -160,9 +160,9 @@ export default {
         const declineCurrency = ref('') // 跌幅榜币种
         const amountCurrency = ref('') // 成交额榜币种
 
-        // 产品标签的显示排序：加密货币、外汇、商品、股票
+        // 产品标签的显示排序：外汇、加密货币、贵金属、 能源、商品、股票
         const labelList = computed(() => {
-            const sortIndex = ['cryptocurrency', 'FX', 'commodites', 'stock']
+            const sortIndex = ['FX', 'cryptocurrency', 'Metal', 'Energy', 'commodites', 'stock']
             const sortResult = []
             sortIndex.forEach(el => {
                 const labelItem = productListByLabel.value.find(item => item.labelCode === el)
@@ -221,50 +221,49 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.rankingModule{
+.rankingModule {
     position: relative;
     background: var(--contentColor);
     border-radius: 5px;
     font-size: 12px;
-    .labelTabs{
+    .labelTabs {
         margin-top: 10px;
     }
-    .rankContent{
+    .rankContent {
         margin-top: 10px;
         display: flex;
         justify-content: space-between;
-        .item{
+        .item {
             flex: 1;
             margin-right: 50px;
-            &:last-child{
+            &:last-child {
                 margin-right: 0;
             }
         }
-        .label{
+        .label {
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
         }
-
     }
-    .lastLabel{
+    .lastLabel {
         text-align: right;
     }
-    .symbolCurrencyIcon{
+    .symbolCurrencyIcon {
         margin-right: 8px;
     }
-    .symbolCurrency{
+    .symbolCurrency {
         display: inline-block;
         line-height: 16px;
         vertical-align: middle;
         font-size: 14px;
     }
 }
-.plansList{
+.plansList {
     position: relative;
     margin-bottom: 30px;
-    &::after{
-        content: "";
+    &::after {
+        content: '';
         position: absolute;
         left: 0;
         bottom: -1px;
@@ -273,27 +272,27 @@ export default {
         background-color: var(--assistColor);
         z-index: var(--el-index-normal);
     }
-    :deep{
-        .el-tabs__header{
+    :deep {
+        .el-tabs__header {
             margin: 0;
         }
-        .el-tabs__nav-wrap::after{
+        .el-tabs__nav-wrap::after {
             display: none;
         }
-        .el-tabs__active-bar{
+        .el-tabs__active-bar {
             height: 3px;
         }
-        .el-tabs__item{
+        .el-tabs__item {
             font-size: 20px;
             color: var(--normalColor);
             line-height: 22px;
             font-weight: 400;
-            &.is-active{
+            &.is-active {
                 color: var(--primary);
                 font-weight: bold;
             }
         }
-        .el-tabs__active-bar{
+        .el-tabs__active-bar {
             background-color: var(--primary);
         }
     }

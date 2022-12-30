@@ -44,7 +44,7 @@
                     />
                 </el-select>
                 <div class='footerBtn'>
-                    <van-button block :disabled='disabled' type='primary' @click='next'>
+                    <van-button block class='pc_withdraw_next_ga' :disabled='disabled' type='primary' @click='next'>
                         {{ $t('common.nextStep') }}
                     </van-button>
                 </div>
@@ -187,7 +187,7 @@ export default {
                 accountId: state.accountId
             }
 
-            if (['bank', 'otc365_cny'].includes(state.currentTab)) {
+            if (['bank', 'otc365_cny', 'micropay'].includes(state.currentTab)) {
                 // 跳转到提现银行卡页面
                 router.push({
                     path: '/assets/withdrawMoney',
@@ -199,13 +199,13 @@ export default {
                     path: '/assets/withdrawRedeem',
                     query
                 })
-            } else if (['GCash', 'Maya', 'APay_GCash'].includes(state.currentTab)) {
+            } else if (['GCash', 'Maya'].includes(state.currentTab)) {
                 // 跳转到提现pay8Account页面
                 router.push({
                     path: '/assets/pay8Account',
                     query
                 })
-            } else if (['Bank_Account', 'APay_Bank'].includes(state.currentTab)) {
+            } else if (['Bank_Account'].includes(state.currentTab)) {
                 // 跳转到提现pay8Bank页面
                 router.push({
                     path: '/assets/pay8Bank',
@@ -290,12 +290,11 @@ export default {
         margin-top: rem(20px);
         padding: 0 rem(30px);
         background: var(--contentColor);
-        :deep(.el-select){
-            width:100%;
+        :deep(.el-select) {
+            width: 100%;
         }
-        :deep(.el-input__inner){
+        :deep(.el-input__inner) {
             border: none;
-            background: var(--assistColor);
             color: var(--color);
         }
         .head-text {

@@ -15,7 +15,7 @@ import LayoutTop from '@plans/layout/top'
 import { setRootVariable } from './colorVariables'
 import { setRouter, modifybaseURL } from '@/utils/request'
 // import LuckDraw from 'vue-luck-draw/vue3'
-import { getLoginParams, localRemove, getQueryVariable, getToken, setToken, isEmpty, removeLoginParams, checkUserKYC, localGet, localSet, getCookie, sessionSet, getQueryString } from '@/utils/util'
+import { getLoginParams, getQueryVariable, getToken, setToken, isEmpty, removeLoginParams, checkUserKYC, localGet, localSet, getCookie, sessionSet, getQueryString, localRemove, localSetObj } from '@/utils/util'
 import BigNumber from 'bignumber.js'
 import preventReClick from '@/directives/preventReClick'
 import positiveNumber from '@/directives/positiveNumber'
@@ -31,6 +31,14 @@ BigNumber.config({ EXPONENTIAL_AT: [-16, 26] })
 
 sessionSet('entrySearch', location.search) // 缓存入口url的参数，给注册开会来源使用
 if (getQueryVariable('tsource')) setToken(getQueryVariable('tsource'))
+
+// 支持uniapp嵌套首页时区分真实模拟首页
+const accountType = getQueryVariable('accountType')
+const demoDomain = getQueryVariable('demoDomain')
+if (accountType && demoDomain) {
+    localSetObj('mockAccount', 'demo_domain', decodeURIComponent(demoDomain))
+    localSetObj('mockAccount', 'lastAccountType', accountType)
+}
 
 const app = createApp(App)
 app.use(preventReClick).use(positiveNumber)
@@ -50,16 +58,17 @@ app.config.errorHandler = (err, vm, info) => {
 // 如果有缓存有登录信息，先执行异步登录或者拉取用户信息
 let loginParams = getLoginParams()
 if (loginParams) localRemove('loginParams') // 删除之前缓存登录密码
+
 const token = getToken()
 
 // 设置默认主题色
 if (isEmpty(localGet('invertColor'))) {
-    localSet('invertColor', 'light')
+    localSet('invertColor', 'night') // 默认黑色主题
 }
 
 setRouter(router)
 
-if (loginParams || token) store.commit('_user/Update_loginLoading', true)
+if (token) store.commit('_user/Update_loginLoading', true)
 else if (location.search.includes('from=officialWebsite')) loginParams = getPreDemoAccountParams() // 从官网过来自动分配pre的Demo账号
 
 // 加载业务渠道自定义配置json

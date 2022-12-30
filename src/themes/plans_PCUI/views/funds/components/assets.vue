@@ -82,14 +82,14 @@ export default {
 
         const accountMap = computed(() => store.state._user.customerInfo?.accountMap)
 
-        // 合约全仓资产
+        // 全仓合约资产
         const accountTradeType1 = computed(() => {
             const accountAssets = store.state._user.accountAssets['1']
             const account = store.state._user.customerInfo?.accountList?.find(el => el.tradeType === parseInt(props.product?.tradeType))
             return Object.assign({}, account, accountAssets)
         })
 
-        // 合约逐仓资产
+        // 逐仓合约资产
         const accountTradeType2 = computed(() => store.state._user.accountAssets['2'])
 
         // 最大可借额度

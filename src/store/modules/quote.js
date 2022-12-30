@@ -31,7 +31,7 @@ export default {
         productList: [], // 产品列表
         productMap: {}, // 产品列表
         planMap: {}, // 管理所有玩法及每个玩法下的所有产品
-        productActivedID: sessionGet('productActived'), // 当前操作的产品ID
+        productActivedID: sessionGet('productActivedID'), // 当前操作的产品ID
         handicapList: [], // 盘口实时深度报价
         dealList: [], // 成交数据,
         dealLastPrice: '', // 成交记录的最新价
@@ -39,6 +39,7 @@ export default {
         deepthDigits: '',
         fundProductList: [], // 基金产品列表
         fundInfo: null, // 当前操作的基金产品
+        quoteTradeType: '' // 行情页面显示的默认玩法
     },
     getters: {
         // 用户自选列表
@@ -243,6 +244,7 @@ export default {
             // 依据分类缓存最后一次访问的产品
             if (product?.symbolId && product?.symbolKey && product?.tradeType) {
                 sessionSet('productActived', JSON.stringify(product))
+                sessionSet('productActivedID', id)
             }
         },
         Update_lastProductActivedID (state, id) {
@@ -271,8 +273,10 @@ export default {
 
             // 更新成交记录的最新价
             const product = state.productMap[data.symbolKey]
-            const newData = handlerDealLastPrice(data, state.dealLastPrice || data, product)
-            state.dealLastPrice = newData
+            if (product) {
+                const newData = handlerDealLastPrice(data, state.dealLastPrice || data, product)
+                state.dealLastPrice = newData
+            }
         },
         Delete_handicapList (state, data = {}) {
             state.handicapList = []
@@ -307,6 +311,10 @@ export default {
             if (!fundProduct) return false
             Object.assign(fundProduct, data)
         },
+        // 设置行情页面玩法类型
+        setQuoteTradeType (state, type) {
+            state.quoteTradeType = type
+        }
     },
     actions: {
         // 整理当前账户组的所有产品列表，自选产品+产品板块的产品
@@ -318,7 +326,12 @@ export default {
             const symbolAllData = createListByPlans(allSymbolKeys)
             const { symbolList, planMap } = symbolAllData
             commit('add_products', symbolList)
+
+            // 过滤掉没有配置产品的玩法
+            const productsPlans = rootState._base.plans.filter(el => planMap[el.tradeType])
+            commit('_base/Update_plans', productsPlans, { root: true })
             commit('Updata_planMap', { plans: rootState._base.plans, planMap })
+
             if (symbolList.length) {
                 const isWallet = rootState._base.wpCompanyInfo.isWallet // 现货玩法是否当钱包使用
                 const firstTradeType = rootState._base.plans.find(el => !(el.tradeType === '5' && isWallet))?.tradeType

@@ -3,7 +3,7 @@
         <h2 class='tradeTypeName'>
             {{ tradeTypeNames[product.tradeType] }}
         </h2>
-        <!-- 合约全仓 -->
+        <!-- 全仓合约 -->
         <div v-if='product.tradeType===1' class='rightActions'>
             <div class='assetItem'>
                 <p>{{ $t('assets.balance') }}({{ accountTradeType1.currency }})</p>
@@ -39,7 +39,7 @@
                 {{ $t('trade.transfer') }}
             </van-button>
         </div>
-        <!-- 合约逐仓 -->
+        <!-- 逐仓合约 -->
         <div v-else-if='product.tradeType===2' class='rightActions'>
             <div class='assetItem'>
                 <p>{{ $t('assets.freeMargin') }}</p>
@@ -137,14 +137,14 @@ export default {
         // 3,5,9玩法资产
         const assetsInfo = computed(() => (store.state._user.assetsInfo[product.value?.tradeType] || {}))
 
-        // 合约全仓资产
+        // 全仓合约资产
         const accountTradeType1 = computed(() => {
             const accountAssets = store.state._user.accountAssets['1']
             const account = store.state._user.customerInfo?.accountList?.find(el => el.tradeType === parseInt(product.value?.tradeType))
             return Object.assign({}, account, accountAssets)
         })
 
-        // 合约逐仓资产
+        // 逐仓合约资产
         const accountTradeType2 = computed(() => store.state._user.accountAssets['2'])
         const customerInfo = computed(() => store.state._user.customerInfo)
 
@@ -152,7 +152,7 @@ export default {
         const goDesposit = () => {
             if (store.state._user.customerInfo?.accountList?.length > 1) {
                 router.push({
-                    path: route.path + '/depositChoose',
+                    path: '/depositChoose',
                     query: {
                         tradeType: product.value?.tradeType
                     }

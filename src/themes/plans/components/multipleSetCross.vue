@@ -1,5 +1,5 @@
 <template>
-    <!-- 杠杆倍数设置 合约全仓 -->
+    <!-- 杠杆倍数设置 全仓合约 -->
     <van-popup
         v-model:show='show'
         class='custom-popup leverage-popup'

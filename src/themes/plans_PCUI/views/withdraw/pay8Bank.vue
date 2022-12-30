@@ -548,7 +548,7 @@ export default {
                             confirmButtonText: t('withdraw.activateBtn')
                         }).then(() => {
                             router.replace({
-                                path: '/assets/depositChoose',
+                                path: '/depositChoose',
                                 query: {
                                     tradeType,
                                     accountId,
@@ -659,7 +659,6 @@ export default {
                 tradeType,
                 fundPwd: md5(state.fundPwd),
                 googleCode: state.googleCode,
-                bankCode: state.channel.code,
                 extend: JSON.stringify({ 'phone': '+63' + state.phone, 'bankCode': state.channel.code })
             }
             handleWithdraw(params).then(res => {
@@ -895,8 +894,8 @@ export default {
         font-size: rem(28px);
     }
 }
-
-.fund, .field-google {
+.fund,
+.field-google {
     margin-top: rem(50px);
     .bw-t {
         color: var(--normalColor);

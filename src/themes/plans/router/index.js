@@ -20,17 +20,18 @@ const routes = [
                 meta: {
                     title: 'route.home',
                     keepAlive: true,
+                    showFooter: true
                 }
             },
-            // {
-            //     path: 'home',
-            //     name: 'Home',
-            //     component: () => import(/* webpackChunkName: "Quote" */ '../views/home/index.vue'),
-            //     meta: {
-            //         title: 'route.home',
-            //         keepAlive: true,
-            //     }
-            // },
+            {
+                path: 'index',
+                name: 'Index',
+                component: () => import(/* webpackChunkName: "Index" */ '../views/home/index.vue'),
+                meta: {
+                    title: 'route.home',
+                    keepAlive: true,
+                }
+            },
             {
                 path: 'selfSymbol',
                 name: 'SelfSymbol',
@@ -76,7 +77,7 @@ const routes = [
             {
                 path: 'order',
                 name: 'Order',
-                component: () => import(/* webpackChunkName: "order" */ '../views/order/order.vue'),
+                component: () => import(/* webpackChunkName: "Order" */ '../views/order/order.vue'),
                 meta: {
                     title: 'route.order',
                 }
@@ -97,7 +98,72 @@ const routes = [
                     title: 'route.download',
                 }
             },
+            {
+                path: 'about',
+                name: 'About',
+                component: () => import(/* webpackChunkName: "footerAboutUs" */ '../views/footerUrlPage/aboutUs/index.vue'),
+                meta: {
+                    title: 'route.about'
+                }
+            },
+            {
+                path: 'fees',
+                name: 'Fees',
+                component: () => import(/* webpackChunkName: "footerFees" */ '../views/footerUrlPage/fees/index.vue'),
+                meta: {
+                    title: 'route.fees'
+                }
+            },
+            {
+                path: 'cookies-policy',
+                name: 'CookiesPolicy',
+                component: () => import(/* webpackChunkName: "footeCookiesPolicy" */ '../views/footerUrlPage/cookiesPolicy/index.vue'),
+                meta: {
+                    title: 'route.cookies',
+                }
+            },
+            {
+                path: 'faqs',
+                name: 'Faqs',
+                component: () => import(/* webpackChunkName: "footerFaqs" */ '../views/footerUrlPage/faqs/index.vue'),
+                meta: {
+                    title: 'route.faqs',
+                }
+            },
+            {
+                path: 'privacy-policy',
+                name: 'privacy-policy',
+                component: () => import(/* webpackChunkName: "footerPrivacyPolicy" */ '../views/footerUrlPage/privacyPolicy/index.vue'),
+                meta: {
+                    title: 'route.privacy',
+                }
+            },
+            {
+                path: 'terms-conditions',
+                name: 'terms-conditions',
+                component: () => import(/* webpackChunkName: "footerTerms" */ '../views/footerUrlPage/terms/index.vue'),
+                meta: {
+                    title: 'route.terms',
+                }
+            },
+            {
+                path: 'service',
+                name: 'service',
+                component: () => import(/* webpackChunkName: "service" */ '../views/service/service.vue'),
+                meta: {
+                    title: 'route.service',
+                }
+            }
         ]
+    },
+    {
+        path: '/depositRecord',
+        name: 'DepositRecord',
+        component: () => import(/* webpackChunkName: "deposit" */ '@/themeCommon/user/deposit/depositRecord.vue'),
+        meta: {
+            title: 'cRoute.depositRecord',
+            roles: ['User']
+        }
     },
     {
         path: '/assetsInfo',
@@ -288,14 +354,12 @@ const routes = [
         path: '/fundDEX',
         name: 'fundDEX',
         redirect: '/dashboard',
-        component: () =>
-            import(/* webpackChunkName: "api" */ '@/themeCommon/user/fundDEX/components/layout.vue'),
+        component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/components/layout.vue'),
         children: [
             {
                 path: '/dashboard',
                 name: 'Dashboard',
-                component: () =>
-                    import(/* webpackChunkName: "api" */ '@/themeCommon/user/fundDEX/dashboard/index.vue'),
+                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/dashboard/index.vue'),
                 meta: {
                     title: ''
                 }
@@ -303,8 +367,7 @@ const routes = [
             {
                 path: '/earning',
                 name: 'Earning',
-                component: () =>
-                    import(/* webpackChunkName: "api" */ '@/themeCommon/user/fundDEX/staking/index.vue'),
+                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/staking/index.vue'),
                 meta: {
                     title: ''
                 }
@@ -312,8 +375,7 @@ const routes = [
             {
                 path: '/earning/detail',
                 name: 'Earning-Detail',
-                component: () =>
-                    import(/* webpackChunkName: "api" */ '@/themeCommon/user/fundDEX/staking/detail.vue'),
+                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/staking/detail.vue'),
                 meta: {
                     title: ''
                 }
@@ -321,8 +383,7 @@ const routes = [
             {
                 path: '/indexFunds',
                 name: 'IndexFunds',
-                component: () =>
-                    import(/* webpackChunkName: "api" */ '@/themeCommon/user/fundDEX/indexFunds/index.vue'),
+                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/indexFunds/index.vue'),
                 meta: {
                     title: ''
                 }
@@ -330,15 +391,14 @@ const routes = [
             {
                 path: '/indexFunds/detail',
                 name: 'IndexFunds-Detail',
-                component: () =>
-                    import(/* webpackChunkName: "api" */ '@/themeCommon/user/fundDEX/indexFunds/detail.vue'),
+                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/indexFunds/detail.vue'),
                 meta: {
                     title: ''
                 }
             }
         ]
     },
-    { path: '/:pathMatch(.*)*', redirect: { name: 'Home' } },
+    { path: '/:pathMatch(.*)*', redirect: { name: 'Mine' } },
 ]
 
 const lang = getCookie('lang') || 'zh-CN'

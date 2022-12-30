@@ -176,7 +176,20 @@ export function queryWithdrawRate (data) {
     })
 }
 
-/* 获取支付通道 */
+/* 获取所有支付通道列表 */
+export function queryAllPayType (data) {
+    return request({
+        url: '/global/fund.app.DepositAppDubboService.getPayChannelsV2',
+        method: 'post',
+        headers: {
+            version: '0.0.1',
+        },
+        data,
+        toastErr: false
+    })
+}
+
+/* 按账户币种获取支付通道列表 */
 export function queryPayType (data) {
     return request({
         url: '/global/fund.app.DepositAppDubboService.getPayChannels',
@@ -187,6 +200,7 @@ export function queryPayType (data) {
         data
     })
 }
+
 /* 获取pay8支付通道类型 */
 export function queryPay8Type (data) {
     return request({
@@ -198,6 +212,7 @@ export function queryPay8Type (data) {
         data
     })
 }
+
 /* 获取直充支付通道支持币种信息 */
 export function getCryptoBlockchainInfo (data) {
     return request({
@@ -209,6 +224,7 @@ export function getCryptoBlockchainInfo (data) {
         data
     })
 }
+
 /* 获取直充支付钱包地址 */
 export function getBindRechargeAddress (data) {
     return request({
@@ -221,6 +237,7 @@ export function getBindRechargeAddress (data) {
         toastErr: false
     })
 }
+
 /* 申请绑定直充支付钱包地址 */
 export function applyRechargeBindAddress (data) {
     return request({
@@ -261,6 +278,18 @@ export function queryBankList (data) {
 export function addBank (data) {
     return request({
         url: '/global/customer.app.WithdrawBankWebApiService.add',
+        method: 'post',
+        headers: {
+            version: '0.0.1',
+        },
+        data
+    })
+}
+
+/* 新增国际银行卡 */
+export function addInternationalBank (data) {
+    return request({
+        url: '/global/customer.app.WithdrawBankWebApiService.addV1v2v8',
         method: 'post',
         headers: {
             version: '0.0.1',
@@ -896,6 +925,32 @@ export function twitterLoginVerify (data) {
     })
 }
 
+/* apple登录token校验 */
+export function appleLoginVerify (data) {
+    return request({
+        url: '/third/login/customer.app.CustomerThirdLoginService.appleVerify',
+        method: 'post',
+        toastErr: false,
+        headers: {
+            version: '0.0.1'
+        },
+        data
+    })
+}
+
+/* telegram 登录校验token有效性 */
+export function telegramLoginVerify (data) {
+    return request({
+        url: '/third/login/customer.app.CustomerThirdLoginService.telegramVerify',
+        method: 'post',
+        toastErr: false,
+        headers: {
+            version: '0.0.1'
+        },
+        data
+    })
+}
+
 /* 第三方登录 */
 export function thirdLogin (data) {
     return request({
@@ -1234,6 +1289,39 @@ export function queryMC900Url (data) {
         url: '/global/fund.app.DepositMc900AppDubboService.getCashierUrl',
         method: 'post',
         toastErr: false,
+        headers: {
+            version: '0.0.1'
+        },
+        data
+    })
+}
+
+/* 获取支付通道支持的账户币种信息列表 */
+export function getDepositAccountCurrencyList (data) {
+    return request({
+        url: '/global/fund.app.DepositAppDubboService.getDepositAccountCurrencyList',
+        method: 'post',
+        headers: {
+            version: '0.0.1'
+        },
+        data
+    })
+}
+
+/* 真实模拟账户切换 */
+export function switchUserAccount (data) {
+    return request({
+        url: '/thirdExt/switchAccount',
+        method: 'post',
+        data
+    })
+}
+
+// 重置模拟账户
+export function resetAccount (data) {
+    return request({
+        url: '/global/customer.app.CustomerDubboApiService.resetAccount',
+        method: 'post',
         headers: {
             version: '0.0.1'
         },

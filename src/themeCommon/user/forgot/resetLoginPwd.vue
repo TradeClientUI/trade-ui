@@ -14,12 +14,20 @@
         </header>
         <van-cell-group>
             <div class='form-item'>
-                <Field v-model='newPwd' label='' :placeholder='$t("forgot.inputNewPwd")' :type='newPwdVis ? "text" : "password"' />
-                <span class='icon' :class="newPwdVis ? 'icon_eye': 'icon_eye-off'" @click='changeState("newPwdVis")'></span>
+                <van-field v-model='newPwd' label='' :placeholder='$t("forgot.inputNewPwd")' :type='newPwdVis ? "text" : "password"' />
+                <span
+                    class='icon'
+                    :class="newPwdVis ? 'icon_icon_pressed': 'icon_icon_default'"
+                    @click='changeState("newPwdVis")'
+                ></span>
             </div>
             <div class='form-item'>
-                <Field v-model='confirmPwd' label='' :placeholder='$t("forgot.newPwdAgain")' :type='confirmVis ? "text" : "password"' />
-                <span class='icon' :class="confirmVis ? 'icon_eye': 'icon_eye-off'" @click='changeState("confirmVis")'></span>
+                <van-field v-model='confirmPwd' label='' :placeholder='$t("forgot.newPwdAgain")' :type='confirmVis ? "text" : "password"' />
+                <span
+                    class='icon'
+                    :class="confirmVis ? 'icon_icon_pressed': 'icon_icon_default'"
+                    @click='changeState("confirmVis")'
+                ></span>
             </div>
         </van-cell-group>
         <van-button class='confirmBtn' @click='handleConfirm'>
@@ -36,7 +44,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { findPwd } from '@/api/user'
 import md5 from 'js-md5'
 import { useI18n } from 'vue-i18n'
-import { localSet } from '@/utils/util'
+import { localSet, pwdReg } from '@/utils/util'
 
 export default {
     name: 'ResetPwd',
@@ -61,7 +69,6 @@ export default {
         }
 
         function handleConfirm () {
-            const pwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
             if (!state.newPwd) {
                 return Toast(t('forgot.inputNewPwd'))
             }

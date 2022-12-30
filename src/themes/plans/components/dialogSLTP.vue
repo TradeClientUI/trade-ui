@@ -208,10 +208,10 @@ export default {
 @import '@/sass/mixin.scss';
 .floatTip {
     position: absolute;
-    top: rem(54px);
+    top: rem(24px);
     left: 0;
     width: 100%;
-    height: rem(50px);
+    min-height: rem(50px);
     color: var(--warn);
     line-height: rem(50px);
     text-align: center;
@@ -236,7 +236,7 @@ export default {
         position: absolute;
         top: 0;
         right: 0;
-        padding:rem(35px) rem(25px) rem(25px) rem(25px);
+        padding: rem(35px) rem(25px) rem(25px) rem(25px);
         color: var(--normalColor);
         font-size: rem(28px);
     }
@@ -311,7 +311,7 @@ export default {
 <style lang="scss">
 @import '@/sass/mixin.scss';
 .m-dialogZyzs {
-    overflow-y: visible;
+    overflow: visible;
     background-color: var(--contentColor);
 }
 </style>

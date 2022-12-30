@@ -87,7 +87,9 @@ export default {
         const closed = () => { // 关闭弹出层且动画结束后触发
             state.pwd = ''
             context.emit('update:show', false)
-            googleVerifyCodeComp.value.clear()
+            if (googleVerifyCodeComp.value) {
+                googleVerifyCodeComp.value.clear()
+            }
         }
         const formatter = value => {
             // 过滤输入的非数字
@@ -160,6 +162,9 @@ export default {
     .oper {
         padding: rem(20px) 0;
         text-align: right;
+        .href {
+            color: var(--primary);
+        }
     }
 }
 .dialog-footer {

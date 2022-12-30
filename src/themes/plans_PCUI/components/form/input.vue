@@ -8,6 +8,7 @@
             :type='type'
             :value='modelValue'
             @blur='onBlur'
+            @focus='onFocus'
             @input='onInput'
         />
         <span v-if='clear' v-show='modelValue.length' class='van-badge__wrapper van-icon van-icon-clear' @click='onClear'></span>
@@ -40,7 +41,7 @@ export default {
             default: 'text'
         },
     },
-    emits: ['update:modelValue', 'onBlur'],
+    emits: ['update:modelValue', 'onBlur', 'onFocus'],
     setup (props, { emit }) {
         const inputEl = ref()
 
@@ -59,11 +60,17 @@ export default {
             if (inputEl.value) inputEl.value.value = ''
             emit('update:modelValue', '')
         }
+
+        // focus
+        const onFocus = event => {
+            emit('onFocus', event.target.value)
+        }
         return {
             inputEl,
             onInput,
             onBlur,
             onClear,
+            onFocus
         }
     }
 }

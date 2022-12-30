@@ -40,14 +40,14 @@ export default {
         // 3,5,9玩法资产
         const assetsInfo = computed(() => (store.state._user.assetsInfo[5] || {}))
 
-        // 合约全仓资产
+        // 全仓合约资产
         const accountTradeType1 = computed(() => {
             const accountAssets = store.state._user.accountAssets['1']
             const account = store.state._user.customerInfo?.accountList?.find(el => el.tradeType === parseInt(5))
             return Object.assign({}, account, accountAssets)
         })
 
-        // 合约逐仓资产
+        // 逐仓合约资产
         const accountTradeType2 = computed(() => store.state._user.accountAssets['2'])
         const customerInfo = computed(() => store.state._user.customerInfo)
 
@@ -55,18 +55,18 @@ export default {
         const goDesposit = () => {
             if (store.state._user.customerInfo?.accountList?.length > 1) {
                 router.push({
-                    path: route.path + '/depositChoose',
+                    path: '/depositChoose',
                     query: {
-                        tradeType: 5
+                        tradeType: 1
                     }
                 })
             } else {
                 router.push({
-                    path: route.path + '/deposit',
+                    path: '/depositChoose',
                     query: {
                         accountId: assetsInfo.value.accountId,
                         currency: assetsInfo.value.currency,
-                        tradeType: 5
+                        tradeType: 1
                     }
                 })
             }
@@ -78,7 +78,7 @@ export default {
                 path: route.path + '/withdrawAccount',
                 query: {
                     accountId: assetsInfo.value.accountId,
-                    tradeType: 5
+                    tradeType: 1
                 }
             })
         }

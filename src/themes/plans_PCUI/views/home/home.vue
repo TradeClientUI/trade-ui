@@ -4,7 +4,6 @@
 
         <!-- 轮播模块 -->
         <FullBanner v-if='fullBannerData' :data='fullBannerData.data' />
-
         <div class='relativeFloor'>
             <!-- 产品模块 -->
             <BannerProducts v-if='bannerProductsData' :data='bannerProductsData.data' />

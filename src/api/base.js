@@ -20,6 +20,15 @@ export function getListByParentCode (data) {
     })
 }
 
+/* 按父级ID获取基础字典列表 */
+export function getListByParentId (data) {
+    return request({
+        url: '/global/config.app.AppDictDubboService.getListByParentId',
+        method: 'post',
+        data
+    })
+}
+
 /* 发送验证码 */
 export function verifyCodeSend (data) {
     return request({
@@ -63,6 +72,7 @@ export function getCountryListByParentCode (data) {
         data
     })
 }
+
 /* 设置语言信息 */
 export function changeLang (lang) {
     return request({

@@ -24,6 +24,7 @@
         :min-date='minDate'
         position='left'
         :round='false'
+        :show-mark='false'
         teleport='body'
         type='range'
         @confirm='onRangeConfirm'

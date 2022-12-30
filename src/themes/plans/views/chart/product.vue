@@ -1,9 +1,10 @@
+
 <template>
     <div class='page-wrap' :class='{ isIframe: isUniapp }'>
         <LayoutTop v-if='!isUniapp' :back='true' :menu='false'>
             <p class='symbolName'>
                 <span v-if='product?.symbolName' class='sortIconSpan' @click='showSidebar=true'>
-                    <van-icon class='sortIcon' name='sort' />
+                    <i class='sortIcon icon_quanrejiaohuan-'></i>
                 </span>
                 <!-- <i v-if='product?.symbolName' class='icon_chouti1' @click='showSidebar=true'></i> -->
                 {{ product?.symbolName }}
@@ -60,7 +61,7 @@
                 <div class='item'>
                     <template v-if='product.isCryptocurrency'>
                         <p class='priceBottom'>
-                            <span>
+                            <span class='label'>
                                 {{ $t('common.24hHigh') }}
                             </span>
                             <span>
@@ -68,7 +69,7 @@
                             </span>
                         </p>
                         <p>
-                            <span>
+                            <span class='label'>
                                 {{ $t('common.24hLow') }}
                             </span>
                             <span>
@@ -78,7 +79,7 @@
                     </template>
                     <template v-else>
                         <p class='priceBottom'>
-                            <span>
+                            <span class='label'>
                                 {{ $t('trade.todayOpen') }}
                             </span>
                             <span>
@@ -86,7 +87,7 @@
                             </span>
                         </p>
                         <p>
-                            <span>
+                            <span class='label'>
                                 {{ $t('trade.yesterdayClosed') }}
                             </span>
                             <span>
@@ -95,7 +96,7 @@
                         </p>
                     </template>
                     <p v-if='product.etf' class='priceTop'>
-                        <span>
+                        <span class='label'>
                             {{ $t('fundInfo.realtimeJZ') }}({{ product.fundCurrency }})
                         </span>
                         <span>
@@ -106,13 +107,17 @@
                 <div class='item'>
                     <template v-if='product.isCryptocurrency'>
                         <p class='priceBottom'>
-                            {{ $t('common.24hNumber') }}({{ product.baseCurrency }})
+                            <span class='label'>
+                                {{ $t('common.24hNumber') }}({{ product.baseCurrency }})
+                            </span>
                             <span>
                                 {{ formatAmount(product.rolling_transactions_number) }}
                             </span>
                         </p>
                         <p>
-                            {{ $t('common.24hAmount') }}({{ product.profitCurrency }})
+                            <span class='label'>
+                                {{ $t('common.24hAmount') }}({{ product.profitCurrency }})
+                            </span>
                             <span>
                                 {{ formatAmount(product.rolling_amount) }}
                             </span>
@@ -120,13 +125,17 @@
                     </template>
                     <template v-else>
                         <p class='priceBottom'>
-                            {{ $t('trade.high') }}
+                            <span class='label'>
+                                {{ $t('trade.high') }}
+                            </span>
                             <span>
                                 {{ product.high_price }}
                             </span>
                         </p>
                         <p>
-                            {{ $t('trade.low') }}
+                            <span class='label'>
+                                {{ $t('trade.low') }}
+                            </span>
                             <span>
                                 {{ product.low_price }}
                             </span>
@@ -134,7 +143,9 @@
                     </template>
 
                     <p v-if='product.etf' class='priceTop'>
-                        {{ $t('fundInfo.premiumRate') }}({{ product.fundCurrency }})
+                        <span class='label'>
+                            {{ $t('fundInfo.premiumRate') }}({{ product.fundCurrency }})
+                        </span>
                         <span>
                             {{ product.premiumRate || '--' }}
                         </span>
@@ -188,6 +199,7 @@
                     <i class='icon_icon_arrow'></i>
                 </div>
 
+                <!-- 图表类型 -->
                 <div class='flex-right'>
                     <van-dropdown-menu class='kIcon-wrap'>
                         <van-dropdown-item ref='klineTypeDropdown' v-model='klineType'>
@@ -316,7 +328,7 @@
                 <div class='buy fallColorBg' @click="toOrder('buy')">
                     <i class='icon icon_mairu'></i>
                     <span class='text'>
-                        {{ $t('trade.buy') }}
+                        {{ $t('trade.buyText') }}
                     </span>
                     <!-- <p class='price'>
                         {{ product.buy_price }}
@@ -325,7 +337,7 @@
                 <div class='sell riseColorBg' @click="toOrder('sell')">
                     <i class='icon icon_maichu'></i>
                     <span class='text'>
-                        {{ $t('trade.sell') }}
+                        {{ $t('trade.sellText') }}
                     </span>
                     <!-- <p class='price '>
                         {{ product.sell_price }}
@@ -396,6 +408,14 @@ export default {
         // uniapp传参
         const { customerGroupId, theme, isUniapp } = route.query
         const lang = route.query.lang || getCookie('lang')
+
+        const chartLocaleJSON = {
+            'zh-CN': 'zh',
+            'en-US': 'en',
+            'zh-HK': 'zh_TW',
+            'th-TH': 'th',
+        }
+        const chartLocale = chartLocaleJSON[lang] || chartLocaleJSON['en-US']
 
         const { t, locale } = useI18n({ useScope: 'global' })
         const klineTypeDropdown = ref(null)
@@ -559,7 +579,10 @@ export default {
             findFundPageList: [], // 基金产品列表
         })
 
-        if (symbolId && tradeType) store.commit('_quote/Update_productActivedID', `${symbolId.value}_${tradeType.value}`)
+        if (symbolId && tradeType) {
+            store.commit('_quote/Update_productActivedID', `${symbolId.value}_${tradeType.value}`)
+            store.commit('_quote/Update_lastProductActivedID', `${symbolId.value}_${tradeType.value}`)
+        }
 
         const computedLineList = computed(() => {
             if (product.value?.tradeType === 9) {
@@ -743,8 +766,9 @@ export default {
         // 更新指标
         const updateStudy = list => {
             const studyList = []
-            if (list.length > 0) {
-                list.forEach(el => {
+            const propsList = list.filter(item => item)
+            if (propsList.length > 0) {
+                propsList.forEach(el => {
                     const target = JSON.parse(JSON.stringify([...MAINSTUDIES, ...SUBSTUDIES].find(item => item.name === el) || null))
                     if (target) {
                         studyList.push(target)
@@ -753,14 +777,28 @@ export default {
                             name: target?.name,
                             params: target?.params
                         }))
-                    } else {
-                        localSetChartConfig('mainStudy', null)
-                        localSetChartConfig('subStudy', null)
                     }
                 })
+            } else {
+                localSetChartConfig('subStudy', null)
+                localSetChartConfig('mainStudy', null)
             }
 
+            if (studyList.length === 1 && studyList.find(el => el.type === 'mainStudy')) {
+                localSetChartConfig('subStudy', null)
+            } else if (studyList.length === 1 && studyList.find(el => el.type === 'subStudy')) {
+                localSetChartConfig('mainStudy', null)
+            }
+            // console.log('studyList======', studyList)
+            // state.onChartReadyFlag && unref(chartRef).updateIndicator(studyList)
+            initChartData()
+
             state.onChartReadyFlag && unref(chartRef).updateIndicator(studyList)
+
+            chartRef.value && chartRef.value.reset({
+                initialValue: initialValue.value,
+                options: unref(state.initConfig)
+            })
         }
 
         // 增加指标
@@ -930,12 +968,11 @@ export default {
         })
 
         // 设置图表设置缓存
-        const locChartConfig = JSON.parse(localGet('chartConfig'))
+        let locChartConfig = JSON.parse(localGet('chartConfig'))
         const initChartData = () => {
-            let chartLocale, invertColor
-
+            locChartConfig = JSON.parse(localGet('chartConfig'))
+            let invertColor
             if (isUniapp) {
-                chartLocale = lang === 'zh-CN' ? 'zh' : 'en'
                 loadLocaleMessages(i18n, lang).then(() => {
                     locale.value = lang // change!
                     setCookie('lang', lang, 'y10')
@@ -945,7 +982,6 @@ export default {
                 setRootVariable(theme)
             } else {
                 invertColor = localGet('invertColor') === 'light' ? 'Light' : 'Dark'
-                chartLocale = getCookie('lang') === 'zh-CN' ? 'zh' : 'en'
             }
 
             // 红 #ef5350  绿 #26a69a  chartColorType 1 绿涨红跌 2 红涨绿跌
@@ -968,7 +1004,8 @@ export default {
                 if (volumeIndex > -1) SUBSTUDIES.splice(volumeIndex, 1)
             }
             state.sideStudyList = SUBSTUDIES.slice(0, 5)
-            if (isEmpty(locChartConfig) || !locChartConfig.chartType) {
+
+            if (isEmpty(locChartConfig)) {
                 localSetChartConfig('showLastPrice', false)
                 localSetChartConfig('mainStudy', JSON.stringify(MAINSTUDIES[0]))
                 localSetChartConfig('subStudy', JSON.stringify(SUBSTUDIES[0]))
@@ -1000,7 +1037,7 @@ export default {
                     },
                     indicators: [
                         {
-                            name: 'Bollinger Bands',
+                            name: 'Moving Average mock',
                             params: [true, false, [26, 2]]
                         },
                         {
@@ -1069,6 +1106,7 @@ export default {
 
         // 图表初始值
         const initialValue = computed(() => {
+            const resolution = JSON.parse(localGet('chartConfig'))?.resolution || 1
             if (product.value?.symbolName) {
                 return {
                     text: product.value.symbolName, // 用于vant组件显示
@@ -1077,7 +1115,7 @@ export default {
                     digits: product.value.symbolDigits, // 小数点
                     dealMode: product.value.dealMode, // 成交模式
                     tradeType: getTradeType(), // 玩法
-                    interval: locChartConfig?.resolution // 周期
+                    interval: resolution // 周期
                 }
             }
             return null
@@ -1242,6 +1280,7 @@ export default {
                     tradeType.value = parseInt(query.tradeType)
                     store.dispatch('_quote/querySymbolInfo', { symbolId: getSymbolId(), tradeType: getTradeType() })
                     store.commit('_quote/Update_productActivedID', `${query.symbolId}_${query.tradeType}`)
+                    store.commit('_quote/Update_lastProductActivedID', `${query.symbolId}_${query.tradeType}`)
                     await nextTick()
                     const product = store.getters.productActived
                     subscribeToProduct()
@@ -1328,8 +1367,8 @@ export default {
     width: 100%;
     //height: 100%;
     margin-top: rem(110px);
-    margin-bottom: rem(120px);
-    //overflow: auto;
+    margin-bottom: rem(140px);
+    overflow: auto;
     background: var(--bgColor);
     .symbolName {
         display: flex;
@@ -1519,11 +1558,15 @@ export default {
                     align-items: center;
                     justify-content: space-between;
                     white-space: nowrap;
+                    color: var(--color);
                     &.priceBottom {
                         margin-bottom: rem(10px);
                     }
                     &.priceTop {
                         margin-top: rem(10px);
+                    }
+                    .label {
+                        color: var(--minorColor);
                     }
                 }
             }

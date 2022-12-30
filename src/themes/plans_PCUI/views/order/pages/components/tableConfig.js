@@ -135,7 +135,7 @@ export const getPendingColumns = tradeType => {
                 minWidth: 150,
                 formatter: row => <span >
                     {<div class="van-ellipsis">{row.symbolName}</div>}
-                    {row.crossLevelNum ? <><span class="crossLevelNum marginleft0">{ row.crossLevelNum }x</span></> : <></>}
+                    {<span class="crossLevelNum marginleft0" v-show={row.crossLevelNum}>{ row.crossLevelNum }x</span>}
                 </span>
             },
             {
@@ -151,7 +151,7 @@ export const getPendingColumns = tradeType => {
                 name: t('trade.pendingUnit') + ' (' + t('trade.volumeUnit') + ')',
                 prop: 'requestNum',
                 align: 'right',
-                minWidth: 120,
+                minWidth: 150,
                 // formatter: row => row.requestNum + `(${row.numberStatisticMode === 2 ? row.accountCurrency : t('trade.volumeUnit')})`
             },
             { name: t('trade.trustPrice'), prop: 'requestPrice', align: 'right', minWidth: 100 },
@@ -185,6 +185,7 @@ export const getPendingColumns = tradeType => {
                 name: t('c.handle'),
                 fixed: 'right',
                 align: 'right',
+                className: 'operate',
                 slots: {
                     default: ({ row }) => {
                         return (
@@ -409,19 +410,19 @@ export const getTransactionColumns = (tradeType) => {
             {
                 name: t('trade.dealTime'),
                 align: 'left',
-                width: 160,
+                width: 170,
                 formatter: row => formatTime(row.executeTime)
             },
             {
                 name: t('trade.name'),
                 align: 'left',
-                minWidth: 120,
+                minWidth: 180,
                 prop: 'symbolName'
             },
             {
                 name: t('trade.direction'),
                 align: 'right',
-                width: 80,
+                width: 85,
                 formatter: row => <span class={Number(row.direction) === 1 ? 'riseColor' : 'fallColor'}>
                     { Number(row.direction) === 1 ? t('trade.buy') : t('trade.sell') }
                 </span>
@@ -438,7 +439,7 @@ export const getTransactionColumns = (tradeType) => {
                 name: t('trade.pendingUnit') + ' (' + t('trade.volumeUnit') + ')',
                 prop: 'requestNum',
                 align: 'right',
-                minWidth: 120
+                minWidth: 150
             },
             // {
             //     name: t('transRecords.byAmount'),
@@ -495,7 +496,7 @@ export const getTransactionColumns = (tradeType) => {
                 minWidth: 100,
             },
             { name: t('trade.fee'), prop: 'commission', align: 'right', minWidth: 120 },
-            { name: t('trade.pendingNo'), prop: 'dealId', align: 'right' },
+            { name: t('trade.pendingNo'), minWidth: 100, prop: 'dealId', align: 'right' },
         ],
         2: [
             {
@@ -844,7 +845,7 @@ export const getAssetColumns = (tradeType) => {
                 }
             },
             {
-                name: t('trade.profit') + '(' + unref(assetsInfo).currency + ')',
+                name: `${t('trade.profit')}${assetsInfo.value?.currency ? '(' + assetsInfo.value.currency + ')' : ''}`,
                 align: 'right',
                 minWidth: 150,
                 formatter: row => {
@@ -864,7 +865,7 @@ export const getAssetColumns = (tradeType) => {
             {
                 name: t('trade.pendingUnit') + '(' + t('trade.volumeUnit') + ')',
                 align: 'right',
-                minWidth: 100,
+                minWidth: 150,
                 formatter: row => minus(row.openVolume, row.closeVolume)
             },
             {
@@ -958,7 +959,7 @@ export const getAssetColumns = (tradeType) => {
 
             },
             {
-                name: t('trade.profit') + '(' + unref(assetsInfo).currency + ')',
+                name: `${t('trade.profit')}${assetsInfo.value?.currency ? '(' + assetsInfo.value.currency + ')' : ''}`,
                 prop: 'direction',
                 align: 'right',
                 minWidth: 100,
@@ -981,7 +982,7 @@ export const getAssetColumns = (tradeType) => {
                 prop: 'requestPrice',
                 align: 'right',
                 formatter: row => minus(row.openVolume, row.closeVolume),
-                minWidth: 100,
+                minWidth: 150,
             },
             { name: t('trade.positionPrice'), prop: 'openPrice', align: 'right', minWidth: 100, },
             {

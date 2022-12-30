@@ -1,5 +1,5 @@
 <template>
-    <div class='assets-module'>
+    <div v-loading='loading' class='assets-module'>
         <div class='assets-header'>
             <p class='all'>
                 <span class='label'>
@@ -10,11 +10,17 @@
                 {{ assetsInfo?.totalBalance }}
             </p>
             <div class='assets-handle'>
-                <button class='btn' @click='goDesposit'>
-                    {{ $t('trade.desposit') }}
-                </button>
-                <button class='btn' @click='goWithdraw'>
-                    {{ $t('trade.withdraw') }}
+                <template v-if='businessConfig?.tradeTypeShowCash.includes(Number(tradeType)) && customerInfo.companyType === "real"'>
+                    <button class='btn pc_assets_deposit_ga' @click='goDesposit'>
+                        {{ $t('trade.desposit') }}
+                    </button>
+                    <button class='btn' @click='goWithdraw'>
+                        {{ $t('trade.withdraw') }}
+                    </button>
+                </template>
+
+                <button v-if="customerInfo.companyType === 'demo'" class='btn' @click='resetUserAccount'>
+                    {{ $t('mockAccount.resetAccount') }}
                 </button>
                 <button v-if='$store.state._base.plans.length>1' class='btn' @click='goTransfer'>
                     {{ $t('trade.transfer') }}
@@ -40,9 +46,14 @@
                 <el-table-column :label="$t('trade.carry')" min-width='150' prop='withdrawAmount' />
                 <el-table-column v-if='customerInfo?.isFund === 1' :label="$t('fundInfo.weight')" min-width='150' prop='weight' />
                 <template #empty>
-                    <span class='emptyText'>
-                        {{ $t('c.noData') }}
-                    </span>
+                    <div class='none-data'>
+                        <button @click='onTrade'>
+                            {{ $t('common.startTrade') }}
+                        </button>
+                        <p class='tip'>
+                            {{ $t('trade.positionEmpty') }}
+                        </p>
+                    </div>
                 </template>
             </el-table>
         </div>
@@ -53,8 +64,12 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AssetFilter from '@planspc/components/assetFilter.vue'
 import { localGet, debounce, localSet, isEmpty } from '@/utils/util'
+import { resetAccount } from '@/api/user'
+import { Toast } from 'vant'
+import { ElMessageBox } from 'element-plus'
 
 export default {
     components: {
@@ -68,11 +83,13 @@ export default {
         }
     },
     setup (props) {
+        const { t } = useI18n({ useScope: 'global' })
         const store = useStore()
         const router = useRouter()
 
         const hideAsset = ref(JSON.parse(localGet('hideAsset')))
         const searchText = ref('')
+        const loading = ref(false)
 
         // 用户信息
         const customerInfo = computed(() => store.state._user.customerInfo)
@@ -89,13 +106,16 @@ export default {
             return list.filter(item => item.currency.toUpperCase().includes(searchText.value.toUpperCase())) || []
         })
 
+        // 配置文件
+        const businessConfig = computed(() => store.state.businessConfig)
+
         // 账户信息
         const accountInfo = computed(() => accountList?.value[0])
 
         // 跳转充值页面
         const goDesposit = () => {
             router.push({
-                path: '/assets/depositChoose',
+                path: '/depositChoose',
                 query: {
                     tradeType: props.tradeType
                 }
@@ -144,6 +164,35 @@ export default {
             searchText.value = val
         }
 
+        // 重置账户
+        const resetUserAccount = () => {
+            loading.value = true
+            ElMessageBox.confirm(
+                t('mockAccount.resetTip1'),
+                t('mockAccount.resetTip2'),
+                {
+                    cancelButtonText: t('common.cancel'),
+                    confirmButtonText: t('common.sure'),
+                    type: 'warning',
+                }
+            ).then(() => {
+                resetAccount().then(res => {
+                    if (res.check()) {
+                        Toast(t('mockAccount.resetSuccess'))
+                    }
+                }).finally(() => {
+                    loading.value = false
+                })
+            }).catch(() => {
+                loading.value = false
+            })
+        }
+
+        // 去交易
+        const onTrade = () => {
+            router.push('quote')
+        }
+
         return {
             assetsInfo,
             accountList,
@@ -153,7 +202,11 @@ export default {
             goRecord,
             customerInfo,
             changeState,
-            searchAsset
+            searchAsset,
+            businessConfig,
+            resetUserAccount,
+            loading,
+            onTrade
         }
     }
 }

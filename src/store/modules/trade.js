@@ -169,12 +169,13 @@ export default {
         Update_positionProfitLossList (state, { tradeType, list }) {
             state.positionProfitLossList = list
             const positionMap = state.positionMap
-            list.forEach(({ positionId, profitLoss, previewStopPrice }) => {
+            list.forEach(({ positionId, profitLoss, previewStopPrice, riskStatus }) => {
                 const key = `${positionId}_${tradeType}`
                 const position = positionMap[key]
                 if (position) {
                     position.profitLoss = profitLoss
                     position.previewStopPrice = previewStopPrice
+                    position.riskStatus = riskStatus
                 } else {
                     vue_set(positionMap, key, { profitLoss })
                 }

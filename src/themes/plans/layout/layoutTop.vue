@@ -1,34 +1,57 @@
 <template>
-    <div v-show='downloadVis' class='download-app'>
-        <div class='brand'>
-            <img alt='' class='logo' src='/images/vitamin_logo.png?vt=33' srcset='' />
-            <div class='text'>
-                <p>Vitatoken APP</p>
-                <p>{{ $t('home.app') }}</p>
-            </div>
-        </div>
-
-        <div class='icons'>
-            <div class='dowonload' @click='$router.push("/download")'>
-                <svg class='dowonload-img' fill='none' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-                    <path d='M19 20H5v2h14v-2zM13 14.5l4.6-4.7 1.5 1.4-7.1 7.1-7.1-7.1 1.4-1.4 4.7 4.7V2h2v12.5z' fill='currentColor' />
-                </svg>
-            </div>
-            <van-icon class='close' color='#333' name='cross' size='18' @click='downloadVis=false' />
-        </div>
-    </div>
     <div class='nav-wrap'>
         <div class='logo' @click="$router.push('/')">
-            <img alt='' src='/images/logo_vitamin.png' srcset='' />
+            <img v-if='logoUrl' alt='' :src='logoUrl' srcset='' />
         </div>
         <div class='right'>
+            <van-button v-if='!customerInfo' class='registerBtn mobile_top_nav_signup_ga' type='primary' @click="$router.push({ name:'Register' })">
+                <span>{{ $t('register.registerBtn') }}</span>
+            </van-button>
+            <!-- <van-button
+                v-else-if='$route.name==="Order"'
+                class='accountTypeText'
+                :class="{ 'mock': customerInfo.companyType === 'demo' }"
+                type='primary'
+            >
+                <span>{{ customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') }}</span>
+            </van-button> -->
+            <van-dropdown-menu
+                v-else-if='Number(customerInfo.associationCompanyId) > 0'
+                class='account-dropdown'
+                :class="{ 'mock': customerInfo.companyType === 'demo' }"
+            >
+                <van-dropdown-item
+                    ref='dropdownAccount'
+                    :title="customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') "
+                    title-class='account-dropdown-title'
+                >
+                    <div class='account-sheet'>
+                        <div
+                            class='account-type'
+                            :class="{ 'active': customerInfo.companyType==='real' }"
+                            @click='switchAccount("real")'
+                        >
+                            <div class='radio'></div>
+                            <span>{{ $t('mockAccount.realAccount') }}</span>
+                        </div>
+                        <div
+                            class='account-type demo'
+                            :class="{ 'active': customerInfo.companyType==='demo' }"
+                            @click='switchAccount("demo")'
+                        >
+                            <div class='radio'></div>
+                            <span>{{ $t('mockAccount.demoAccount') }}</span>
+                        </div>
+                        <div v-if='topNavDeposit' class='recharge-button'>
+                            <van-button type='primary' @click='goDeposit'>
+                                {{ $t('homeJD.deposit') }}
+                            </van-button>
+                        </div>
+                    </div>
+                </van-dropdown-item>
+            </van-dropdown-menu>
             <div class='menu' @click='menuVis=true'>
-                <svg class='icon-svg' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
-                    <use xlink:href='#menu-hamburger-f' />
-                    <symbol id='menu-hamburger-f' viewBox='0 0 24 24'>
-                        <path clip-rule='evenodd' d='M4 4H20V7H4V4ZM4 10.5H20V13.5H4V10.5ZM20 17H4V20H20V17Z' fill='currentColor' fill-rule='evenodd' />
-                    </symbol>
-                </svg>
+                <van-icon class='icon-svg' name='wap-nav' />
             </div>
         </div>
     </div>
@@ -54,7 +77,7 @@
             <minePerson :data='minePersonData' />
         </div>
         <van-cell-group class='cellGroup'>
-            <van-cell class='cellItem' is-link :title='$t("fundInfo.fund")' @click="routerTo('fundProductList')">
+            <!-- <van-cell class='cellItem' is-link :title='$t("fundInfo.fund")' @click="routerTo('fundProductList')">
                 <template #icon>
                     <div class='icon-wrap'>
                         <svg class='svg-icon' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
@@ -65,8 +88,8 @@
                         </svg>
                     </div>
                 </template>
-            </van-cell>
-            <van-cell class='cellItem' is-link :title='$t("route.spotTrade")' @click="routerTo('order')">
+            </van-cell> -->
+            <van-cell class='cellItem' is-link :title='$t("route.trade")' @click="routerTo('order')">
                 <template #icon>
                     <div class='icon-wrap'>
                         <svg class='svg-icon' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
@@ -115,7 +138,7 @@
                     </div>
                 </template>
             </van-cell>
-            <van-cell class='cellItem' is-link :title='$t("cRoute.regKyc")' @click="routerTo('authentication')">
+            <van-cell v-if='isReal' class='cellItem' is-link :title='$t("cRoute.regKyc")' @click="routerTo('authentication')">
                 <template #icon>
                     <div class='icon-wrap'>
                         <svg class='svg-icon' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
@@ -127,7 +150,7 @@
                     </div>
                 </template>
             </van-cell>
-            <van-cell class='cellItem' is-link :title='$t("cRoute.securitySetting")' @click="routerTo('securitySetting')">
+            <van-cell v-if='customerInfo && isReal' class='cellItem' is-link :title='$t("cRoute.securitySetting")' @click="routerTo('securitySetting')">
                 <template #icon>
                     <div class='icon-wrap'>
                         <svg class='svg-icon' fill='currentColor' xmlns='http://www.w3.org/2000/svg'>
@@ -169,11 +192,13 @@
                     </div>
                 </template>
                 <template #right-icon>
-                    <img alt='' class='lang-icon' :src="'/images/country_icon/'+ lang + '.png'" />
+                    <span class='label'>
+                        {{ langItem.name }}
+                    </span>
                     <van-icon class='right-arrow' name='arrow' />
                 </template>
             </van-cell>
-            <!-- <van-cell
+            <van-cell
                 class='cellItem'
                 is-link
                 :title='$t("common.dark")'
@@ -197,7 +222,16 @@
                 <template #right-icon>
                     <van-switch v-model='themeVal' :active-color='$style.primary' size='24px' @change='colorSelect' />
                 </template>
-            </van-cell> -->
+            </van-cell>
+            <van-cell
+                v-if='customerInfo'
+                class='cellItem logoutItem'
+                is-link
+                :title='$t("setting.logout")'
+                @click='handleLogout'
+            >
+                <template #right-icon></template>
+            </van-cell>
         </van-cell-group>
     </van-popup>
 
@@ -222,45 +256,66 @@
                 :class='{ active: lang === item.val }'
                 @click='langSelect(item)'
             >
-                <img alt='' class='lang-icon' :src="'/images/country_icon/'+ item.val + '.png?555'" />
+                <span class='lang-label'>
+                    {{ item.name }}
+                </span>
+                <van-icon class='success-icon' name='success' />
             </div>
         </div>
     </van-popup>
+
+    <Loading :show='loading' />
 </template>
 
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { changeLang } from '@/api/base'
 import i18n, { loadLocaleMessages } from '@/themeCommon/i18n/i18n.js'
-import { setCookie, getCookie, isEmpty, localGet, localSet, getDevice } from '@/utils/util'
+import { setCookie, getCookie, isEmpty, localGet, setToken, sessionSet, localSet, getDevice, localGetObj, localSetObj } from '@/utils/util'
 import Colors, { setRootVariable } from '@plans/colorVariables'
 import minePerson from '@plans/modules/minePerson/minePerson.vue'
 import { isIOS } from 'vant/lib/utils'
 import { useI18n } from 'vue-i18n'
+import { Dialog, Toast } from 'vant'
+import { switchUserAccount } from '@/api/user'
+import { findSymbolBaseInfoList } from '@/api/trade'
+import useMethods from '@plans/hooks/useMethods'
+
+const instance = getCurrentInstance()
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 
-const downloadVis = ref(route.path === '/home')
 const langShow = ref(false)
+const langItem = computed(() => supportLanguages.value.find(el => el.val === lang.value))
+
 const menuVis = ref(false)
 const menuListData = ref([])
 const minePersonData = ref([])
 const themeVal = ref(localGet('invertColor') === 'night')
 const lang = ref(getCookie('lang') || store.state._base.wpCompanyInfo.language)
+const accountType = ref(localGetObj('mockAccount', 'accountType'))
+const loading = ref(false)
+const accountVis = ref(false)
+
 const { t, locale } = useI18n({ useScope: 'global' })
 
+const { toOrderPriority, handleSwitchAccount, toDeposit } = useMethods()
 const symbolKey = computed(() => store.state._quote.productActivedID)
 const customerInfo = computed(() => store.state._user.customerInfo)
 const supportLanguages = computed(() => store.state.supportLanguages)
+const logoUrl = computed(() => store.state.businessConfig?.pcuiLogo || '')
+const topNavDeposit = computed(() => store.state.businessConfig?.topNavDeposit)
+const isReal = computed(() => customerInfo.value.companyType === 'real')
 
 const routerTo = path => {
     if (path === 'order') {
         const [symbolId, tradeType] = symbolKey.value?.split('_')
-        path = `/order?symbolId=${symbolId}&tradeType=${tradeType}`
+        menuVis.value = false
+        return toOrderPriority(tradeType)
     }
     router.push(path)
     menuVis.value = false
@@ -271,10 +326,6 @@ const download = () => {
 
     window.open(downloadUrl)
 }
-
-watch(() => route.path, val => {
-    downloadVis.value = val === '/home'
-})
 
 store.dispatch('_base/getPageConfig', 'Mine').then(res => {
     menuListData.value = res.find(el => el.tag === 'menulist')?.data
@@ -293,7 +344,6 @@ const langSelect = (action) => {
         }
     }).then(() => {
         lang.value = action.val
-
         // 替换URL
         const str = location.pathname
         const firstSlash = str.indexOf('/') + 1
@@ -333,6 +383,52 @@ const colorSelect = (action) => {
         document.body.style.setProperty('--placeholdColor', themeColors[themeColor].placeholdColor)
     }
 }
+
+const dropdownAccount = ref(null)
+
+const goDeposit = () => {
+    dropdownAccount.value.toggle()
+    toDeposit()
+}
+
+// 切换真实模拟账号
+const switchAccount = type => {
+    if (accountType.value === type) return
+    loading.value = true
+    accountType.value = type
+    accountVis.value = false
+    dropdownAccount.value.toggle()
+
+    handleSwitchAccount({
+        type,
+        callback: () => {
+            loading.value = false
+        },
+        fail: () => {
+            loading.value = false
+        }
+    })
+}
+
+// 登出
+const handleLogout = () => {
+    // localRemove('noticeParams')
+    Dialog.confirm({
+        title: t('common.tip'),
+        message: t('setting.logoutConfirm'),
+    }).then(() => {
+        loading.value = true
+        // 退出登录
+        instance.appContext.config.globalProperties.$MsgSocket.logout()
+        return store.dispatch('_user/logout')
+    }).then(() => {
+        return router.push('/login')
+    }).then(() => {
+        location.reload()
+    }).catch(() => {
+        // on cancel
+    })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -343,7 +439,7 @@ const colorSelect = (action) => {
     flex-shrink: 0;
     height: 60px;
     padding: rem(26px) 0;
-    background: #fff;
+    background: #FFF;
     .brand {
         font-size: 12px;
         color: var(--color);
@@ -358,6 +454,9 @@ const colorSelect = (action) => {
         .text {
             display: inline-block;
             vertical-align: middle;
+            >p {
+                color: var(--contentColor);
+            }
         }
     }
     .icons {
@@ -377,7 +476,7 @@ const colorSelect = (action) => {
                 //width: 20px;
                 //height: 20px;
                 margin-top: -3px;
-                color: #fff;
+                color: #FFF;
             }
         }
         .close {
@@ -387,12 +486,14 @@ const colorSelect = (action) => {
     }
 }
 .nav-wrap {
+    width: 100%;
+    z-index: 999;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    height: 64px;
-    background: #181a20;
+    height: rem(128px);
+    background: #181A20;
     .logo {
         display: inline-block;
         display: flex;
@@ -400,19 +501,141 @@ const colorSelect = (action) => {
         height: 64px;
         padding-left: rem(30px);
         img {
-            height: rem(48px);
+            height: rem(68px);
         }
     }
     .right {
+        display: flex;
+        align-items: center;
         >div {
             display: inline-block;
             margin-right: rem(30px);
+        }
+        .registerBtn {
+            height: rem(60px);
+            line-height: 1.2;
+            border-radius: rem(8px);
+            margin-right: rem(30px);
+            padding: 0 8px;
+        }
+        .accountTypeText {
+            height: rem(40px);
+            line-height: 1.2;
+            border-radius: rem(8px);
+            margin-right: rem(30px);
+            background: none;
+            color: #FFF;
+            border: 0;
+            padding: rem(10px) rem(16px);
+            background: var(--primary);
+            font-size: rem(24px);
+            &.mock {
+                background-color: #3762FF;
+            }
         }
         .icon-svg {
             width: 24px;
             height: 24px;
             line-height: 1;
-            color: #fff;
+            color: #FFF;
+            font-size: 24px;
+            vertical-align: 5px;
+        }
+        .account-dropdown-title {
+            .van-ellipsis {
+                color: var(--contentColor);
+            }
+        }
+
+        --van-dropdown-menu-title-text-color: var(--color);
+        --van-dropdown-menu-title-active-text-color: var(--color);
+        .account-dropdown {
+            color: var(--contentColor);
+            background: var(--primary);
+            border-radius: rem(8px);
+            //padding: 0 rem(10px);
+            &.mock {
+                background: #3762FF;
+            }
+            :deep(.van-dropdown-menu__bar) {
+                height: rem(40px);
+                padding-right: rem(20px);
+                .van-ellipsis {
+                    font-size: rem(20px);
+                    color: #FFF;
+                }
+
+                //border-radius: rem(16px);
+            }
+            :deep(.van-dropdown-item) {
+                top: rem(120px) !important;
+            }
+            .account-sheet {
+                .recharge-button {
+                    padding: 0 rem(20px);
+                    margin-bottom: rem(20px);
+                    width: 100%;
+                    .van-button {
+                        width: 100%;
+                        border-radius: rem(8px);
+                    }
+                }
+                .account-type {
+                    color: var(--normalColor);
+                    background: var(--assistColor);
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: rem(20px);
+                    margin: rem(20px);
+                    padding: rem(40px);
+                    border-radius: rem(10px);
+                    .radio {
+                        margin-right: rem(20px);
+                        width: rem(40px);
+                        height: rem(40px);
+                        border-radius: 50%;
+                        border: solid 1px var(--minorColor);
+                        &.active {
+                            border: solid 1px var(--primary);
+                            &::after {
+                                position: absolute;
+                                left: rem(8px);
+                                top: rem(8px);
+                                content: '';
+                                width: rem(20px);
+                                height: rem(20px);
+                                border-radius: 50%;
+                                background: var(--primary);
+                            }
+                        }
+                    }
+                    &.active {
+                        color: var(--primary);
+                        .radio {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border: solid 1px var(--primary);
+                            &::after {
+                                content: '';
+                                width: rem(20px);
+                                height: rem(20px);
+                                border-radius: 50%;
+                                background: var(--primary);
+                            }
+                        }
+                        &.demo {
+                            color: #3762FF;
+                            .radio {
+                                border: solid 1px #3762FF;
+                                &::after {
+                                    background: #3762FF;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -436,12 +659,13 @@ const colorSelect = (action) => {
             display: inline-block;
             width: 100%;
             margin-bottom: rem(30px);
-            color: rgb(30, 35, 41);
+            color: var(--color);
             font-size: 16px;
             text-align: center;
         }
     }
     .cellGroup {
+        background: none;
         .cellItem {
             //background: none;
             display: flex;
@@ -455,12 +679,20 @@ const colorSelect = (action) => {
             &::after {
                 border: none;
             }
+            &.logoutItem {
+                padding: 0;
+                height: auto;
+                :deep(.van-cell__title) {
+                    text-align: center;
+                }
+            }
             :deep(.van-cell__title) {
                 color: var(--color);
             }
-            .lang-icon {
-                width: rem(56px);
+            .label {
+                color: var(--color);
                 margin-right: rem(20px);
+                font-size: rem(28px);
             }
             .right-arrow {
                 margin-top: -2px;
@@ -478,7 +710,7 @@ const colorSelect = (action) => {
                 width: 24px;
                 min-width: 0;
                 height: 24px;
-                margin-right: rem(10px);
+                margin-right: rem(20px);
                 color: rgb(112, 122, 138);
                 -webkit-box-align: center;
                 -webkit-box-pack: center;
@@ -499,22 +731,36 @@ const colorSelect = (action) => {
 }
 .lang-popup {
     .popup-wrap {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 0 0 0 rem(25px);
         .lang-item {
-            box-sizing: content-box;
-            margin-right: rem(20px);
-            margin-bottom: rem(42px);
-            padding: rem(8px) rem(8px) rem(2px) rem(8px);
-            border: rem(4px) solid transparent;
-            .lang-icon {
-                width: rem(120px);
-                height: rem(120px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: rem(130px);
+            padding: 0 rem(30px);
+            margin-bottom: rem(12px);
+            background: var(--contentColor);
+            border-radius: rem(10px);
+            :root .night &.lang-item {
+                background: var(--assistColor) !important;
             }
-            &.active {
-                border: rem(4px) solid var(--primary);
+            .lang-label {
+                color: var(--color);
+                font-size: rem(32px);
+            }
+            .lang-icon {
+                width: rem(72px);
+                height: rem(72px);
                 border-radius: 50%;
+            }
+            .success-icon {
+                display: none;
+                font-size: rem(42px);
+                color: var(--primary);
+            }
+        }
+        .active {
+            .success-icon {
+                display: block;
             }
         }
     }

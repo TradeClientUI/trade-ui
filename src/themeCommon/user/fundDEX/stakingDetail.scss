@@ -13,17 +13,16 @@
             font-size: 14px;
             color: var(--primary);
             border: 1px solid var(--primary);
-            transition: .1s;
+            transition: 0.1s;
             cursor: pointer;
         }
         .item-active {
             background: var(--primary);
-            color: #fff;
+            color: #FFF;
             font-weight: bold;
         }
     }
 }
-
 .detail-module {
     margin-top: 16px;
     @media (max-width: 768px) {
@@ -136,7 +135,7 @@
                     justify-content: flex-end;
                 }
                 .inline {
-                   width: 130px;
+                    width: 130px;
                 }
                 .label {
                     margin-bottom: 4px;
@@ -254,7 +253,6 @@
                 color: #FFF;
                 font-weight: 500;
                 font-size: 14px;
-                font-family: Inter, Arial;
                 line-height: 33px;
                 background: linear-gradient(248.86deg, #5292F1 10.51%, #5BECBC 90.41%);
                 border-radius: 4px;
@@ -348,7 +346,7 @@
             }
             &.purchase {
                 @include hover();
-                color: #fff;
+                color: #FFF;
                 background: var(--primary);
                 cursor: pointer;
             }

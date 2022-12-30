@@ -39,7 +39,7 @@
                 <p class='may'>
                     <span>{{ $t('withdrawCoin.can') }} </span>
                     <strong v-if='showCanMoney'>
-                        {{ coinTotal }} {{ coinKind }}-{{ chainName }}
+                        {{ coinTotal }} {{ coinKind }}
                     </strong>
                 </p>
             </div>
@@ -50,9 +50,6 @@
                     </label>
                     <span class='value'>
                         {{ serviceCount }} {{ coinKind }}
-                        <span v-if='chainName'>
-                            -{{ chainName }}
-                        </span>
                     </span>
                 </p>
                 <p class='row'>
@@ -61,9 +58,6 @@
                     </label>
                     <span class='value'>
                         {{ arriveCount }} {{ coinKind }}
-                        <span v-if='chainName'>
-                            -{{ chainName }}
-                        </span>
                     </span>
                 </p>
                 <p class='row'>
@@ -166,7 +160,7 @@
                             {{ item.address }}
                         </p>
                     </div>
-                    <van-radio checked-color='#53C51A' :name='item.id' />
+                    <van-radio :checked-color='$style.primary' :name='item.id' />
                 </div>
             </div>
         </van-radio-group>
@@ -194,6 +188,7 @@ import { Toast, Dialog } from 'vant'
 // i18n
 import { useI18n } from 'vue-i18n'
 // api
+import { getAssetsList } from '@/api/base'
 import {
     getWithdrawCurrencyList,
     queryWithdrawConfig,
@@ -237,6 +232,8 @@ export default {
             singleHighAmount: 0,
             // 最低可提币数量
             singleLowAmount: 0,
+            // 提币币种小数位
+            withdrawCurrencyDigits: 0,
             // 提币链名称数据列表
             allList: [],
             // 提币币种选项列表
@@ -298,8 +295,6 @@ export default {
 
         // 账户币种
         const { value: accountCurrency } = computed(() => store.state._user.customerInfo.accountList.find(el => el.accountId === Number(accountId)))
-        console.log('currency', currency)
-        console.log('accountCurrency', accountCurrency)
         // 导航栏右侧标题点击跳转
         const rightClick = () => {
             router.push(state.rightAction.path)
@@ -571,6 +566,18 @@ export default {
             })
         }
 
+        // 获取所有资产列表
+        const getAllAssetsList = () => {
+            getAssetsList().then(res => {
+                if (res.check()) {
+                    const account = res.data.find(el => el.code === state.coinKind)
+                    if (account) {
+                        state.withdrawCurrencyDigits = account.digits
+                    }
+                }
+            })
+        }
+
         // 获取客户提币币种和链名称
         const queryWithdrawCurrencyList = (resolve) => {
             getWithdrawCurrencyList({
@@ -749,8 +756,8 @@ export default {
             if (!state.coinCount) {
                 return Toast({ message: t('withdrawCoin.coinCountPlaceholder') })
             }
-            if (amountDigitsLength > accountCurrency.digits) {
-                return Toast(t('withdraw.withdrawDigitsTip'))
+            if (amountDigitsLength > state.withdrawCurrencyDigits) {
+                return Toast(t('withdraw.withdrawDigitsTip', { digit: state.withdrawCurrencyDigits }))
             }
             if (coinCount < state.singleLowAmount) {
                 return Toast({ message: `${t('withdrawCoin.hint_4')}${state.singleLowAmount}` })
@@ -775,7 +782,7 @@ export default {
                 withdrawCoinAmount: state.coinCount,
                 rate: state.withdrawRate.exchangeRate,
                 withdrawRateSerialNo: state.withdrawRate.withdrawRateSerialNo,
-                bankAccountName: '',
+                bankAccountName: customInfo.customerNo,
                 bankName: '数字钱包',
                 bankCardNo: state.currentWallet.address,
                 withdrawType: 2,
@@ -788,11 +795,7 @@ export default {
                 state.loading = false
                 if (res.check()) {
                     state.withdrawSuccess = true
-                } else {
-                    state.serviceCount = ''
-                    state.arriveCount = ''
-                    state.minusCount = ''
-                }
+                } 
             })
         }
 
@@ -801,6 +804,8 @@ export default {
                 // 获取客户提币币种和链名称
                 queryWithdrawCurrencyList(resolve)
             }).then((res) => {
+                // 获取所有资产列表
+                getAllAssetsList()
                 // 获取配置信息
                 getWithdrawRate()
                 // 获取取款限制配置
@@ -904,6 +909,7 @@ export default {
         }
         .may {
             display: flex;
+            justify-content: space-between;
             margin-top: rem(10px);
             font-size: rem(24px);
             span {

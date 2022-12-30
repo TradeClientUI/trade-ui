@@ -1,6 +1,6 @@
 <template>
     <div class='notice' :style='data.styleObj'>
-        <van-notice-bar :background='$style.bgColor' color='#666' left-icon='volume-o' :scrollable='false'>
+        <van-notice-bar :background='$style.contentColor' color='#666' left-icon='volume-o' :scrollable='false'>
             <van-swipe
                 :autoplay='3000'
                 class='notice-swipe'
@@ -12,7 +12,7 @@
                     <span v-if='item?.href?.name' class='swipe-text' @click="$emit('openUrl',item)">
                         {{ item.text }}
                     </span>
-                    <span v-else>
+                    <span v-else class='swipe-text'>
                         {{ item.text }}
                     </span>
                 </van-swipe-item>
@@ -55,6 +55,7 @@ export default {
 :deep(.notice-swipe) {
     overflow: hidden;
     .swipe-text {
+        color: var(--color);
         display: inline-block;
         width: 100%;
         overflow: hidden;
@@ -64,4 +65,13 @@ export default {
         text-overflow: ellipsis;
     }
 }
+.notice{
+    :deep(.van-notice-bar){
+        border-radius: rem(10px);
+    }
+    :deep(.van-icon-volume-o){
+        color: var(--warn);
+    }
+}
+
 </style>

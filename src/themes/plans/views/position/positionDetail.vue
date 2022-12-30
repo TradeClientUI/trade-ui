@@ -290,7 +290,7 @@ export default {
                     .name {
                         margin-bottom: rem(4px);
                         .number {
-                            color: var(--minorColor);
+                            color: var(--color);
                         }
                     }
                     :nth-child(1n) {

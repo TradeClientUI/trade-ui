@@ -39,16 +39,13 @@
             </van-cell>
             <van-cell :title="$t('contract.feeType')" :value='["1","3"].includes(product.feeFormula)?$t("contract.ratio"):$t("contract.amount")' />
             <van-cell :title="$t('fee')" :value='fee' />
-            <van-cell>
-                <div class='margin-info'>
+            <van-cell :value='interest'>
+                <template #title>
                     <span class='left-label'>
                         {{ $t('contract.interest') }}
                         <van-icon class='questionIcon' name='question-o' @click='showInterest = true' />
                     </span>
-                    <span class='right-val'>
-                        {{ interest }}
-                    </span>
-                </div>
+                </template>
             </van-cell>
             <van-cell :title="$t('contract.zone')" :value="'GMT +' + (0 - new Date().getTimezoneOffset() / 60)" />
             <van-cell v-if='tradeTimeList && tradeTimeList.length' class='timeListCell' :title="$t('contract.tradeTime')">

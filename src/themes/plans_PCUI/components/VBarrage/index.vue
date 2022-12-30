@@ -382,7 +382,6 @@ export default {
         padding: 3px;
         color: #333;
         font-size: 14px;
-        font-family: SimHei, 'Microsoft JhengHei', Arial, Helvetica, sans-serif;
         white-space: pre;
         // shadow: 0 0 10px #EEE;
         text-shadow: 0 0 10px #EEE;

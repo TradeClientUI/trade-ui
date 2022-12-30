@@ -11,12 +11,14 @@
           content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <link rel="icon"
           href="<%= BASE_URL %>favicon.ico">
-  
     <meta name="google-signin-client_id"
           content="507643510387-ff4on5fmgb2h06tmd5vou0trprtnk0b9.apps.googleusercontent.com">
     <style>
     html {
         font-size: 10vw;
+    }
+    body.night {
+        background-color: #191E24;
     }
     #app:empty::after,
     .loadIcon::after {
@@ -109,7 +111,9 @@
 
 <body>
     <script type="text/javascript">
-        (function(window) {   
+        (function(window) {
+            if (localStorage.invertColor) document.body.classList.add(localStorage.invertColor);
+   
             if(!!window.ActiveXObject || "ActiveXObject" in window) {
                 var str = "温馨提醒";
                 var str2 = "为确保您获得顺畅的交易体验，请使用以下浏览器访问交易平台"
@@ -222,8 +226,17 @@
 		/* ##PCUI基金功能是否显示## */
 		window['fundShow'] = false
     </script>
-    <script type="text/javascript" src="/libs/uni-app/uni.webview.1.5.2.js"></script>
-    <script type="text/javascript" src="/libs/adapter-latest.js"></script>
+
+    <script>
+        (function(){
+            // uniapp环境需要嵌套这个插件
+            if(navigator.userAgent.toLowerCase().includes('uni-app')){
+                document.write('<script type="text\/javascript" src="\/libs\/uni-app\/uni.webview.1.5.2.js"><\/script>')
+            }
+        })()
+    </script>
+    <!-- adapter-latest 人脸识别使用 -->
+    <!-- <script type="text/javascript" src="/libs/adapter-latest.js"></script> -->
     
 </body>
 

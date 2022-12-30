@@ -1,7 +1,7 @@
 <template>
     <centerViewDialog>
         <div>
-            <LayoutTop :back='true' :menu='false' title='' @backEvent='back' />
+            <LayoutTop :custom-back="true" :menu='false' title='' @back='back' />
             <div class='page-wrap'>
                 <Loading :show='loading' />
                 <div v-if='kycList && kycList.length === 0' class='empty-data'>
@@ -28,7 +28,14 @@
                                 </span>
                             </div>
                             <div v-else class='btn'>
-                                <van-button v-if='[0,3].includes(Number(item.status))' plain round size='small' @click='handleNext(item)'>
+                                <van-button
+                                    v-if='[0,3].includes(Number(item.status))'
+                                    class='pc_kyc_unverified_ga'
+                                    plain
+                                    round
+                                    size='small'
+                                    @click='handleNext(item)'
+                                >
                                     <template #default>
                                         <span class='unverified' @click='handleNext(item)'>
                                             {{ kycAuditStatus[item.status] }}
@@ -102,7 +109,7 @@ export default {
         }
 
         const back = () => {
-            router.replace('/personal')
+            router.replace('/')
         }
 
         onBeforeRouteLeave((to, from) => {
@@ -174,7 +181,6 @@ export default {
                     color: var(--color);
                     font-weight: 500;
                     font-size: rem(24px);
-                    font-family: PingFang SC;
                     line-height: rem(49px);
                 }
             }
@@ -195,18 +201,18 @@ export default {
                 font-size: rem(24px);
             }
         }
-        .btn{
-            :deep(.van-button){
+        .btn {
+            :deep(.van-button) {
                 background: var(--primaryAssistColor);
             }
-            .unverified{
+            .unverified {
                 color: var(--fallColor);
             }
-            .state{
+            .state {
                 color: var(--minorColor);
                 font-size: rem(24px);
             }
-            .van-icon-arrow{
+            .van-icon-arrow {
                 vertical-align: -1px !important;
             }
         }

@@ -37,6 +37,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { findPwd } from '@/api/user'
 import md5 from 'js-md5'
 import { useI18n } from 'vue-i18n'
+import { pwdReg } from '@/utils/util'
 
 export default {
     components: {
@@ -60,7 +61,6 @@ export default {
         }
 
         function handleConfirm () {
-            const pwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/
             if (!state.newPwd) {
                 return Toast(t('forgot.inputNewPwd'))
             }
@@ -139,6 +139,9 @@ export default {
             font-size: 16px;
         }
     }
+    :deep(.van-cell-group){
+        background: none;
+    }
     .pageTitle {
         color: var(--color);
         font-weight: bold;
@@ -163,6 +166,7 @@ export default {
         margin-bottom: 24px;
         overflow: hidden;
         border-radius: 4px;
+        border: solid 1px var(--lineColor);
         .icon {
             position: absolute;
             top: rem(25px);

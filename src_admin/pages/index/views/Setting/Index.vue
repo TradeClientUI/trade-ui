@@ -120,25 +120,25 @@
 
                             <el-form-item label='apiService'>
                                 <el-input
-                                    v-model='form.apiService'
+                                    v-model='form.other.apiService'
                                     :placeholder="$t('pleaseEnter')"
                                 />
                             </el-form-item>
                             <el-form-item label='quoteService'>
                                 <el-input
-                                    v-model='form.quoteService'
+                                    v-model='form.other.quoteService'
                                     :placeholder="$t('pleaseEnter')"
                                 />
                             </el-form-item>
                             <el-form-item label='msgService'>
                                 <el-input
-                                    v-model='form.msgService'
+                                    v-model='form.other.msgService'
                                     :placeholder="$t('pleaseEnter')"
                                 />
                             </el-form-item>
                             <el-form-item label='tradeService'>
                                 <el-input
-                                    v-model='form.tradeService'
+                                    v-model='form.other.tradeService'
                                     :placeholder="$t('pleaseEnter')"
                                 />
                             </el-form-item>
@@ -440,7 +440,6 @@ export default {
                     // this.$refs.tree.setCheckedKeys(content.disabledProvince || [])
                     const other = res.data.other && res.data.other.indexOf('{') === 0 ? JSON.parse(res.data.other) : {}
                     this.form = Object.assign(this.form, content, { other })
-
                     this.pageData = res.data
                 })
                 .catch(error => {
@@ -456,12 +455,15 @@ export default {
         },
         submit () {
             return new Promise((resolve, reject) => {
-                // console.log(this.tradeTypeCurrencyCollect)
-
                 this.submitLoading = true
-                const _other = JSON.stringify(this.form.other)
-                console.log(_other)
                 const _formData = deepClone(this.form)
+                const _other = JSON.stringify(this.form.other)
+                _formData.adminDomain = _formData.other.adminDomain
+                _formData.forwardDomain = _formData.other.forwardDomain
+                _formData.apiService = _formData.other.apiService
+                _formData.quoteService = _formData.other.quoteService
+                _formData.msgService = _formData.other.msgService
+                _formData.tradeService = _formData.other.tradeService
                 delete _formData.other
 
                 try {

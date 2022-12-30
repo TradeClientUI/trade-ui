@@ -99,7 +99,7 @@ export default {
         const customerInfo = computed(() => store.state._user.customerInfo)
 
         // 获取玩法列表
-        const plans = computed(() => store.state._base.plans.map(el => (el.name = t('tradeType.' + el.tradeType), el)))
+        const plans = computed(() => store.state._base.plans)
 
         const tradeType = computed(() => store.state._quote.curTradeType || plans.value[0].id)
 
@@ -231,7 +231,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
 .assetsWrapper {
-    padding: 0 0 rem(100px);
     overflow: auto;
     .plans-item {
         padding: 0 rem(20px);

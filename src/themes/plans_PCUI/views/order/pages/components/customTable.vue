@@ -138,89 +138,90 @@ const current = computed({
 </script>
 
 <style lang="scss" scoped>
-.customTable{
+.customTable {
     // display: flex;
     // flex-direction: column;
     // align-items: flex-end;
     width: 100%;
     height: 100%;
-    .pagination{
+    .pagination {
         margin: 10px 0;
     }
-    :deep{
-        .el-table{
-            .el-table__body-wrapper{
+    :deep {
+        .el-table {
+            --el-table-row-hover-background-color: var(--assistColor);
+            --el-table-border-color: var(--assistColor);
+            .el-table__body-wrapper {
                 scrollbar-width: thin;
             }
             background-color: var(--contentColor);
-            th.el-table__cell{
+            th.el-table__cell {
                 color: var(--minorColor);
                 font-weight: 400;
-                font-size: 13px;
+                font-size: 12px;
                 border-color: var(--assistColor);
+                background-color: var(--contentColor) !important;
             }
-            td.el-table__cell{
+            td.el-table__cell {
                 border-color: var(--assistColor);
+                background: none;
                 color: var(--color);
-                font-size: 14px;
+                font-size: 13px;
                 padding: 8px 0;
-                .cell{
+                .cell {
                     white-space: nowrap;
                 }
             }
-
             tr {
                 background-color: var(--contentColor);
             }
-
-            tr:hover, tr.hover-row, tr.hover-row:hover {
-                background-color: var(--bgColor);
+            tr:hover,
+            tr.hover-row,
+            tr.hover-row:hover {
+                // background-color: var(--bgColor);
             }
-
-            tr.hover-row>td.el-table__cell{
+            tr.hover-row>td.el-table__cell {
                 background: none;
             }
-
             .chunk {
                 display: inline-flex;
                 align-items: center;
             }
-            .pointer{
+            .pointer {
                 cursor: pointer;
-                &:hover{
+                &:hover {
                     color: var(--color);
                 }
             }
         }
-        .el-pagination{
+        .el-pagination {
             justify-content: flex-end;
         }
-        .el-pagination{
+        .el-pagination {
             .btn-prev,
             .btn-next,
-            .number{
+            .number {
                 background-color: var(--contentColor);
                 color: var(--color);
             }
-            .active.number{
+            .active.number {
                 color: var(--el-pagination-hover-color);
             }
-            .number:hover{
+            .number:hover {
                 color: var(--el-pagination-hover-color);
             }
         }
-        .empty{
+        .empty {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            .image{
+            .image {
                 width: 160px;
                 height: auto;
             }
         }
-
-        .emptyText{
+        .emptyText {
             display: inline-block;
             width: 160px;
             padding-top: 140px;
@@ -229,12 +230,11 @@ const current = computed({
             color: var(--placeholdColor);
         }
     }
-
 }
 </style>
 
 <style lang="scss">
-.multipleVal{
+.multipleVal {
     cursor: pointer;
     margin-left: 10px;
     display: inline-block;
@@ -248,15 +248,14 @@ const current = computed({
     color: var(--color);
     border-radius: 3px;
     border: 1px solid var(--color);
-    &.marginleft0{
+    &.marginleft0 {
         margin-left: 0;
     }
-    &.arrow{
+    &.arrow {
         padding-right: 25px;
         color: var(--color);
     }
-
-    .icon_icon_arrow{
+    .icon_icon_arrow {
         font-size: 12px;
         margin-left: 3px;
     }

@@ -1,16 +1,16 @@
 <template>
-    <a v-if='onlineService' class='service' :href='onlineService' target='_blank'>
+    <a class='service' @click='goService'>
         <i class='icon icon_xiaoxizhongxin' :title="$t('newHomeFooter.customer')"></i>
     </a>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useStore } from 'vuex'
-
-const store = useStore()
-// 在线客服地址
-const onlineService = computed(() => store.state._base.wpCompanyInfo?.onlineService)
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const goService = () => {
+    router.push('service')
+}
 </script>
 
 <style lang='scss' scoped>
@@ -30,7 +30,7 @@ const onlineService = computed(() => store.state._base.wpCompanyInfo?.onlineServ
     @include hover();
     .icon {
         font-size: 18px;
-        color: #fff;
+        color: #FFF;
     }
 }
 </style>

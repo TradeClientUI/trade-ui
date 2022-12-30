@@ -4,8 +4,8 @@
             v-if='pwd'
             :id='id'
             v-model='val'
-            class='input'
             v-bind='$attrs'
+            class='input'
             :maxlength='maxLength'
             :placeholder='label'
             required
@@ -17,8 +17,8 @@
             v-else
             :id='id'
             v-model='val'
-            class='input'
             v-bind='$attrs'
+            class='input'
             :maxlength='maxLength'
             :placeholder='label'
             required
@@ -27,8 +27,15 @@
             @input='onInput'
         />
         <!-- <label v-if='label' class='label' :for='id'>{{ label }}</label> -->
-        <a v-if='clear' v-show='val.length' class='van-icon van-icon-clear' href='javascript:;' @click='onClear'></a>
-        <a v-if='pwd' :class='[pwdVisible?"icon_icon_pressed":"icon_icon_default"]' href='javascript:;' @click='pwdVisible=!pwdVisible'></a>
+        <a
+            v-if='clear'
+            v-show='val.length'
+            class='van-icon van-icon-clear'
+            href='javascript:;'
+            tabindex='-1'
+            @click='onClear'
+        ></a>
+        <a v-if='pwd' :class='[pwdVisible?"icon_icon_pressed":"icon_icon_default"]' href='javascript:;' tabindex='-1' @click='pwdVisible=!pwdVisible'></a>
     </div>
 </template>
 

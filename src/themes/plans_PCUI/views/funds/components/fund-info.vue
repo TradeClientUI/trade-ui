@@ -10,7 +10,7 @@
                     {{ fund.fundName }}
                 </span>
                 <span class='by'>
-                    By <span>VITATOKEN</span> Crypto Exchange
+                    By <span>MagnaMarkets</span> Crypto Exchange
                 </span>
             </div>
         </div>
@@ -38,7 +38,10 @@
                     </template>
                 </van-popover>
                 <van-popover v-model:show='showPopover2' placement='top' theme='dark'>
-                    <p style='padding: 10px; width: 300px;'>
+                    <p
+                        style='padding: 10px;
+width: 300px;'
+                    >
                         {{ $t('funds.hoverTip2') }}
                     </p>
                     <template #reference>
@@ -118,7 +121,7 @@ const calculate = (num) => {
             }
             .name {
                 margin-bottom: 5px;
-                letter-spacing: .15px;
+                letter-spacing: 0.15px;
                 font-size: 24px;
                 font-weight: 700;
                 color: var(--mainColor);
@@ -128,7 +131,7 @@ const calculate = (num) => {
                 font-weight: 600;
                 color: var(--mainColor);
                 span {
-                    color: #ebb650;
+                    color: #EBB650;
                 }
             }
         }

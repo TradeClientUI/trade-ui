@@ -285,7 +285,7 @@ export default {
             // 手机号
             phone: receiptInfo?.phone || '',
             // 注册账号提示
-            inputAccount: t('pay8Account.inputAccount', { name: currentTab === 'Maya' ? 'Maya' : 'GCash' }),
+            inputAccount: t('pay8Account.inputAccount', { name: currentTab === 'GCash' ? 'GCash' : 'Maya' }),
             // 提现通道
             channel: {}
         })
@@ -534,7 +534,7 @@ export default {
                             confirmButtonText: t('withdraw.activateBtn')
                         }).then(() => {
                             router.replace({
-                                path: '/assets/depositChoose',
+                                path: '/depositChoose',
                                 query: {
                                     tradeType,
                                     accountId,
@@ -637,7 +637,6 @@ export default {
                 tradeType,
                 fundPwd: md5(state.fundPwd),
                 googleCode: state.googleCode,
-                bankCode: state.channel.code,
                 extend: JSON.stringify({ 'phone': '+63' + state.phone, 'bankCode': state.channel.code })
             }
             handleWithdraw(params).then(res => {

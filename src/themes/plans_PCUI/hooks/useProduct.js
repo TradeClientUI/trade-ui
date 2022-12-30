@@ -1,4 +1,4 @@
-import { computed, ref, unref } from 'vue'
+import { computed, onMounted, ref, unref } from 'vue'
 import { useStore } from 'vuex'
 import globalData from './globalData'
 import { useI18n } from 'vue-i18n'
@@ -10,7 +10,13 @@ const sortField = ref(localGet('productListSortField') || '') // 排序字段
 const sortType = ref(localGet('productListSortType') || '') // 排序方式， asc-升序； desc-降序；
 const customerInfo = computed(() => store.state._user.customerInfo)
 
-export default function ({ tradeType, categoryType, isSelfSymbol = true }) {
+export default function ({
+    tradeType,
+    categoryType,
+    isSelfSymbol = true,
+    defaultSortField = null, // 初始化排序字段
+    defaultSortType = null, // 初始化排序类型
+}) {
     // wp拖拽预览的时候直接返回空数据
     const { h5Preview } = globalData()
     if (h5Preview) {
@@ -19,6 +25,15 @@ export default function ({ tradeType, categoryType, isSelfSymbol = true }) {
             productList: []
         }
     }
+
+    onMounted(() => {
+        if (defaultSortField !== null) {
+            sortField.value = defaultSortField
+        }
+        if (defaultSortType !== null) {
+            sortType.value = defaultSortType
+        }
+    })
 
     const { t } = useI18n({ useScope: 'global' })
     const store = useStore()
@@ -29,7 +44,6 @@ export default function ({ tradeType, categoryType, isSelfSymbol = true }) {
     // 所选玩法的板块列表
     const categoryList = computed(() => {
         const listByUser = unref(userSelfSymbolList)[unref(tradeType)] || []
-        // console.log(listByUser)
         const selfSymbol = {
             title: t('trade.favorites'),
             id: 'selfSymbol',
@@ -46,9 +60,8 @@ export default function ({ tradeType, categoryType, isSelfSymbol = true }) {
         const arr = []
         let listByUserData = [] // 用户自主添加的自选列表
         const systemOptional = unref(categoryList.value)[unref(categoryType.value)]?.listByUser || [] // 系统默认推送的自选列表
-
         if (!customerInfo.value) { // 未登录
-            if (unref(categoryType.value) === '0') {
+            if (unref(categoryType.value) === '0' && isSelfSymbol) {
                 // 取本地缓存的自选列表
                 const localSelfSymbolList = localGet('localSelfSymbolList') ? JSON.parse(localGet('localSelfSymbolList')) : []
 
@@ -110,7 +123,7 @@ export default function ({ tradeType, categoryType, isSelfSymbol = true }) {
                 } else {
                     return 0
                 }
-            } else if (sortField.value === 'rolling_upDownWidth') {
+            } else if (['rolling_upDownAmount', 'rolling_upDownWidth'].includes(sortField.value)) {
                 const firtstValue = parseFloat(firstEl[sortField.value]) || defaultInfinity
                 const secondValue = parseFloat(secondEl[sortField.value]) || defaultInfinity
                 return firtstValue - secondValue

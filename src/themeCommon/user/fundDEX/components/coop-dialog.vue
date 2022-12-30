@@ -308,7 +308,6 @@ export default {
     }
     .calcItem {
         margin-top: 20px;
-        font-family: 'IBM Plex Sans,sans-serif';
         .label {
             font-size: 14px;
         }

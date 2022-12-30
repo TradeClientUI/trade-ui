@@ -1,11 +1,12 @@
-import { getQueryVariable, getCookie } from '@/utils/util'
+import { getQueryVariable, getCookie, localGet } from '@/utils/util'
 import { baseLangURL } from '@/api/information'
 
 /* 全局mixin */
 export default {
     data () {
         return {
-            h5Preview: false
+            h5Preview: false,
+            theme: localGet('invertColor')
         }
     },
     computed: {
@@ -22,7 +23,8 @@ export default {
     methods: {
         // 用iframe打开url地址
         openOuterUrl (data) {
-            const lang = getCookie('lang') || this.$route.query.lang
+            let lang = getCookie('lang') || this.$route.query.lang
+            if (lang === 'th-TH') lang = 'en-US'
             let pageTitle = data.title
             const url = baseLangURL[data.newsArea][lang] + `/article?id=${data.id}&orgid=${data.orgid}`
             const { isUniapp } = this.$route.query
@@ -75,5 +77,8 @@ export default {
         formatTime (val, fmt = 'YYYY-MM-DD HH:mm:ss') {
             return window.dayjs(val).format(fmt)
         }
-    }
+    },
+    mounted () {
+        this.theme = localGet('invertColor')
+    },
 }

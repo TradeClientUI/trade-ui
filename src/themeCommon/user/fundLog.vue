@@ -426,12 +426,10 @@ export default {
                     color: var(--color);
                     font-weight: bold;
                     font-size: rem(28px);
-                    font-family: PingFang SC;
                 }
                 .date {
                     color: var(--normalColor);
                     font-weight: 400;
-                    font-family: DIN 1451 Mittelschrift;
                 }
             }
             .f-right {
@@ -439,13 +437,11 @@ export default {
                     color: var(--color);
                     font-weight: bold;
                     font-size: rem(28px);
-                    font-family: DIN 1451 Mittelschrift;
                     text-align: right;
                 }
                 .balance {
                     color: var(--normalColor);
                     font-weight: 500;
-                    font-family: PingFang SC;
                 }
             }
         }

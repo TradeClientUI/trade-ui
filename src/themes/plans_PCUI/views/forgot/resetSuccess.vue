@@ -67,7 +67,7 @@ export default {
             width:520px;
             padding: 60px;
             border-radius: 10px;
-                background-color: var(--contentColor);
+            background-color: var(--contentColor);
         }
     }
 }
@@ -95,13 +95,13 @@ export default {
     }
 }
 .confirmBtn {
-width: 100%;
+    width: 100%;
     background: var(--primary);
     margin-top: 72px;
-    color: var(--contentColor);
+    color: #fff;
     border-color: var(--primary);
     font-size: 20px;
-        border-radius: 4px;
+    border-radius: 4px;
     height: 48px;
 }
 </style>

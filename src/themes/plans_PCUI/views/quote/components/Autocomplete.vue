@@ -153,10 +153,10 @@ const addOptional = ({ id: symbolId, tradeType = props.tradeType }) => {
             height: 100%;
         }
         .el-input__inner {
-            background: var(--assistColor);
-            border-color: transparent;
+            //background: var(--assistColor);
+            //border-color: transparent;
             &:focus {
-                border-color: var(--el-input-focus-border, var(--primary));
+                border-color: var(--primary)!important;
             }
         }
         .el-input__prefix {

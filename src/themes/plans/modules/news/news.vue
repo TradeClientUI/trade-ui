@@ -693,12 +693,12 @@ export default {
         align-items: center;
         justify-content: center;
         height: 0.93333rem;
-        background-color: var(--primary);
+        background-color: var(--bgColor);
         span {
             display: block;
             height: 0.53333rem;
             padding: 0 10px;
-            color: var(--contentColor);
+            color: var(--color);
             font-size: 0.32rem;
             line-height: 0.53333rem;
             border: 1px solid var(--contentColor);

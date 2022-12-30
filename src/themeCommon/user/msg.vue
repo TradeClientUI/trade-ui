@@ -511,7 +511,7 @@ export default {
         }
 
         const back = () => {
-            router.push('/mine')
+            router.back()
         }
 
         const formatTime = (val) => {
@@ -645,15 +645,10 @@ export default {
             line-height: rem(60px);
         }
         .msg-content {
-            display: -webkit-box;
-            overflow: hidden;
             color: var(--color);
             font-weight: 500;
             font-size: rem(24px);
             line-height: rem(40px);
-            text-overflow: ellipsis;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
         }
         .msg-time {
             color: var(--minorColor);

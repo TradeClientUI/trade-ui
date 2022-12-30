@@ -26,16 +26,13 @@
                 </span>
                 <van-switch
                     v-model='enabled'
-                    :active-color='$style.success'
+                    :active-color='$style.primary'
                     size='20'
                 />
             </div>
             <!-- 基金代币产品 -->
             <van-popover v-model:show='showFundPopover' placement='left' theme='dark'>
-                <p
-                    style=' width: 300px;
-padding: 10px;'
-                >
+                <p class='purchaseOrRedemptionTip'>
                     {{ $t('trade.purchaseOrRedemptionTip') }}
                 </p>
                 <template #reference>
@@ -70,7 +67,7 @@ padding: 10px;'
     <LoanBar v-if='[3, 9].includes(product.tradeType)' v-model='operationType' :account='account' class='loanBarMargin' :product='product' />
 
     <div class='trade-wrap'>
-        <div class='buy-wrap'>
+        <div class='buy-wrap' :class='!customerInfo ? "no-login": ""'>
             <!-- 挂单设置 -->
             <div v-if='[3, 5, 9].includes(product.tradeType) && orderType===10' class='form-item'>
                 <PendingBar
@@ -88,6 +85,7 @@ padding: 10px;'
                     class='cellMarginTop'
                     direction='buy'
                     :product='product'
+                    @change='previewMarinHandler("buy", $event)'
                 />
             </div>
             <div v-else class='form-item disable'>
@@ -104,11 +102,31 @@ padding: 10px;'
                     v-model='buy.volume'
                     v-model:entryType='buy.entryType'
                     :account='account'
-                    class='cellMarginTop'
                     direction='buy'
                     :product='product'
+                    @change='previewMarinHandler("buy", $event)'
                 />
             </div>
+
+            <!-- 订单金额 -->
+            <Assets
+                v-if='account'
+                :account='account'
+                direction='buy'
+                :preview-fee='buy.previewFee'
+                :preview-margin='buy.previewMargin'
+                :product='product'
+                :volume='buy.volume'
+            />
+
+            <!-- 过期类型 -->
+            <CellExpireType
+                v-if='orderType===10 && [1,2].includes(product.tradeType)'
+                v-model='buy.expireType'
+                :btn-list='expireTypeList'
+                class='mtop20'
+                :title="$t('trade.expireTime')"
+            />
 
             <!-- 止盈止损 -->
             <ProfitlossSet
@@ -121,23 +139,6 @@ padding: 10px;'
                 :product='product'
             />
 
-            <!-- 过期类型 -->
-            <CellExpireType
-                v-if='orderType===10 && [1,2].includes(product.tradeType)'
-                v-model='buy.expireType'
-                :btn-list='expireTypeList'
-                class='mtop20'
-                :title="$t('trade.expireTime')"
-            />
-
-            <!-- 订单金额 -->
-            <Assets
-                v-if='account'
-                :account='account'
-                direction='buy'
-                :product='product'
-                :volume='buy.volume'
-            />
             <div class='footerBtn buy'>
                 <van-button block :disabled='buy.loading || product.tradeEnable === 2' :loading='buy.loading' size='normal' @click='submitHandler("buy")'>
                     {{ $t('trade.buyText') }}
@@ -153,7 +154,7 @@ padding: 10px;'
                 </router-link>
             </div> -->
         </div>
-        <div class='sell-wrap'>
+        <div class='sell-wrap' :class='!customerInfo ? "no-login": ""'>
             <!-- 挂单设置 -->
             <div v-if='[3, 5, 9].includes(product.tradeType) && orderType===10' class='form-item'>
                 <PendingBar
@@ -172,6 +173,7 @@ padding: 10px;'
                     class='cellMarginTop'
                     direction='sell'
                     :product='product'
+                    @change='previewMarinHandler("sell", $event)'
                 />
             </div>
             <div v-else class='form-item disable'>
@@ -188,21 +190,21 @@ padding: 10px;'
                     v-model='sell.volume'
                     v-model:entryType='sell.entryType'
                     :account='account'
-                    class='cellMarginTop'
                     direction='sell'
                     :product='product'
+                    @change='previewMarinHandler("sell", $event)'
                 />
             </div>
 
-            <!-- 止盈止损 -->
-            <ProfitlossSet
-                v-if=' [1,2].includes(product.tradeType)'
-                v-model:stopLoss='sell.stopLoss'
-                v-model:stopProfit='sell.stopProfit'
-                class='cellMarginTop'
+            <!-- 可用余额 -->
+            <Assets
+                v-if='account'
+                :account='account'
                 direction='sell'
-                :enabled='enabled'
+                :preview-fee='sell.previewFee'
+                :preview-margin='sell.previewMargin'
                 :product='product'
+                :volume='sell.volume'
             />
 
             <!-- 过期类型 -->
@@ -214,13 +216,15 @@ padding: 10px;'
                 :title="$t('trade.expireTime')"
             />
 
-            <!-- 可用余额 -->
-            <Assets
-                v-if='account'
-                :account='account'
+            <!-- 止盈止损 -->
+            <ProfitlossSet
+                v-if=' [1,2].includes(product.tradeType)'
+                v-model:stopLoss='sell.stopLoss'
+                v-model:stopProfit='sell.stopProfit'
+                class='cellMarginTop'
                 direction='sell'
+                :enabled='enabled'
                 :product='product'
-                :volume='sell.volume'
             />
 
             <div class='footerBtn sell'>
@@ -237,10 +241,10 @@ padding: 10px;'
 import { reactive, toRefs, computed, ref, watch, unref, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 import { useRoute, useRouter } from 'vue-router'
-import { delayAwaitTime, isEmpty } from '@/utils/util'
-import { addMarketOrder } from '@/api/trade'
+import { debounce, delayAwaitTime, isEmpty } from '@/utils/util'
+import { addMarketOrder, calculateMarketOrder } from '@/api/trade'
 import { mul, pow } from '@/utils/calculation'
 import hooks from '../orderHooks'
 import OrderVolume from './components/orderVolume'
@@ -289,6 +293,8 @@ export default {
                 pendingPrice: '',
                 loading: false,
                 entryType: 1, // 1按数量下单 2按成交额下单
+                previewMargin: '', // 预估保证金
+                previewFee: '', // 预估手续费
             },
             sell: {
                 volume: '',
@@ -298,6 +304,8 @@ export default {
                 pendingPrice: '',
                 loading: false,
                 entryType: 1, // 1按数量下单 2按成交额下单
+                previewMargin: '', // 预估保证金
+                previewFee: '', // 预估手续费
             },
             operationType: 2, // 操作类型。1-普通；2-自动借款；3-自动还款
             enabled: false,
@@ -361,7 +369,13 @@ export default {
             state[state.submitType].loading = true
             addMarketOrder(params)
                 .then(async res => {
-                    if (res.invalid()) {
+                    const isReal = store.state._user.customerInfo.companyType === 'real'
+                    if (['E000027', '20010', 'E000030', 'E000033', 'E000031', 'E000029', 'E000025'].includes(res.code) && isReal) {
+                        depositGuideDialog()
+                        state[state.submitType].loading = false
+                        return false
+                    } else if (res.invalid()) {
+                        res.toast()
                         state[state.submitType].loading = false
                         return false
                     }
@@ -391,6 +405,8 @@ export default {
                     }
                     // 清除表单
                     resetForm()
+                    resetPreviewMargin('buy')
+                    resetPreviewMargin('sell')
                     state[state.submitType].volume = ''
                     state[state.submitType].pendingPrice = ''
                     Toast({
@@ -403,27 +419,52 @@ export default {
                     state[state.submitType].loading = false
                 })
         }
+        // 下单时余额不足的充值引导
+        const depositGuideDialog = () => {
+            const plans = store.state._base.plans
+            const tradeType = product.value.tradeType
+            const isTransferAction = plans.length > 1 && tradeType !== 5
+            const btnText = isTransferAction ? t('assets.transfer') : t('assets.recharge')
+            const { accountId, currency } = account.value[state.submitType]
+            Dialog.confirm({
+                title: '',
+                message: t('withdrawMoney.hint_5'),
+                confirmButtonText: btnText
+            }).then(() => {
+                let url = ''
+                if (isTransferAction) {
+                    url = `/order/transfer?tradeType=${tradeType}&accountId=${accountId}&currency=${currency}`
+                } else {
+                    url = `/depositChoose?tradeType=${tradeType}&accountId=${accountId}&currency=${currency}&back=historyBack`
+                }
+                router.push(url)
+            }).catch(() => {
+                // on cancel
+            })
+        }
 
         // 验证下单数据是否异常
         const paramsInvalid = () => {
-            if (state.orderType === 10 && !state[state.submitType].pendingPrice) return Toast(t('trade.inputPendingPrice'))
-            else if (state.orderType === 10 && isNaN(state[state.submitType].pendingPrice)) return Toast(t('trade.pendingPriceError'))
-            else if (!state[state.submitType].volume) return Toast(t('trade.inputVolume'))
-            else if (isNaN(state[state.submitType].volume)) return Toast(t('trade.volumeError'))
-            else if (!account.value) return Toast(t('trade.nullAssets'))
+            if (state.orderType === 10 && !state[state.submitType].pendingPrice) return t('trade.inputPendingPrice')
+            else if (state.orderType === 10 && isNaN(state[state.submitType].pendingPrice)) return t('trade.pendingPriceError')
+            else if (!state[state.submitType].volume) return t('trade.inputVolume')
+            else if (isNaN(state[state.submitType].volume)) return t('trade.volumeError')
+            else if (!account.value) return t('trade.nullAssets')
             return pendingWarn.value || profitLossWarn.value
         }
 
         // 下单参数
-        const orderParams = (ype) => {
-            if (paramsInvalid()) return null
+        const orderParams = () => {
+            const paramsInvalidResult = paramsInvalid()
+            typeof (paramsInvalidResult) === 'string' && Toast(paramsInvalidResult)
+            if (paramsInvalidResult) return null
             let requestPrice = state.submitType === 'sell' ? product.value.sell_price : product.value.buy_price
             const [symbolId, tradeType] = symbolKey.value.split('_')
             const direction = state.submitType === 'sell' ? 2 : 1
             if (state.orderType === 10) {
                 requestPrice = state[state.submitType].pendingPrice
             }
-            const price_digits = product.value.hasOwnProperty('price_digits') && product.value.price_digits !== undefined ? product.value.price_digits : product.value.symbolDigits
+            const price_digits = product.value.hasOwnProperty('price_digits') ? product.value.price_digits : product.value.symbolDigits
             const p = Math.pow(10, price_digits)
             const params = {
                 bizType: bizType.value, // 业务类型。1-市价开；2-限价开
@@ -464,6 +505,8 @@ export default {
         // 切换订单类型
         const changeOrderType = (val) => {
             store.commit('_trade/Update_pendingEnable', val === 10)
+            previewMarinHandler('buy')
+            previewMarinHandler('sell')
         }
 
         // 设置按额或者按手数，切换产品或者切换方向时需要重新设置；现货撮合、杠杆玩法下单买入按额，其他都是按手数交易
@@ -552,7 +595,7 @@ export default {
             })
         }
 
-        // 监听合约全仓的持仓杠杆倍数修改
+        // 监听全仓合约的持仓杠杆倍数修改
         const watchMultipLeVal = (evt) => {
             console.log(evt.detail)
             const { multipleVal, symbolId } = evt.detail
@@ -563,8 +606,61 @@ export default {
         watch(
             () => product.value, (val, oval) => {
                 init()
+                resetPreviewMargin('buy')
+                resetPreviewMargin('sell')
             }
         )
+
+        // 预估保证金
+        const intervalCalculateMargin = {}
+        const intervalCalculating = {}
+        const intervalCalculateMarginRequest = (params) => {
+            calculateMarketOrder(params).then(res => {
+                const type = params.direction === 1 ? 'buy' : 'sell'
+                if (res.check() && params.symbolId === product.value.symbolId && intervalCalculating[type]) {
+                    state[type].previewFee = res.data.fee
+                    state[type].previewMargin = res.data.margin
+                } else {
+                    resetPreviewMargin(type)
+                }
+            }).catch(() => {
+                const type = params.direction === 1 ? 'buy' : 'sell'
+                clearIntervalCalculate(type)
+            })
+        }
+
+        const previewMarinHandler = debounce((type, e) => {
+            if ([1, 2].indexOf(product.value?.tradeType) === -1) return false
+            clearIntervalCalculate(type)
+            state.submitType = type
+            const paramsInvalidResult = paramsInvalid()
+            if (paramsInvalidResult) {
+                state[type].previewFee = ''
+                state[type].previewMargin = ''
+                return null
+            }
+            const params = orderParams()
+            intervalCalculateMarginRequest(params)
+            // 500ms循环调用接口获取实时预估手续费和保证金
+            intervalCalculating[type] = true
+            intervalCalculateMargin[type] = setInterval(() => {
+                const paramsInvalidResult = paramsInvalid()
+                if (!paramsInvalidResult) intervalCalculateMarginRequest(orderParams())
+            }, 500)
+        }, 400)
+
+        // 清理轮询获取预估保证金
+        const clearIntervalCalculate = (type) => {
+            intervalCalculating[type] = false
+            intervalCalculateMargin[type] && clearInterval(intervalCalculateMargin[type])
+        }
+
+        // 切换产品和下单成功清空预估保证金
+        const resetPreviewMargin = (type) => {
+            state[type].previewFee = ''
+            state[type].previewMargin = ''
+            clearIntervalCalculate(type)
+        }
 
         init()
         getFundPage()
@@ -575,6 +671,8 @@ export default {
 
         onBeforeUnmount(() => {
             document.body.removeEventListener('update:multipLeVal', removeEventListener)
+            intervalCalculateMargin['buy'] && clearInterval(intervalCalculateMargin['buy'])
+            intervalCalculateMargin['sell'] && clearInterval(intervalCalculateMargin['sell'])
         })
 
         return {
@@ -591,6 +689,7 @@ export default {
             mVal,
             fundtokenLink,
             showLeverage,
+            previewMarinHandler,
             ...toRefs(state),
         }
     }
@@ -635,6 +734,10 @@ export default {
             vertical-align: middle;
         }
     }
+    .purchaseOrRedemptionTip {
+        width: 300px;
+        padding: 10px;
+    }
     .right-wrap {
         .multipleBtn,
         .fundtokenLink {
@@ -675,11 +778,11 @@ export default {
         position: relative;
         flex: 1;
         padding: 10px 15px;
-        &:hover .loginMaskPop {
+        &.no-login:hover .loginMaskPop {
             visibility: visible;
             opacity: 1;
         }
-        &:hover .footerBtn {
+        &.no-login:hover .footerBtn {
             opacity: 0.5;
         }
     }
@@ -702,11 +805,13 @@ export default {
                 color: var(--minorColor);
             }
         }
-        &.disable {
-            background-color: var(--lineColor);
+        :deep(.trade-type) {
+            color: var(--normalColor);
+            cursor: default;
         }
     }
     .footerBtn {
+        margin-top: 16px;
         width: 100%;
         height: 40px;
         margin-bottom: 5px;
@@ -734,5 +839,32 @@ export default {
         }
     }
 }
-
+body.night {
+    .trade-wrap {
+        .form-item {
+            color: #FFF;
+            label {
+                color: #FFF;
+            }
+            :deep(.trade-type) {
+                color: #FFF;
+            }
+        }
+        .van-tab .van-tab__text {
+            color: #FFF;
+        }
+    }
+    .trade-header {
+        :deep(.orderTypeTab) {
+            .van-tab {
+                .van-tab__text {
+                    color: #FFF;
+                }
+                &.van-tab--active .van-tab__text {
+                    color: var(--primary);
+                }
+            }
+        }
+    }
+}
 </style>

@@ -1,10 +1,10 @@
 <template>
     <van-dropdown-menu class='menu'>
         <van-dropdown-item ref='dropdownItemRef' v-model='dateModel' :options='dateOption' @change='onDateChange'>
-            <template #title v-if='context.slots.title'>
+            <template v-if='context.slots.title' #title>
                 <slot name='title'></slot>
             </template>
-            <template #title v-else-if='showTitleIcon'>
+            <template v-else-if='showTitleIcon' #title>
                 <span class='icon iconfont icon_paixu1'></span>
             </template>
             <template #default>
@@ -97,6 +97,13 @@ export default {
     }
     :deep(.van-overlay) {
         background: none;
+    }
+    :deep(.van-popup){
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+    :deep(.van-cell){
+        background: var(--bgColor);
     }
     .icon_paixu1 {
         color: var(--normalColor);

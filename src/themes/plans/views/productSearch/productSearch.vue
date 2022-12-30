@@ -207,8 +207,9 @@ export default {
     justify-content: flex-start;
     width: 100%;
     // margin-top: rem(90px);
-    padding-bottom: rem(100px);
+    //padding-bottom: rem(100px);
     overflow: auto;
+    padding-top: rem(128px);
     background: var(--bgColor);
     .productListWrap {
         flex: 1;
@@ -216,25 +217,25 @@ export default {
     }
     .search_box {
         position: absolute;
-        top: 0;
+        top: rem(134px);
         right: 0;
-        bottom: rem(100px);
+        bottom: 0;
         left: 0;
         z-index: 2;
         background: var(--contentColor);
         overflow: auto;
         &.top {
-            top: rem(100px);
+            //top: rem(100px);
         }
         .search_input {
             .van-field {
                 border-radius: 3px;
             }
-            :deep(.van-cell){
+            :deep(.van-cell) {
                 padding-left: 0;
             }
-            :deep(.van-search__action){
-                padding: 0 rem(40px)
+            :deep(.van-search__action) {
+                padding: 0 rem(40px);
             }
         }
         .search_label {
@@ -247,7 +248,7 @@ export default {
                 width: 100%;
                 height: rem(116px);
                 padding: rem(40px);
-                border-bottom: 1px solid #F8F8F8;
+                border-bottom: 1px solid var(--lineColor);
                 button {
                     float: right;
                     background: none;
@@ -256,7 +257,7 @@ export default {
                     color: #FC822F;
                     animation: heartBeat 1.3s ease-in-out forwards;
                 }
-                .activeText{
+                .activeText {
                     color: var(--primary);
                 }
             }

@@ -1,12 +1,14 @@
 <template>
     <div class='switchTradeType'>
         <div v-if='product' class='productInfo'>
-            <span class='sortIconSpan' @click="$emit('switchProduct')">
-                <van-icon class='sortIcon' name='sort' />
-            </span>
-            <span class='productName'>
-                {{ product.symbolName }}
-            </span>
+            <div class="box" @click="$emit('switchProduct')">
+                <span class='sortIconSpan'>
+                    <i class="icon_quanrejiaohuan-"></i>
+                </span>
+                <span class='productName'>
+                    {{ product.symbolName }}
+                </span>
+            </div>
             <ETF v-if='product.etf' />
             <span class='upDownWidth' :class='product.rolling_upDownColor'>
                 {{ product.rolling_upDownWidth }}
@@ -62,6 +64,10 @@ export default {
     padding: 0 rem(30px);
     font-size: rem(34px);
     line-height: rem(104px);
+    .box {
+        display: inline-flex;
+        align-items: center;
+    }
     .icon_chouti1 {
         padding-right: rem(20px);
         font-size: rem(26px);
@@ -84,12 +90,14 @@ export default {
         border-radius: 3px;
     }
     .sortIconSpan{
-        margin-right: 3px;
-        padding-top: 8px;
+        margin-right: rem(8px);
     }
     .sortIcon{
         transform: rotate(90deg);
         font-size: rem(40px);
+    }
+    :deep(.etfIcon) {
+        margin-right: rem(8px);
     }
 }
 </style>

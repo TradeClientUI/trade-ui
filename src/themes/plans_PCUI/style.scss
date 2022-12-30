@@ -18,6 +18,7 @@ body,
     height: 100%;
     color: var(--color);
     background-color: var(--bgColor);
+    scroll-behavior: smooth;
     // @include scroll-pc();
     // scrollbar-color:var(--lineColor) var(--bgColor);
     // scrollbar-width:thin;
@@ -26,7 +27,7 @@ body {
     font-size: 14px;
     /* no */
     line-height: 1.5;
-    // font-family: 'PingFang SC', '-apple-system', 'Heiti SC', 'Helvetica Neue', 'Droid Sans Fallback', 'Droid Sans';
+    font-family: 'HarmonyOS Sans', 'PingFang SC', 'Microsoft Yahei', 'Heiti SC', 'WenQuanYi Micro Hei', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif';
     //font-family: 'Trebuchet MS', 'roboto', 'ubuntu', 'sans-serif';
     //background-color: var(--bgColor2);
     webkit-text-size-adjust: none;
@@ -94,7 +95,7 @@ input[type='number'] {
 input,
 textarea {
     color: var(--color);
-    font-family: 'PingFang SC', '-apple-system', 'Heiti SC', 'Helvetica', 'Helvetica Neue', 'Droid Sans Fallback', 'Droid Sans';
+    font-family: inherit;
     background: none;
 }
 i {
@@ -188,10 +189,10 @@ i {
         background: #FFF;
     }
     30% {
-        background: linear-gradient(to right, var(--contentColor), #FCF6F7);
+        background: #FCF6F7;
     }
     80% {
-        background: linear-gradient(to right, var(--contentColor), #FAF3F3);
+        background: #FAF3F3;
     }
     100% {
         background: #FFF;
@@ -203,10 +204,10 @@ i {
         background: #FFF;
     }
     30% {
-        background: linear-gradient(to right, var(--contentColor), #F0FAF8);
+        background: #F0FAF8;
     }
     80% {
-        background: linear-gradient(to right, var(--contentColor), #EAF8F6);
+        background: #EAF8F6;
     }
     100% {
         background: #FFF;
@@ -596,12 +597,19 @@ body {
             background-color: var(--contentColor);
         }
     }
-    .van-checkbox__icon--checked,
-    .van-checkbox__icon {
+    .van-checkbox__icon{
         .van-icon {
             border-radius: rem(8px);
+            color: transparent;
+        }
+    }   
+    .van-checkbox__icon--checked{
+        .van-icon {
+            border-radius: rem(8px);
+            color: #fff;
         }
     }
+
     .van-picker__mask {
         background-image: none;
     }
@@ -652,6 +660,21 @@ body {
     .van-button--plain.van-button--primary {
         color: var(--primary);
     }
+    .van-empty {
+        .van-empty__description {
+            margin-top: 0;
+            padding: rem(30px);
+        }
+    }
+    &.van-toast--unclickable {
+        overflow: visible;
+    }
+    &.van-overflow-hidden {
+        overflow: visible !important;
+    }
+    .van-toast{
+        word-break: break-word;
+    }
 
     // element-plus
     .el-dialog {
@@ -672,6 +695,10 @@ body {
     .el-dropdown-menu {
         background: var(--contentColor);
     }
+    .el-select {
+        --el-select-input-focus-border-color: var(--primary);
+        --el-select-border-color-hover: var(--primary);
+    }
     .el-dropdown-menu__item,
     .el-select-dropdown__item {
         color: var(--color);
@@ -687,6 +714,16 @@ body {
             background: none;
         }
     }
+    .el-select__popper,
+    .el-popper.is-light,
+    .el-table__fixed-right,
+    .el-dropdown__popper {
+        --el-color-white: var(--contentColor);
+        --el-border-color-light: var(--lineColor);
+        --el-border-color-lighter: var(--lineColor);
+        --el-dropdown-menuItem-hover-color: var(--primary);
+    }
+    
     // .el-popper {
     //     color: var(--color) !important;
     //     font-size: 14px;
@@ -723,13 +760,29 @@ body {
             }
         }
     }
+    .van-pagination__item{
+        background: var(--contentColor)
+    }
+    .el-input {
+        --el-input-focus-border: var(--primary);
+        --el-input-focus-border-color: var(--primary);
+        --el-input-hover-border: var(--primary);
+        --el-input-hover-border-color: var(--primary);
+    }
     .el-input__inner {
         color: var(--color);
-        background: var(--assistColor);
+        //background: var(--assistColor);
         border: none;
         &:hover {
-            border: 1px solid var(--primary) !important;
+            //border: 1px solid var(--primary) !important;
         }
+        &:focus {
+            border-color: var(--primary) !important;
+        }
+    }
+    .van-checkbox__icon--checked .van-icon{
+        --van-checkbox-checked-icon-color: var(--primary);
+        --van-checkbox-checked-icon-color: var(--primary);
     }
     .el-checkbox__input {
         &.is-checked .el-checkbox__inner {
@@ -756,6 +809,8 @@ body {
         tbody tr td {
             border-color: var(--lineColor) !important;
         }
+
+        --el-table-row-hover-bg-color: var(--primaryAssistColor);
     }
     .el-table--border {
         border-color: var(--lineColor);
@@ -763,6 +818,25 @@ body {
             background: var(--lineColor);
         }
     }
+    .el-button{
+        --el-button-active-border-color: var(--normalColor);
+        --el-button-active-bg-color: var(--normalColor);
+    }
+    .el-button--primary{
+        --el-button-bg-color: var(--primary);
+        --el-button-border-color:var(--primary);
+        --el-button-active-color: var(--primary);
+        --el-button-active-bg-color: var(--primary);
+        --el-button-active-border-color:var(--primary);
+        --el-button-hover-border-color: var(--primary);
+        --el-button-hover-bg-color: var(--primary);
+
+    }
+    .el-button:focus, .el-button:hover{
+        --el-button-hover-text-color: #fff;
+        
+    }
+    
     .web3modal-modal-lightbox {
         z-index: 102;
     }

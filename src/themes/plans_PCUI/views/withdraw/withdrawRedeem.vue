@@ -510,7 +510,7 @@ export default {
                             confirmButtonText: t('withdraw.activateBtn')
                         }).then(() => {
                             router.replace({
-                                path: '/assets/depositChoose',
+                                path: '/depositChoose',
                                 query: {
                                     tradeType,
                                     accountId,

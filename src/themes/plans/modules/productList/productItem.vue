@@ -74,25 +74,25 @@ export default {
         const state = reactive({
             bgClass: ''
         })
-        let price = 0
+        const price = 0
         watch(
             () => props.product.sell_price,
             (val) => {
-                if (price === 0) {
-                    if ((props.product.sell_color === 'riseColor' && chartColorType.value === 1) || (props.product.sell_color === 'fallColor' && chartColorType.value === 2)) {
-                        state.bgClass = 'riseColorBgAni'
-                    } else if ((props.product.sell_color === 'fallColor' && chartColorType.value === 1) || (props.product.sell_color === 'riseColor' && chartColorType.value === 2)) {
-                        state.bgClass = 'fallColorBgAni'
-                    }
-                    price = val
-                } else {
-                    if (val - price > 0) {
-                        state.bgClass = 'riseColorBgAni'
-                    } else if (val - price < 0) {
-                        state.bgClass = 'fallColorBgAni'
-                    }
-                    price = val
-                }
+                // if (price === 0) {
+                //     if ((props.product.sell_color === 'riseColor' && chartColorType.value === 1) || (props.product.sell_color === 'fallColor' && chartColorType.value === 2)) {
+                //         state.bgClass = 'riseColorBgAni'
+                //     } else if ((props.product.sell_color === 'fallColor' && chartColorType.value === 1) || (props.product.sell_color === 'riseColor' && chartColorType.value === 2)) {
+                //         state.bgClass = 'fallColorBgAni'
+                //     }
+                //     price = val
+                // } else {
+                //     if (val - price > 0) {
+                //         state.bgClass = 'riseColorBgAni'
+                //     } else if (val - price < 0) {
+                //         state.bgClass = 'fallColorBgAni'
+                //     }
+                //     price = val
+                // }
             })
         return {
             ...toRefs(state),

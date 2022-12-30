@@ -1,5 +1,5 @@
 <template>
-    <div class='playType'>
+    <div v-if='plansList.length > 1' class='playType'>
         <van-tabs v-if='reRender' v-model:active='active' class='tabs' :data='active' :swipe-threshold='1'>
             <van-tab v-for='item in plansList' :key='item.id' :name='item.id' :title='item.name' />
         </van-tabs>

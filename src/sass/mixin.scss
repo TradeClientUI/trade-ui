@@ -208,3 +208,24 @@
 @mixin font() {
     font-family: 'Microsoft Yahei';
 }
+
+// 兼容PC/mobile 1px边框的函数
+@mixin bd {
+    height: 1px;
+    background-color: #dedede;
+    @media screen and (min-resolution: 2dppx) {
+        transform: scaleY(.5);
+    }
+}
+
+
+// pc端自适应padding
+@mixin pagePadding() {
+    padding: 0 16px;
+    @media screen and (min-width: 1600px) {
+        padding: 0 64px;
+    }
+    @media screen and (min-width:1200px) and (max-width:1600px){
+        padding: 0 32px;
+    }
+}

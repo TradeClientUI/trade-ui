@@ -16,6 +16,8 @@
             :chart='chart'
             name='sideMenu'
         ></slot>
+
+        <div v-show='!chartReady' class='chartLoading loadIcon'></div>
     </div>
 </template>
 
@@ -158,6 +160,7 @@ export default {
             resolutionList,
             isLandscape,
             chart,
+            chartReady,
             setSymbol: withMethod(setSymbol),
             setResolution: withMethod(setResolution),
             updateIndicator: withMethod(updateIndicator),
@@ -175,10 +178,22 @@ export default {
 
 <style lang="scss" scoped>
 .tv {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
+    .chartLoading {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--contentColor);
+    }
     #tv-chart-container {
         flex: 1;
         background: var(--contentColor);

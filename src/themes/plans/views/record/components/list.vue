@@ -13,6 +13,7 @@
             @refresh='onRefresh'
         >
             <van-list
+                v-if='state.finished && state.list.length > 0'
                 v-model:loading='state.loading'
                 :finished='state.finished'
                 :finished-text='$t("historyList.noMore")'
@@ -21,12 +22,14 @@
             >
                 <slot :list='state.list'></slot>
             </van-list>
+
+            <van-empty v-else :description='$t("common.noData")' image='/images/empty.png' />
         </van-pull-refresh>
     </div>
 </template>
 
 <script>
-import { reactive, nextTick } from 'vue'
+import { reactive, nextTick, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 export default {
@@ -105,6 +108,10 @@ export default {
                 onRefresh()
             })
         }
+
+        onMounted(() => {
+            onLoad()
+        })
 
         return {
             state,

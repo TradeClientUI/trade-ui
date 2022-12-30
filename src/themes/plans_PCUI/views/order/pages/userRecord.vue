@@ -3,8 +3,9 @@
         <div class='headbar'>
             <el-tabs v-model='activeName' class='tabs'>
                 <el-tab-pane :label='[1,2].includes(Number(tradeType)) ? $t("trade.order") : $t("trade.order")' name='0' />
+                <el-tab-pane v-if='[1,2].includes(Number(tradeType))' :label='$t("trade.position")' name='2' />
                 <el-tab-pane :label='$t("trade.dealList")' name='1' />
-                <el-tab-pane :label='[1,2].includes(Number(tradeType)) ? $t("trade.position") : $t("trade.asset") ' name='2' />
+                <el-tab-pane v-if='!([1,2].includes(Number(tradeType)))' :label='$t("trade.asset")' name='2' />
             </el-tabs>
             <router-link v-if='isLogin && activeName === "1"' class='link' :to="{ name: 'TransRecords', query: { tradeType } }">
                 {{ $t('trade.allTransaction') }}
@@ -52,27 +53,27 @@ watch(() => tradeType.value, async () => {
 </script>
 
 <style lang="scss" scoped>
-.userRecord{
+.userRecord {
     display: flex;
     flex-direction: column;
     width: 100%;
     flex: 1;
-    .headbar{
+    .headbar {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         width: 100%;
         padding: 0 16px;
-        .tabs{
+        .tabs {
             height: 40px;
-            :deep{
-                .el-tabs__item{
+            :deep {
+                .el-tabs__item {
                     --el-text-color-primary: var(--normalColor);
                     user-select: none;
                     font-weight: 400;
                     color: var(--normalColor);
-                    &.is-active{
+                    &.is-active {
                         font-weight: bold;
                         color: var(--primary);
                     }
@@ -80,33 +81,34 @@ watch(() => tradeType.value, async () => {
                 .el-tabs__active-bar {
                     background-color: var(--primary);
                 }
-                .el-tabs__nav-wrap::after{
+                .el-tabs__nav-wrap::after {
                     display: none;
                 }
             }
         }
     }
-    .link{
+    .link {
         cursor: pointer;
         user-select: none;
     }
-
-    :deep{
-        .link{
+    :deep {
+        .link {
             padding: 0 5px;
             cursor: pointer;
         }
     }
-    .content{
+    .content {
         position: relative;
-        .loginMaskPop{
+        .loginMaskPop {
             z-index: 8;
         }
         &:hover .loginMaskPop {
             visibility: visible;
             opacity: 1;
         }
+        :deep(.operate) {
+            background-color: var(--contentColor) !important;
+        }
     }
-
 }
 </style>

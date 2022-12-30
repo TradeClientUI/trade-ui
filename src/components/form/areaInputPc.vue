@@ -2,9 +2,69 @@
     <div class='mobileBar'>
         <div v-if="type ==='mobile'" class='zone' :class='{ "disabled": disabled }'>
             <!-- <VueSelect v-model='zoneVal' :actions='countryList' :text="type === 'mobile' ? 'name': 'countryName'" value='name' @select='zoneOnSelect' /> -->
-            <el-select v-model='zoneVal' :disabled='disabled' placeholder='Select' @change='zoneOnSelect'>
+
+            <el-popover v-model:visible='countryListVis' placement='bottom-start' trigger='click' width='300px'>
+                <div class='country-list'>
+                    <div class='search-box'>
+                        <el-input
+                            v-model='searchText'
+                            :placeholder='$t("common.input")'
+                            :prefix-icon='Search'
+                            size='large'
+                        />
+                    </div>
+                    <div v-if='fileterList.length > 0' class='country-list-container'>
+                        <div
+                            v-for='item in fileterList'
+                            :key='item.code'
+                            class='country-item'
+                            @click='zoneOnSelect(item.code)'
+                        >
+                            <div>
+                                <img
+                                    alt=''
+                                    class='icon-country'
+                                    :src="cdnUrl+'/images/countries_flags/' + item.countryCode +'.png'"
+                                    srcset=''
+                                />
+                                <span class='country-name'></span>{{ item.displayName }}
+                            </div>
+                            <div>{{ item.code }}</div>
+                        </div>
+                    </div>
+                    <div v-else class='no-data'>
+                        {{ $t('common.searchEmpty') }}
+                    </div>
+                </div>
+                <template #reference>
+                    <div class='zone-wrap'>
+                        <img
+                            alt=''
+                            class='icon-country'
+                            :src="cdnUrl+'/images/countries_flags/' + countryCode +'.png'"
+                            srcset=''
+                        />
+                        <span class='zone-text'>
+                            {{ zoneVal }}
+                        </span>
+                        <el-icon size='18'>
+                            <CaretTop v-if='countryListVis' />
+                            <CaretBottom v-else />
+                        </el-icon>
+                    </div>
+                </template>
+            </el-popover>
+            <!-- <el-select
+                v-model='zoneVal'
+                :disabled='disabled'
+                :filter-method='filterZone'
+                filterable
+                placeholder='Select'
+                @change='zoneOnSelect'
+                @visible-change='zoneOnBlur'
+            >
                 <el-option
-                    v-for='item in countryList'
+                    v-for='item in fileterList'
                     :key='item.code'
                     :value='item.code'
                 >
@@ -17,14 +77,14 @@
                         {{ item.code }}
                     </span>
                 </el-option>
-            </el-select>
+            </el-select> -->
         </div>
 
         <div class='inputWrapper'>
             <input
                 :id='id'
-                class='input'
                 v-bind='$attrs'
+                class='input'
                 required
                 :type='inputType'
                 :value='modelValue'
@@ -43,9 +103,13 @@
 // import VueSelect from '@/components/select'
 import { find } from 'lodash'
 import { randomId } from '@/utils/util'
+import { cdnUrl } from '@/config'
+import { CaretBottom, CaretTop } from '@element-plus/icons'
 export default {
     components: {
         // VueSelect
+        CaretBottom,
+        CaretTop
     },
     props: {
         modelValue: {
@@ -79,12 +143,22 @@ export default {
         isBusiness: {
             type: Boolean,
             default: false
+        },
+        countryCode: {
+            type: String,
+            default: ''
         }
     },
     data () {
         return {
             value: '',
             id: this.$attrs.id || randomId(),
+            filterValue: '',
+            fileterList: [],
+            searchText: '',
+            cdnUrl,
+            countryListVis: false,
+            selectItem: ''
         }
     },
     computed: {
@@ -100,6 +174,9 @@ export default {
                     code: value,
                     countryCode: item.code,
                     countryName: item.name,
+                    displayName: item.displayName,
+                    formatName: item.formatName,
+                    nationalCode: item.nationalCode
                 })
             })
             return tempArr
@@ -113,6 +190,35 @@ export default {
                     this.$emit('update:zone', value)
                 }
             }
+        }
+    },
+    watch: {
+        searchText (newVal) {
+            this.filterZone(newVal)
+        },
+        countryList: {
+            handler (value) {
+                this.fileterList = [
+                    ...value
+                ]
+            },
+            immediate: true
+        },
+        filterValue: {
+            handler (value) {
+                if (value) {
+                    this.fileterList = this.countryList.filter(el => {
+                        if ((el.code && el.code.toUpperCase().indexOf(value) !== -1) || (el.countryCode && el.countryCode.toUpperCase().indexOf(value) !== -1) || (el.displayName && el.displayName.toUpperCase().indexOf(value) !== -1)) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    })
+                } else {
+                    this.fileterList = this.countryList
+                }
+            },
+            immediate: true
         }
     },
     emits: ['update:modelValue', 'update:zone', 'input', 'zoneSelect', 'onBlur'],
@@ -132,18 +238,30 @@ export default {
             //     countryName: "中国大陆",
             //     name: "中国大陆 (86)",
             // }
+
             if (!this.disabled) {
                 const typeKey = this.type === 'mobile' ? 'code' : 'countryCode'
                 const item = find(this.countryList, { [typeKey]: val })
 
                 if (!this.disabled) {
+                    this.selectItem = item
                     this.$emit('update:zone', item.name)
                     this.$emit('zoneSelect', item)
+                    this.countryListVis = false
                 }
+            }
+        },
+        zoneOnBlur (visible) {
+            if (visible === false) {
+                this.filterValue = ''
             }
         },
         onBlur ($event) {
             this.$emit('onBlur', $event.target.value)
+        },
+        filterZone (value) {
+            value = value.toUpperCase()
+            this.filterValue = value
         }
     }
 }
@@ -161,8 +279,35 @@ export default {
     }
     .zone {
         flex: none;
-        width: 152px;
+        width: 120px;
         margin-right: 10px;
+        .zone-wrap {
+            border-radius: 4px;
+            border: solid 1px var(--lineColor);
+            height: 48px;
+            line-height: 48px;
+            cursor: pointer;
+            text-align: center;
+            &:hover {
+                border: solid 1px var(--primary);
+            }
+            .zone-text {
+                vertical-align: middle;
+                margin-right: 5px;
+                font-size: 16px;
+            }
+            .el-icon {
+                vertical-align: -4px;
+                transition: all 0.3s;
+            }
+            .icon-country {
+                width: 25px;
+                height: 18px;
+                vertical-align: middle;
+                margin-right: 5px;
+                border: solid 1px var(--lineColor);
+            }
+        }
         &.disabled {
             color: #C5C5C5;
             pointer-events: none;
@@ -173,7 +318,7 @@ export default {
                 color: var(--color);
                 font-size: 16px;
                 line-height: 48px;
-                background-color: var(--assistColor);
+                //background-color: var(--assistColor);
                 border: none;
                 border-radius: 4px;
             }
@@ -203,8 +348,12 @@ export default {
 }
 .inputWrapper {
     position: relative;
-    background-color: var(--assistColor) !important;
+    //background-color: var(--assistColor);
+    border: solid 1px var(--lineColor);
     border-radius: 3px;
+    &:hover {
+        border: solid 1px var(--primary);
+    }
 }
 .input {
     width: 100%;
@@ -252,6 +401,46 @@ export default {
         margin-top: rem(-25px);
         background: var(--lineColor);
         content: '';
+    }
+}
+.country-list {
+    .search-box {
+        margin-bottom: 10px;
+    }
+    .country-list-container {
+        overflow: auto;
+        max-height: 280px;
+        min-height: 90px;
+        .country-item {
+            padding: 0 10px;
+            display: flex;
+            justify-content: space-between;
+            line-height: 40px;
+            cursor: pointer;
+            .icon-country {
+                vertical-align: middle;
+                border: solid 1px var(--lineColor);
+                width: 30px;
+                height: 20px;
+                margin-right: 10px;
+            }
+            .country-name {
+                vertical-align: middle;
+            }
+            &:hover {
+                background: var(--bgColor);
+            }
+        }
+        &::-webkit-scrollbar-track {
+            background: #FFF;
+            border-radius: 10px;
+            outline: none;
+            border: none;
+        }
+    }
+    .no-data {
+        text-align: center;
+        line-height: 40px;
     }
 }
 </style>

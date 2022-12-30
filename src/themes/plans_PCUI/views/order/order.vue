@@ -7,10 +7,9 @@
                 <productSearch />
             </div>
             <div class='middle-wrap'>
-                <div class='chart-content'>
-                    <!-- 图表 -->
-                    <chart />
-                </div>
+                <!-- 图表 -->
+                <chart />
+
                 <div class='trade-content'>
                     <!-- 交易下单 -->
                     <trade />
@@ -132,7 +131,7 @@ export default {
 
         // 缓存每次切换的产品
         watch(
-            [() => product.value?.symbolId, () => product.value?.tradeType],
+            [() => route.query?.symbolId, () => route.query?.tradeType],
             newVal => {
                 store.commit('_quote/Update_lastProductActivedID', newVal.join('_'))
             }
@@ -182,8 +181,6 @@ export default {
     position: relative;
     padding: 8px;
     font-size: 14px;
-    // background: var(--bgColor);
-    background-color: #FBF9F8;
     // &::before{
     //     content: "";
     //     position: absolute;
@@ -216,7 +213,7 @@ export default {
             display: flex;
             flex-direction: row;
             flex-shrink: 0;
-            width: 320px;
+            width: 300px;
             position: absolute;
             top: 0;
             bottom: 0;
@@ -227,7 +224,7 @@ export default {
             flex-direction: column;
             justify-content: space-between;
             background: var(--bgColor);
-            margin-left: 328px;
+            margin-left: 308px;
             >div {
                 background: var(--contentColor);
                 border-radius: 10px;
@@ -312,10 +309,10 @@ export default {
         padding: 15px 0;
         :deep(.van-sticky--fixed) {
             background-color: var(--contentColor);
-            box-shadow: 0 0px 10px rgba(0, 0, 0, 0.15);
-            width: 100%!important;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            width: 100% !important;
             left: 0;
-            .assetsModule{
+            .assetsModule {
                 height: 100%;
                 margin-top: 0;
             }

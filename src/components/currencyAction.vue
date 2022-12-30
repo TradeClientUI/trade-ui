@@ -21,8 +21,10 @@
 </template>
 
 <script>
-import { computed, reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { getAssetsList } from '@/api/base'
+
 export default {
     props: {
         modelValue: String,
@@ -48,6 +50,18 @@ export default {
             emit('update:modelValue', item.code)
             state.actionSheetVisible = false
         }
+
+        onMounted(() => {
+            // 获取资产列表
+            getAssetsList().then(res => {
+                if (res.check()) {
+                    res.data.map(el => {
+                        el.name = el.code
+                    })
+                }
+                state.actionsList = res.data
+            })
+        })
 
         return {
             ...toRefs(state),

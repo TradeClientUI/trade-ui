@@ -119,7 +119,7 @@ export default {
         font-size: rem(32px);
         line-height: rem(120px);
         background: var(--contentColor);
-        border-top: solid rem(10px) var(--bgColor);
+        border-top: solid 1px var(--bgColor);
         &::after {
             border: none;
         }

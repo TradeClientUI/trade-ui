@@ -14,7 +14,9 @@
             <div class='empty'></div>
             <div class='module-form'>
                 <div class='select'>
-                    <label>{{ $t('withdrawCoin.coinName') }}</label>
+                    <label class='select_lab'>
+                        {{ $t('withdrawCoin.coinName') }}
+                    </label>
                     <div class='option'>
                         <el-select v-model='coinKind' class='currencyBox' placeholder='Select' @change='selectCoinKind'>
                             <el-option
@@ -28,7 +30,9 @@
                 </div>
 
                 <div class='select'>
-                    <label>{{ $t('withdrawCoin.chainName') }}</label>
+                    <label class='select_lab'>
+                        {{ $t('withdrawCoin.chainName') }}
+                    </label>
                     <div class='option'>
                         <el-select v-model='chainName' class='currencyBox' placeholder='Select' @change='selectChainName'>
                             <el-option
@@ -54,11 +58,10 @@
                     <p class='may'>
                         <span>{{ $t('withdrawCoin.can') }} </span>
                         <strong v-if='showCanMoney'>
-                            {{ coinTotal }} {{ coinKind }}-{{ chainName }}
+                            {{ coinTotal }} {{ coinKind }}
                         </strong>
                     </p>
                 </div>
-
                 <div class='case'>
                     <p class='row'>
                         <label class='name'>
@@ -66,9 +69,6 @@
                         </label>
                         <span class='value'>
                             {{ serviceCount }} {{ coinKind }}
-                            <span v-if='chainName'>
-                                -{{ chainName }}
-                            </span>
                         </span>
                     </p>
                     <p class='row'>
@@ -77,9 +77,6 @@
                         </label>
                         <span class='value'>
                             {{ arriveCount }} {{ coinKind }}
-                            <span v-if='chainName'>
-                                -{{ chainName }}
-                            </span>
                         </span>
                     </p>
                     <p class='row'>
@@ -237,6 +234,7 @@ import { Toast, Dialog } from 'vant'
 // i18n
 import { useI18n } from 'vue-i18n'
 // api
+import { getAssetsList } from '@/api/base'
 import {
     queryWithdrawConfig,
     getWithdrawCurrencyList,
@@ -282,6 +280,8 @@ export default {
             singleHighAmount: 0,
             // 最低可提币数量
             singleLowAmount: 0,
+            // 提币币种小数位
+            withdrawCurrencyDigits: 0,
             // 提币链名称数据列表
             allList: [],
             // 提币币种选项列表
@@ -389,7 +389,6 @@ export default {
 
         // 获取取款手续费
         const getWithdrawFee = debounce(() => {
-            console.log('jisuanshouxufei ...')
             const coinTotal = parseFloat(state.coinTotal)
             const coinCount = parseFloat(state.coinCount)
             if (!state.coinKind) {
@@ -600,7 +599,7 @@ export default {
                             confirmButtonText: t('withdraw.activateBtn')
                         }).then(() => {
                             router.replace({
-                                path: '/assets/depositChoose',
+                                path: '/depositChoose',
                                 query: {
                                     tradeType,
                                     accountId,
@@ -618,6 +617,18 @@ export default {
                     }
                     if (!withdrawConfig.hourIn24Enable) {
                         return Toast(t('withdrawCoin.hint_2') + withdrawConfig.withdrawBaseConfig.maxCount + t('withdrawCoin.unit'))
+                    }
+                }
+            })
+        }
+
+        // 获取所有资产列表
+        const getAllAssetsList = () => {
+            getAssetsList().then(res => {
+                if (res.check()) {
+                    const account = res.data.find(el => el.code === state.coinKind)
+                    if (account) {
+                        state.withdrawCurrencyDigits = account.digits
                     }
                 }
             })
@@ -789,8 +800,8 @@ export default {
             if (!state.coinCount) {
                 return Toast({ message: t('withdrawCoin.coinCountPlaceholder') })
             }
-            if (amountDigitsLength > accountCurrency.digits) {
-                return Toast(t('withdraw.withdrawDigitsTip'))
+            if (amountDigitsLength > state.withdrawCurrencyDigits) {
+                return Toast(t('withdraw.withdrawDigitsTip', { digit: state.withdrawCurrencyDigits }))
             }
             if (coinCount < state.singleLowAmount) {
                 return Toast({ message: `${t('withdrawCoin.hint_4')}${state.singleLowAmount}` })
@@ -821,7 +832,7 @@ export default {
                 withdrawCoinAmount: state.coinCount,
                 rate: state.withdrawRate.exchangeRate,
                 withdrawRateSerialNo: state.withdrawRate.withdrawRateSerialNo,
-                bankAccountName: '',
+                bankAccountName: customInfo.customerNo,
                 bankName: '数字钱包',
                 bankCardNo: state.currentWallet.address,
                 withdrawType: 2,
@@ -834,10 +845,6 @@ export default {
                 state.loading = false
                 if (res.check()) {
                     state.withdrawSuccess = true
-                } else {
-                    state.serviceCount = ''
-                    state.arriveCount = ''
-                    state.minusCount = ''
                 }
             })
         }
@@ -847,6 +854,8 @@ export default {
                 // 获取客户提币币种和链名称
                 queryWithdrawCurrencyList(resolve)
             }).then((res) => {
+                // 获取所有资产列表
+                getAllAssetsList()
                 // 获取配置信息
                 getWithdrawRate()
                 // 获取取款限制配置
@@ -900,9 +909,6 @@ export default {
         border-bottom: 1px solid var(--lineColor);
         :deep(.el-select) {
             width: 100%;
-            .el-input__inner {
-                background: #FFF;
-            }
         }
         :deep(.el-input__inner) {
             text-align: right;
@@ -921,6 +927,9 @@ export default {
                 text-align: right;
             }
         }
+    }
+    .select_lab {
+        width: 70px;
     }
     .block {
         padding: 0 rem(30px);
@@ -963,6 +972,7 @@ export default {
         }
         .may {
             display: flex;
+            justify-content: space-between;
             margin-top: rem(10px);
             font-size: rem(24px);
             span {

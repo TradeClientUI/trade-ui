@@ -1,10 +1,9 @@
 @import '@/sass/mixin.scss';
-
 .assets-module {
     display: flex;
     flex-direction: column;
     flex: 1;
-	overflow: hidden;
+    overflow: hidden;
 }
 .assets-header {
     padding: 22px;
@@ -17,7 +16,6 @@
         align-items: center;
         font-size: 14px;
         .label {
-            margin-right: 16px;
             color: var(--minorColor);
         }
         .risk {
@@ -40,24 +38,42 @@
             display: inline-flex;
             flex-direction: column;
             width: 20%;
-            span {
-                font-size: 14px;
-                color: var(--minorColor);
+            .muted {
+                display: flex;
+                align-items: center;
+                font-size: rem(24px);
+                span {
+                    font-size: 14px;
+                    color: var(--minorColor);
+                }
+                .question {
+                    margin-top: rem(-4px);
+                    margin-left: rem(8px);
+                    font-size: rem(32px);
+                    cursor: pointer;
+                }
             }
-            strong {
+            .value {
                 margin-top: 10px;
-                font-size: 24px;
-                color: var(--color);
+                strong {
+                    font-size: 24px;
+                    color: var(--color);
+                }
             }
         }
     }
     .assets-handle {
         display: flex;
+        align-items: center;
         position: absolute;
         top: 20px;
         right: 22px;
+        .question {
+            cursor: pointer;
+        }
         .btn {
             @include hover();
+            margin: 0 10px;
             display: inline-flex;
             justify-content: center;
             align-items: center;
@@ -71,8 +87,12 @@
             border-radius: 4px;
             cursor: pointer;
             &:hover {
-                color: #fff;
+                color: #FFF;
                 background: var(--primary);
+            }
+            &.btnLong {
+                width: auto;
+                padding: 0 10px;
             }
         }
         .record-link {
@@ -95,40 +115,40 @@
             }
         }
     }
-}
-.riskLevel{
-    position: relative;
-    padding-left: rem(25px);
-    margin-left: rem(10px);
-    font-size: rem(22px);
-    &::before{
-        content: '';
-        display: block;
-        position: absolute;
-        top: 45%;
-        left: 0%;
-        transform: translate(0, -50%);
-        width: rem(16px);
-        height: rem(16px);
-        border-radius: 16px;
-    }
-}
-.riskLevel1{
-    color: var(--success);
-    &::before{
-        background: var(--success);
-    }
-}
-.riskLevel2{
-    color: var(--focusColor);
-    &::before{
-        background: var(--focusColor);
-    }
-}
-.riskLevel3{
-    color: var(--warn);
-    &::before{
-        background: var(--warn);
+    .riskLevel {
+        position: relative;
+        margin-left: 10px;
+        padding-left: 10px;
+        font-size: rem(22px);
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translate(0, -50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        &.riskLevel1 {
+            color: var(--success);
+            &::before {
+                background: var(--success);
+            }
+        }
+        &.riskLevel2 {
+            color: var(--focusColor);
+            &::before {
+                background: var(--focusColor);
+            }
+        }
+        &.riskLevel3 {
+            color: var(--warn);
+            &::before {
+                background: var(--warn);
+            }
+        }
     }
 }
 .assets-body {
@@ -137,56 +157,56 @@
     padding: 0 20px;
     background: var(--contentColor);
     border-radius: 10px;
-	:deep(.el-table) {
-		background-color: transparent;
-		&::before {
-			background: none;
-		}
+    :deep(.el-table) {
+        background-color: transparent;
+        &::before {
+            background: none;
+        }
         .el-table__fixed-right::before {
             background: none;
         }
         .el-table__cell.is-right {
             background: var(--contentColor) !important;
         }
-		thead {
-			tr {
-				height: 50px;
-				font-size: 12px;
-				color: var(--minorColor);
-				background: transparent;
-				th {
-					font-weight: normal;
-					border-bottom: 1px solid var(--lineColor);
-					background: transparent;
-				}
-			}
-		}
-		tbody {
-			tr {
-				height: 62px;
-				font-size: 14px;
-				color: var(--color);
-				background: transparent;
-				td {
-					border-bottom: 1px solid var(--lineColor);
-					background: transparent;
-				}
-			}
-		}
-		.el-table__body-wrapper {
-			@include scroll-pc();
-		}
-        .empty{
+        thead {
+            tr {
+                height: 50px;
+                font-size: 12px;
+                color: var(--minorColor);
+                background: transparent;
+                th {
+                    font-weight: normal;
+                    border-bottom: 1px solid var(--lineColor);
+                    background: transparent;
+                }
+            }
+        }
+        tbody {
+            tr {
+                height: 62px;
+                font-size: 14px;
+                color: var(--color);
+                background: transparent;
+                td {
+                    border-bottom: 1px solid var(--lineColor);
+                    background: transparent;
+                }
+            }
+        }
+        .el-table__body-wrapper {
+            @include scroll-pc();
+        }
+        .empty {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            .image{
+            .image {
                 width: 160px;
                 height: auto;
             }
         }
-        .emptyText{
+        .emptyText {
             display: inline-block;
             width: 160px;
             padding-top: 140px;
@@ -194,22 +214,63 @@
             background-size: 160px auto;
             color: var(--placeholdColor);
         }
-	}
-	.handle {
-		display: flex;
-		justify-content: flex-end;
-	    button {
-	        margin-right: 15px;
-	        font-size: 14px;
-	        color: var(--primary);
-	        background: none;
-	        cursor: pointer;
-	        &:last-of-type {
-	            margin-right: 0;
-	        }
-			&:hover {
-				text-decoration: underline;
-			}
-	    }
-	}
+        .riskLevel {
+            &.riskLevel1 {
+                color: var(--success);
+            }
+            &.riskLevel2 {
+                color: var(--focusColor);
+            }
+            &.riskLevel3 {
+                color: var(--warn);
+            }
+        }
+    }
+    .header-cell {
+        display: inline-flex;
+        align-items: center;
+        .question {
+            margin-left: 2px;
+            margin-top: -4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    }
+    .handle {
+        display: flex;
+        justify-content: flex-end;
+        button {
+            margin-right: 15px;
+            font-size: 14px;
+            color: var(--primary);
+            background: none;
+            cursor: pointer;
+            &:last-of-type {
+                margin-right: 0;
+            }
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    .none-data {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        button {
+            background: var(--primary);
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+    }
 }

@@ -1,251 +1,288 @@
 <template>
-    <div class='symbol-info'>
-        <div class='item symbol-name'>
-            <p class='name'>
-                <span>{{ product?.symbolName }}</span>
-                <van-popover v-model:show='showEtfPopover' theme='dark'>
-                    <p
-                        style=' width: 400px;
-padding: 10px;'
-                    >
-                        {{ $t('trade.etfTip') }}
-                    </p>
-                    <template #reference>
-                        <EtfIcon v-if='product?.etf' @mouseenter='showEtfPopover=true' @mouseleave='showEtfPopover=false' />
-                    </template>
-                </van-popover>
-            </p>
-            <p class='code'>
-                {{ product?.symbolCode }}
-            </p>
-        </div>
-
-        <div class='item range'>
-            <p v-if='dealLastPrice' :class='dealLastPrice?.price_color'>
-                {{ dealLastPrice?.price ? parseFloat(dealLastPrice?.price).toFixed(product.symbolDigits) : '--' }}
-            </p>
-            <p>
-                <span :class='product?.rolling_upDownColor'>
-                    {{ product?.rolling_upDownAmount ? product?.rolling_upDownAmount : '--' }}
-                </span>&nbsp;
-                <span :class='product?.rolling_upDownColor'>
-                    {{ product?.rolling_upDownWidth ? product?.rolling_upDownWidth : '--' }}
-                </span>
-            </p>
-        </div>
-
-        <template v-if='product.isCryptocurrency'>
-            <div class='item ohlc'>
-                <p>
-                    <span class='muted'>
-                        {{ $t('common.24hHigh') }}
-                    </span> {{ product?.rolling_high_price || '--' }}
-                </p>
-                <p>
-                    <span class='muted'>
-                        {{ $t('common.24hLow') }}
-                    </span> {{ product?.rolling_low_price || '--' }}
-                </p>
+    <div id='chartContent' class='chart-content' :class='{ full: isFull }'>
+        <div class='symbol-info'>
+            <div v-if='currencyList.length' class='item symbol-icon'>
+                <div class='icon'>
+                    <img :src='`/images/currency_icon/${currencyList[0]}.png`' />
+                    <img :src='`/images/currency_icon/${currencyList[1]}.png`' />
+                </div>
             </div>
-
-            <div class='item ohlc'>
-                <p>
-                    <span class='muted'>
-                        {{ $t('common.24hNumber') }}
-                    </span>  {{ product?.rolling_transactions_number ? formatAmount(product.rolling_transactions_number) : '--' }}
-                </p>
-                <p>
-                    <span class='muted'>
-                        {{ $t('common.24hAmount') }}
-                    </span>  {{ product?.rolling_amount ? formatAmount(product.rolling_amount) : '--' }}
-                </p>
-            </div>
-        </template>
-        <template v-else>
-            <div class='item ohlc'>
-                <p>
-                    <span class='muted'>
-                        {{ $t('trade.todayOpen') }}
-                    </span> {{ product?.open_price || '--' }}
-                </p>
-                <p>
-                    <span class='muted'>
-                        {{ $t('trade.yesterdayClosed') }}
-                    </span> {{ product?.yesterday_close_price || '--' }}
-                </p>
-            </div>
-
-            <div class='item ohlc'>
-                <p>
-                    <span class='muted'>
-                        {{ $t('trade.high') }}
-                    </span>  {{ product?.high_price || '--' }}
-                </p>
-                <p>
-                    <span class='muted'>
-                        {{ $t('trade.low') }}
-                    </span>  {{ product?.low_price || '--' }}
-                </p>
-            </div>
-        </template>
-
-        <div v-if='product.etf' class='item ohlc'>
-            <p>
-                <span class='muted'>
-                    {{ $t('fundInfo.realtimeJZ') }}({{ product.fundCurrency }})
-                </span>  {{ product.currentNav || '--' }}
-            </p>
-            <p>
-                <span class='muted'>
-                    {{ $t('fundInfo.premiumRate') }}({{ product.fundCurrency }})
-                </span>  {{ product.premiumRate || '--' }}
-            </p>
-        </div>
-
-        <div class='item collect'>
-            <i
-                v-preventReClick
-                class='icon'
-                :class="[isOptional ? 'icon_hangqingliebiaoyijiazixuan' : 'icon_zixuankongxin']"
-                @click='addOptional'
-            ></i>
-            <i v-if='[1, 2].includes(product?.tradeType)' class='icon icon_heyuexiangqing' @click='$router.push(contractRoute)'></i>
-        </div>
-    </div>
-    <div class='tv-head'>
-        <div class='tabs-wrap'>
-            <van-tabs
-                v-model:active='activeTab'
-                :before-change='onBeforeChange'
-                class='tabs'
-                :color='$style.primary'
-                line-height='2'
-                line-width='20'
-                title-active-color='$style.primary'
-            >
-                <van-tab
-                    v-for='(item) in candleKTypeList'
-                    :key='item.ktype'
-                    :name='item.ktype'
-                    :title='item.title'
-                />
-            </van-tabs>
-            <div class='tv-right'>
-                <div class='dropdown'>
-                    <el-dropdown trigger='click'>
-                        <KIcon class='kIcon' :value='klineTypeIndex' />
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for='(item, i) in klineTypeList'
-                                    :key='item.name'
-                                    :class="{ 'mainColor':klineType === item.value }"
-                                    @click='setChartType(item.value)'
-                                >
-                                    <KIcon class='kIcon' :value='i+1' />
-                                    {{ item['title_zh'] }}
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
+            <div class='item symbol-name'>
+                <p class='name'>
+                    <span>{{ product?.symbolName }}</span>
+                    <van-popover v-model:show='showEtfPopover' theme='dark'>
+                        <p class='etfTip'>
+                            {{ $t('trade.etfTip') }}
+                        </p>
+                        <template #reference>
+                            <EtfIcon v-if='product?.etf' @mouseenter='showEtfPopover=true' @mouseleave='showEtfPopover=false' />
                         </template>
-                    </el-dropdown>
+                    </van-popover>
+                </p>
+                <p :class='dealLastPrice?.price_color'>
+                    {{ dealLastPrice?.price ? parseFloat(dealLastPrice?.price).toFixed(product.symbolDigits) : '--' }}
+                </p>
+            </div>
+            <div class='item range'>
+                <p class='muted'>
+                    {{ product.isCryptocurrency ? $t('common.24hChange') : $t('common.updown') }}
+                </p>
+                <p>
+                    <span :class='product?.rolling_upDownColor'>
+                        {{ product?.rolling_upDownAmount ? product?.rolling_upDownAmount : '--' }}
+                    </span>&nbsp;
+                    <span :class='product?.rolling_upDownColor'>
+                        {{ product?.rolling_upDownWidth ? product?.rolling_upDownWidth : '--' }}
+                    </span>
+                </p>
+            </div>
+
+            <template v-if='product.isCryptocurrency'>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('common.24hHigh') }}
+                    </p>
+                    <p>
+                        {{ product?.rolling_high_price || '--' }}
+                    </p>
+                </div>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('common.24hLow') }}
+                    </p>
+                    <p>
+                        {{ product?.rolling_low_price || '--' }}
+                    </p>
+                </div>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('common.24hNumber') }}
+                    </p>
+                    <p>
+                        {{ product?.rolling_transactions_number ? formatAmount(product.rolling_transactions_number) : '--' }}
+                    </p>
+                </div>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('common.24hAmount') }}
+                    </p>
+                    <p>
+                        {{ product?.rolling_amount ? formatAmount(product.rolling_amount) : '--' }}
+                    </p>
+                </div>
+            </template>
+            <template v-else>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('trade.todayOpen') }}
+                    </p>
+                    <p>
+                        {{ product?.open_price || '--' }}
+                    </p>
                 </div>
 
-                <div class='setting' @click='settingStatus = !settingStatus'>
-                    <van-icon class='icon' name='setting-o' />
-
-                    <div v-show='settingStatus' class='content van-hairline--surround' @click.stop=''>
-                        <van-checkbox-group ref='checkboxGroup' v-model='settingList' @change='handleLineChange'>
-                            <van-checkbox
-                                v-for='item in computedLineList'
-                                :key='item.value'
-
-                                class='item'
-                                icon-size='16px'
-                                :name='item.value'
-                            >
-                                {{ item.title }}
-                            </van-checkbox>
-                        </van-checkbox-group>
-                    </div>
-                    <div
-                        v-show='settingStatus'
-                        class='mask'
-                        @click.stop='settingStatus = false'
-                        @touchmove.stop='settingStatus = false'
-                    >
-                    </div>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('trade.yesterdayClosed') }}
+                    </p>
+                    <p>
+                        {{ product?.yesterday_close_price || '--' }}
+                    </p>
                 </div>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('trade.high') }}
+                    </p>
+                    <p>
+                        {{ product?.high_price || '--' }}
+                    </p>
+                </div>
+                <div class='item ohlc'>
+                    <p class='muted'>
+                        {{ $t('trade.low') }}
+                    </p>
+                    <p>
+                        {{ product?.low_price || '--' }}
+                    </p>
+                </div>
+            </template>
+
+            <div v-if='product.etf' class='item ohlc'>
+                <p>
+                    <span class='muted'>
+                        {{ $t('fundInfo.realtimeJZ') }}({{ product.fundCurrency }})
+                    </span>  {{ product.currentNav || '--' }}
+                </p>
+                <p>
+                    <span class='muted'>
+                        {{ $t('fundInfo.premiumRate') }}({{ product.fundCurrency }})
+                    </span>  {{ product.premiumRate || '--' }}
+                </p>
+            </div>
+
+            <div class='item collect'>
+                <i
+                    v-preventReClick
+                    class='icon'
+                    :class="[isOptional ? 'icon_hangqingliebiaoyijiazixuan' : 'icon_zixuankongxin']"
+                    @click='addOptional'
+                ></i>
+                <i v-if='[1, 2].includes(product?.tradeType)' class='icon icon_heyuexiangqing' @click='$router.push(contractRoute)'></i>
             </div>
         </div>
-    </div>
-    <div v-show='studyVis' ref='mainStudyArea' class='study-area'>
-        <div class='main-study'>
-            <div class='content'>
-                <div
-                    v-for='(item, i) in mainStudyList'
-                    :key='i'
-                    class='item'
-                    :class='{ active: mainStudy === item.name }'
+        <div class='tv-head'>
+            <div class='tabs-wrap'>
+                <van-tabs
+                    v-model:active='activeTab'
+                    :before-change='onBeforeChange'
+                    class='tabs'
                     :color='$style.primary'
+                    line-height='2'
+                    line-width='20'
+                    title-active-color='$style.primary'
                 >
-                    <span
-                        class='inner-label'
-                        @click='onClickStudy("main", item.name)'
-                    >
-                        {{ item.label }}
+                    <van-tab
+                        v-for='(item) in candleKTypeList'
+                        :key='item.ktype'
+                        :name='item.ktype'
+                        :title='item.title'
+                    />
+                </van-tabs>
+                <div class='tv-right'>
+                    <span v-if='isFull' class='fullIcon' @click='fullHandler'>
+                        <svg height='24' viewBox='0 0 24 24' width='22' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+                            <g fill='none'>
+                                <path d='M8.5 3.75a.75.75 0 0 0-1.5 0v2.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 0 0 1.5h2.5A2.25 2.25 0 0 0 8.5 6.25v-2.5zm0 16.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 1 0-1.5h2.5a2.25 2.25 0 0 1 2.25 2.25v2.5zM16.25 3a.75.75 0 0 0-.75.75v2.5a2.25 2.25 0 0 0 2.25 2.25h2.5a.75.75 0 0 0 0-1.5h-2.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75zm-.75 17.25a.75.75 0 0 0 1.5 0v-2.5a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 0 0-1.5h-2.5a2.25 2.25 0 0 0-2.25 2.25v2.5z' fill='currentColor' />
+                            </g>
+                        </svg>
                     </span>
+                    <span v-else class='fullIcon' @click='fullHandler'>
+                        <svg height='28' viewBox='0 0 28 28' width='22' xmlns='http://www.w3.org/2000/svg'>
+                            <path d='M8.5 6A2.5 2.5 0 0 0 6 8.5V11h1V8.5C7 7.67 7.67 7 8.5 7H11V6H8.5zM6 17v2.5A2.5 2.5 0 0 0 8.5 22H11v-1H8.5A1.5 1.5 0 0 1 7 19.5V17H6zM19.5 7H17V6h2.5A2.5 2.5 0 0 1 22 8.5V11h-1V8.5c0-.83-.67-1.5-1.5-1.5zM22 19.5V17h-1v2.5c0 .83-.67 1.5-1.5 1.5H17v1h2.5a2.5 2.5 0 0 0 2.5-2.5z' fill='currentColor' />
+                        </svg>
+                    </span>
+
+                    <!-- 图表类型 -->
+                    <div class='dropdown'>
+                        <el-dropdown :teleported='false' trigger='click'>
+                            <KIcon class='kIcon' :value='klineTypeIndex' />
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for='(item, i) in klineTypeList'
+                                        :key='item.name'
+                                        :class="{ 'mainColor':klineType === item.value }"
+                                        @click='setChartType(item.value)'
+                                    >
+                                        <KIcon class='kIcon' :value='i+1' />
+                                        <span class='type-text'>
+                                            {{ item['title_zh'] }}
+                                        </span>
+                                        <van-icon v-if='klineType===item.value' name='success' size='12' />
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
+
+                    <div class='setting' @click='settingStatus = !settingStatus'>
+                        <van-icon class='icon' name='setting-o' />
+
+                        <div v-show='settingStatus' class='content van-hairline--surround' @click.stop=''>
+                            <van-checkbox-group ref='checkboxGroup' v-model='settingList' @change='handleLineChange'>
+                                <van-checkbox
+                                    v-for='item in computedLineList'
+                                    :key='item.value'
+
+                                    class='item'
+                                    icon-size='16px'
+                                    :name='item.value'
+                                >
+                                    {{ item.title }}
+                                </van-checkbox>
+                            </van-checkbox-group>
+                        </div>
+                        <div
+                            v-show='settingStatus'
+                            class='mask'
+                            @click.stop='settingStatus = false'
+                            @touchmove.stop='settingStatus = false'
+                        >
+                        </div>
+                    </div>
                 </div>
-                <span class='item more' @click='showStudyDialog = true'>
-                    <span class='inner-label'>
-                        {{ $t('chart.more') }}
-                    </span>
-                </span>
             </div>
         </div>
-    </div>
-    <div class='chart'>
-        <tv
-            v-if='initialValue'
-            ref='chartRef'
-            :initial-value='initialValue'
-            :options='initConfig'
-            @indicatorRemoved='indicatorRemoved'
-            @onChartReady='onChartReady'
-            @orientationChanged='orientationChanged'
+        <div v-show='studyVis' ref='mainStudyArea' class='study-area'>
+            <div class='main-study'>
+                <div class='content'>
+                    <div
+                        v-for='(item, i) in mainStudyList'
+                        :key='i'
+                        class='item'
+                        :class='{ active: mainStudy === item.name }'
+                        :color='$style.primary'
+                    >
+                        <span
+                            class='inner-label'
+                            @click='onClickStudy("main", item.name)'
+                        >
+                            {{ item.label }}
+                        </span>
+                    </div>
+                    <span class='item more' @click='showStudyDialog = true'>
+                        <span class='inner-label'>
+                            {{ $t('chart.more') }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class='chart'>
+            <tv
+                v-if='initialValue'
+                ref='chartRef'
+                :initial-value='initialValue'
+                :options='initConfig'
+                @indicatorRemoved='indicatorRemoved'
+                @onChartReady='onChartReady'
+                @orientationChanged='orientationChanged'
+            />
+        </div>
+        <div v-show='studyVis' ref='mainStudyArea' class='study-area'>
+            <div class='main-study'>
+                <div class='content'>
+                    <div
+                        v-for='(item, i) in sideStudyList'
+                        :key='i'
+                        class='item'
+                        :class='{ active: subStudy === item.name }'
+                    >
+                        <span
+                            class='inner-label'
+                            @click='onClickStudy("sub", item.name)'
+                        >
+                            {{ item.label }}
+                        </span>
+                    </div>
+                    <span class='item more' @click='showStudyDialog = true'>
+                        <span class='inner-label'>
+                            {{ $t('chart.more') }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <StudyList
+            :prop-main-study='mainStudy'
+            :prop-sub-study='subStudy'
+            :show='showStudyDialog'
+            @update:show='updateShow'
+            @updateStudy='updateStudy'
         />
     </div>
-    <div v-show='studyVis' ref='mainStudyArea' class='study-area'>
-        <div class='main-study'>
-            <div class='content'>
-                <div
-                    v-for='(item, i) in sideStudyList'
-                    :key='i'
-                    class='item'
-                    :class='{ active: subStudy === item.name }'
-                >
-                    <span
-                        class='inner-label'
-                        @click='onClickStudy("sub", item.name)'
-                    >
-                        {{ item.label }}
-                    </span>
-                </div>
-                <span class='item more' @click='showStudyDialog = true'>
-                    <span class='inner-label'>
-                        {{ $t('chart.more') }}
-                    </span>
-                </span>
-            </div>
-        </div>
-    </div>
 
-    <StudyList
-        :prop-main-study='mainStudy'
-        :prop-sub-study='subStudy'
-        :show='showStudyDialog'
-        @update:show='updateShow'
-        @updateStudy='updateStudy'
-    />
     <Loading :show='loading' />
 </template>
 
@@ -266,6 +303,7 @@ import { addCustomerOptional, removeCustomerOptional } from '@/api/trade'
 import { MAINSTUDIES, SUBSTUDIES, VolumeStudy } from '@/components/tradingview/datafeeds/userConfig/config'
 import Loading from '@/components/loading.vue'
 import { ElMessage } from 'element-plus'
+import useSymbolIcon from '@/hooks/useSymbolIcon'
 
 export default {
     components: { tv, KIcon, EtfIcon, StudyList },
@@ -410,7 +448,8 @@ export default {
             showStudyDialog: false,
             loading: false,
             klineType: 1,
-            isOptional: false // 是否自选
+            isOptional: false, // 是否自选
+            isFull: false, // 是否全屏
         })
 
         // 是否是自选
@@ -451,16 +490,43 @@ export default {
             state.isOptional = !!val
         }, { immediate: true })
 
+        watch(() => [state.settingList], (newValues) => {
+            if (state.settingList.indexOf('showBuyPrice') > -1) {
+                localSetChartConfig('showBuyPrice', true)
+            } else {
+                localSetChartConfig('showBuyPrice', false)
+            }
+
+            if (state.settingList.indexOf('showPositionPrice') > -1) {
+                localSetChartConfig('showPositionPrice', true)
+            } else {
+                localSetChartConfig('showPositionPrice', false)
+            }
+
+            if (state.settingList.indexOf('showSellPrice') > -1) {
+                localSetChartConfig('showSellPrice', true)
+            } else {
+                localSetChartConfig('showSellPrice', false)
+            }
+
+            if (state.settingList.indexOf('showLastPrice') > -1) {
+                localSetChartConfig('showLastPrice', true)
+            } else {
+                localSetChartConfig('showLastPrice', false)
+            }
+
+            localSetChartConfig('lineSetList', state.settingList)
+        })
+
         // 图表类型
         const klineTypeIndex = computed(() => {
             const curIndex = klineTypeList.findIndex(el => el.value === state.klineType)
             return curIndex + 1
         })
 
-        const isReLoadProductSearch = inject('isReLoadProductSearch')
-
         // 图表初始值
         const initialValue = computed(() => {
+            const resolution = JSON.parse(localGet('chartConfig'))?.resolution || 1
             if (product.value.symbolName) {
                 return {
                     text: product.value.symbolName, // 用于vant组件显示
@@ -469,7 +535,7 @@ export default {
                     digits: product.value.symbolDigits, // 小数点
                     dealMode: product.value.dealMode, // 成交模式
                     tradeType: product.value.tradeType, // 玩法
-                    interval: locChartConfig?.resolution // 周期
+                    interval: resolution // 周期
                 }
             }
             return null
@@ -672,14 +738,20 @@ export default {
                             name: target?.name,
                             params: target?.params
                         }))
-                    } else {
-                        localSetChartConfig('mainStudy', null)
-                        localSetChartConfig('subStudy', null)
                     }
                 })
             }
-
+            if (studyList.length === 1 && studyList.find(el => el.type === 'mainStudy')) {
+                localSetChartConfig('subStudy', null)
+            } else if (studyList.length === 1 && studyList.find(el => el.type === 'subStudy')) {
+                localSetChartConfig('mainStudy', null)
+            }
+            initChartData()
             state.onChartReadyFlag && unref(chartRef).updateIndicator(studyList)
+            chartRef.value && chartRef.value.reset({
+                initialValue: initialValue.value,
+                options: unref(state.initConfig)
+            })
         }
 
         // 缓存图表设置
@@ -727,7 +799,14 @@ export default {
         const initChartData = () => {
             locChartConfig = JSON.parse(localGet('chartConfig'))
             const invertColor = localGet('invertColor')
-            const locale = getCookie('lang') === 'zh-CN' ? 'zh' : 'en'
+            const lang = route.query.lang || getCookie('lang')
+            const chartLocaleJSON = {
+                'zh-CN': 'zh',
+                'en-US': 'en',
+                'zh-HK': 'zh_TW',
+                'th-TH': 'th',
+            }
+            const locale = chartLocaleJSON[lang] || chartLocaleJSON['en-US']
 
             // 当前产品是否可以显示成交量，外汇、商品、指数类产品不显示成交量
             const canUseVolume = !product.value.isFX && !product.value.isCommodites && !product.value.isIndex
@@ -766,12 +845,12 @@ export default {
                     },
                     indicators: [
                         {
-                            name: 'Bollinger Bands',
+                            name: 'Moving Average mock',
                             params: [true, false, [26, 2]]
                         },
                         {
-                            name: 'Custom MACD',
-                            params: [false, false, [12, 26, 'close', 9]]
+                            name: 'Volume',
+                            params: [false, false, [20]],
                         }
 
                     ],
@@ -894,6 +973,8 @@ export default {
                 initialValue: initialValue.value,
                 options: unref(state.initConfig)
             })
+
+            QuoteSocket.deal_subscribe(product.value.symbolId, 1, '1', product.value.tradeType.toString(), 1)
             // changeTheme({ 'detail': invertColor })
             // renderChart(product, state.initConfig.property)
         }
@@ -920,14 +1001,44 @@ export default {
 
         // QuoteSocket.send_subscribe([`${product.value.symbolId}_${product.value.tradeType}`])
 
+        // 图表全屏
+        const fullHandler = () => {
+            const fullEl = document.querySelector('#chartContent')
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+            } else {
+                fullEl.requestFullscreen()
+            }
+        }
+
+        // 全屏的回调事件
+        const fullscreenchangeCallback = e => {
+            console.log(e, document.fullscreenElement)
+            state.isFull = !!document.fullscreenElement
+        }
+
+        const symbolKey = computed(() => {
+            return product.value.symbolId + '_' + product.value.tradeType
+        })
+        const { currencyList } = useSymbolIcon(symbolKey)
+
         // 监听主题修改
         document.body.addEventListener('Launch_theme', changeTheme, false)
         // 监听设置图表颜色
         document.body.addEventListener('Launch_chartColor', changeChartColor, false)
 
+        onMounted(() => {
+            // 全屏触发事件
+            const fullEl = document.querySelector('#chartContent')
+            fullEl.addEventListener('fullscreenchange', fullscreenchangeCallback, false)
+        })
+
         onUnmounted(() => {
             document.body.removeEventListener('Launch_theme', changeTheme, false)
             document.body.addEventListener('Launch_chartColor', changeChartColor, false)
+
+            const fullEl = document.querySelector('#chartContent')
+            if (fullEl) fullEl.removeEventListener('fullscreenchange', fullscreenchangeCallback, false)
         })
 
         return {
@@ -955,8 +1066,9 @@ export default {
             checkIsSelfSymbol,
             dealLastPrice,
             contractRoute,
-            isReLoadProductSearch,
-            includeSymbol
+            fullHandler,
+            includeSymbol,
+            currencyList
         }
     }
 }
@@ -964,6 +1076,19 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
+.chart-content {
+    margin-bottom: 8px;
+    background: var(--contentColor);
+    border-radius: 10px;
+    &.full {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        .chart {
+            flex: 1;
+        }
+    }
+}
 .symbol-info {
     display: flex;
     align-items: center;
@@ -971,10 +1096,36 @@ export default {
     >div {
         flex: 1;
         &.item {
-            &.symbol-name,
-            &.range,
-            &.ohlc {
+            margin-right: 15px;
+            &.range {
                 flex: 0 1 220px;
+            }
+            &.ohlc {
+                flex: 0 1 120px;
+            }
+            .etfTip {
+                width: 400px;
+                padding: 10px;
+            }
+            &.symbol-name {
+                flex: none;
+            }
+            &.symbol-icon {
+                flex: none;
+                .icon {
+                    display: flex;
+                    align-items: center;
+                    height: rem(80px);
+                    img {
+                        width: rem(52px);
+                        height: rem(52px);
+                        border: 1px solid #FFF;
+                        border-radius: 100%;
+                        &:last-child {
+                            margin-left: -10px;
+                        }
+                    }
+                }
             }
             .name {
                 display: flex;
@@ -988,8 +1139,9 @@ export default {
             .code {
                 color: var(--minorColor);
             }
+            &.range,
             &.ohlc {
-                color: var(--normalColor);
+                color: var(--mainColor);
                 font-size: 12px;
                 line-height: 2;
                 white-space: nowrap;
@@ -1128,11 +1280,28 @@ export default {
     .tv-right {
         display: flex;
         align-items: center;
-        .dropdown,
-        .setting {
+        z-index: 1;
+        .fullIcon {
+            line-height: 1;
+            vertical-align: middle;
+            cursor: pointer;
+            color: var(--normalColor);
+            &:hover {
+                opacity: 0.7;
+            }
+        }
+        .dropdown {
             margin: 0 10px;
+            height: 30px;
+            :deep(.el-dropdown-menu__item) {
+                &.mainColor {
+                    color: var(--primary);
+                }
+            }
         }
         .setting {
+            margin: 0 10px;
+            height: 30px;
             position: relative;
             display: flex;
             align-items: center;
@@ -1148,11 +1317,9 @@ export default {
                 position: absolute;
                 top: rem(72px);
                 right: 0;
-                z-index: 10;
+                z-index: 99;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                align-items: flex-start;
                 justify-content: center;
                 background: var(--contentColor);
                 box-shadow: 0 0 2px 0 var(--contentColor);
@@ -1161,6 +1328,7 @@ export default {
                     line-height: rem(30px);
                     white-space: nowrap;
                     cursor: pointer;
+                    background: var(--contentColor);
                     &.active {
                         :deep(&.van-checkbox__icon--disabled) {
                             .van-icon {
@@ -1215,6 +1383,9 @@ export default {
         color: var(--normalColor);
         vertical-align: middle;
         cursor: pointer;
+    }
+    .type-text {
+        margin: 0 8px;
     }
 }
 .study-area {
@@ -1412,17 +1583,6 @@ export default {
         font-size: rem(32px);
     }
     .content {
-        position: absolute;
-        top: rem(72px);
-        right: 0;
-        z-index: 10;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        align-items: flex-start;
-        justify-content: center;
-        background: var(--contentColor);
-        box-shadow: 0 0 2px 0 var(--contentColor);
         .item {
             padding: rem(20px) rem(50px) rem(10px);
             line-height: rem(30px);

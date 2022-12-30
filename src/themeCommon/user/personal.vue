@@ -3,7 +3,7 @@
     <div class='page-wrap'>
         <van-cell-group>
             <van-cell is-link :title='$t("cRoute.authentication")' to='/authentication' />
-            <van-cell is-link :title='$t("cRoute.bankList")' to='/bankList' />
+            <!-- <van-cell is-link :title='$t("cRoute.bankList")' to='/bankList' /> -->
             <van-cell is-link :title='$t("faceAuth.faceDetect")' @click='toFaceDetect'>
                 <template #right-icon>
                     <van-icon class='right-icon' :color='faceDetectSuccess ? $style.success : $style.minorColor' :name="faceDetectSuccess ? 'success': 'arrow'" />

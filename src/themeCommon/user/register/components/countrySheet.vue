@@ -1,86 +1,47 @@
 <template>
-    <!-- <van-popup
-        v-model:show='show'
-
-        position='bottom'
-        :style="{ width: '100%',height: '50%' }"
-    >
-        <van-index-bar :index-list='indexList'>
-            <van-index-anchor index='A' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-
-            <van-index-anchor index='B' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-
-            <van-index-anchor index='C' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-
-            <van-index-anchor index='D' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-
-            <van-index-anchor index='E' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-
-            <van-index-anchor index='F' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-
-            <van-index-anchor index='D' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-            <van-cell title='文本' />
-        </van-index-bar>
-    </van-popup> -->
-
     <van-popup
         v-model:show='show'
         class='popup-country'
-        position='bottom'
-        round
-        :style="{ width: '100%' }"
+        position='right'
+        :style="{ width: '100%',height:'100%' }"
+        teleport='#app'
+        @close='onClose'
     >
         <div class='header'>
+            <i class='icon_icon_back1' @click='show=false'></i>
             {{ $t('register.area') }}
-            <i class='icon_icon_close_big' @click='show=false'></i>
         </div>
-        <!-- <van-search v-model='searchVal' placeholder='请输入搜索关键词' /> -->
-        <div class='country-list'>
+        <van-search v-model='searchVal' :placeholder='$t("search.placeholder")' @focus='handleFocus' />
+        <div ref='countryListRef' class='country-list'>
             <div
-                v-for='item in actions'
+                v-for='item in searchList'
                 :key='item.id'
                 class='country-item'
                 @click='onSelect(item)'
             >
-                <span>{{ item.displayName }}</span>
+                <div>
+                    <img
+                        alt=''
+                        class='icon-country'
+                        :src="cdnUrl+'/images/countries_flags/' + item.code +'.png'"
+                        srcset=''
+                    />
+                    <span class='country-text'>
+                        {{ item.displayName }}
+                    </span>
+                </div>
+
                 <span>{{ item.countryCode }}</span>
             </div>
+            <van-empty v-show='searchList.length === 0' :description="$t('search.norecord')" image='/images/empty.png' />
         </div>
     </van-popup>
-
-    <!-- <van-action-sheet v-model:show='show' :actions='actions' @select='onSelect' /> -->
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { cdnUrl } from '@/config'
 export default {
     props: {
         modelValue: Boolean,
@@ -88,27 +49,34 @@ export default {
             type: String,
             default: 'name'
         },
-        data: {
-            type: Array,
-            default () {
-                return []
-            }
+        accountType: {
+            type: Number,
+            default: 0, // 0 个人开户 1企业开户
         }
     },
     emits: ['update:modelValue', 'select'],
     setup (props, { emit }) {
-        const indexList = ref(['A', 'B', 'C', 'D', 'F'])
+        const store = useStore()
         const show = computed({
             get: () => props.modelValue,
             set: val => emit('update:modelValue', val)
         })
-        const actions = computed(() => {
-            return props.data.map(el => {
-                return {
-                    ...el,
-                    name: el.countryCode ? el[props.text] + '(' + el.countryCode + ')' : el[props.text]
+        const searchVal = ref('') // 搜索文字
+
+        const countryListRef = ref(null) // 滚动条div
+        // 列表
+        const searchList = computed(() => {
+            const value = searchVal.value.toUpperCase()
+            // 获取国家区号
+            const countrylist = props.accountType === 0 ? store.state.countryList : store.getters.companyCountryList
+            const list = (!value) ? countrylist : countrylist.filter(el => {
+                if ((el.code && el.code.toUpperCase().indexOf(value) !== -1) || (el.countryCode && el.countryCode.toUpperCase().indexOf(value) !== -1) || (el.displayName && el.displayName.toUpperCase().indexOf(value) !== -1)) {
+                    return true
+                } else {
+                    return false
                 }
             })
+            return list
         })
 
         const onSelect = item => {
@@ -116,11 +84,28 @@ export default {
             emit('update:modelValue', false)
         }
 
+        const handleFocus = (e) => {
+            e?.target?.scrollIntoView && e.target.scrollIntoView({
+                block: 'nearest',
+                inline: 'nearest'
+            })
+        }
+
+        // 关闭弹窗清除搜索内容
+        const onClose = () => {
+            searchVal.value = ''
+            if (countryListRef.value?.scrollTop) countryListRef.value.scrollTop = 0 // 重置滚动条
+        }
+
         return {
+            searchVal,
+            countryListRef,
+            searchList,
             show,
-            actions,
             onSelect,
-            indexList
+            onClose,
+            handleFocus,
+            cdnUrl
         }
     }
 }
@@ -131,39 +116,57 @@ export default {
 .popup-country {
     background: var(--bgColor);
     .header {
-        display: flex;
-        justify-content: space-between;
         margin: 0 rem(30px);
         font-size: rem(32px);
         line-height: rem(120px);
-        text-align: right;
-        .icon_icon_close_big {
-            color: var(--normalColor);
+        font-weight: bold;
+        .icon_icon_back1 {
+            color: var(--minorColor);
             font-weight: bold;
-            font-size: rem(28px);
+            margin-right: rem(10px);
+            font-size: rem(26px);
         }
     }
     .van-search {
         padding-top: 0;
         :deep(.van-cell) {
             padding-left: 0;
+            border-radius: rem(40px);
+            background: var(--bgColor);
         }
         :deep(.van-search__content) {
-            background: var(--contentColor);
+            background: var(--bgColor);
             border: solid 1px var(--lineColor);
-            border-radius: rem(10px);
+            border-radius: rem(40px);
+            padding-left: rem(16px);
+            height: rem(80px);
+            align-items: center;
+        }
+        :deep(.van-icon-search){
+            margin-top: -1px;
         }
     }
     .country-list {
-        height: 400px;
+        height: calc(100vh - 110px);
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
         .country-item {
             display: flex;
             justify-content: space-between;
             padding: 0 rem(30px);
             line-height: rem(100px);
-            //border-bottom: solid 1px var(--lineColor);
-            &:hover {
+            font-size: rem(28px);
+            .icon-country{
+                width: rem(50px);
+                height: rem(38px);
+                vertical-align: middle;
+                border: solid 1px var(--lineColor);
+                margin-right: rem(10px);
+            }
+            .country-text{
+                vertical-align: middle;
+            }
+            &:active {
                 background: var(--bgColor);
             }
         }

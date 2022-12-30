@@ -94,6 +94,8 @@ const changeLangHandler = lang => {
             locale.value = lang // change!
             store.commit('del_cacheViews', 'Home')
             store.commit('del_cacheViews', 'Layout')
+            store.commit('Update_countryList', [])
+            store.commit('Update_countryListAll', [])
         })
 
         setCookie('lang', lang, 'y10')

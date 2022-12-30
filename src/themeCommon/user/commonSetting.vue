@@ -1,11 +1,14 @@
 <template>
-    <LayoutTop :custom-back='true' :menu='false' :title='$t("route.mine")' @back='back' />
+    <LayoutTop
+        :custom-back='true'
+        :menu='false'
+        :title='$t("cRoute.commonSetting")'
+        @back='$router.push("/")'
+    />
     <div class='page-wrap'>
-        <p class='header'>
-            {{ $t('cRoute.commonSetting') }}
-        </p>
         <van-cell-group :border='false' class='cellGroup'>
-            <van-cell
+            <!-- <van-cell
+                v-if='langItem'
                 class='cellItem'
                 is-link
                 :title='$t("common.lang")'
@@ -17,7 +20,7 @@
                     </span>
                     <van-icon class='right-arrow' name='arrow' />
                 </template>
-            </van-cell>
+            </van-cell> -->
             <van-cell
                 class='cellItem'
                 is-link
@@ -25,11 +28,14 @@
                 @click='colorShow=true'
             >
                 <template #right-icon>
-                    <img alt='' class='updown-icon' :src='Number(chartVal) === 1 ? "/images/redDown.png" : "/images/redUp.png"' />
+                    <label>
+                        <i class='icon_hongzhang riseColor'></i>
+                        <i class='icon_lvdie fallColor'></i>
+                    </label>
                     <van-icon class='right-arrow' name='arrow' />
                 </template>
             </van-cell>
-            <van-cell
+            <!-- <van-cell
                 class='cellItem'
                 is-link
                 :title='$t("common.dark")'
@@ -37,7 +43,7 @@
                 <template #right-icon>
                     <van-switch v-model='themeVal' :active-color='$style.primary' size='24px' @change='colorSelect' />
                 </template>
-            </van-cell>
+            </van-cell> -->
             <van-cell
                 v-if='inviteVis'
                 class='cellItem'
@@ -190,7 +196,6 @@ export default {
                 state.loading = false
                 state.langVisible = false
                 state.lang = action.val
-
                 // 替换URL
                 const str = location.pathname
                 const firstSlash = str.indexOf('/') + 1
@@ -202,6 +207,8 @@ export default {
                     locale.value = action.val // change!
                     store.commit('del_cacheViews', 'Home')
                     store.commit('del_cacheViews', 'Layout')
+                    store.commit('Update_countryList', [])
+                    store.commit('Update_countryListAll', [])
                 })
 
                 setCookie('lang', action.val, 'y10')
@@ -237,6 +244,7 @@ export default {
             const curTheme = localGet('invertColor')
             state.chartVal = chartObj
             const locChartConfig = JSON.parse(localGet('chartConfig'))
+
             if (isEmpty(locChartConfig)) {
                 localSet('chartConfig', JSON.stringify({
                     'chartColorType': chartObj
@@ -259,10 +267,8 @@ export default {
 
             setRootVariable()
             state.colorShow = false
-        }
-
-        const back = () => {
-            return router.replace('/mine')
+            // 缓存最后一次修改颜色的类型
+            localSet('lastModifyType', 1)
         }
 
         return {
@@ -270,7 +276,6 @@ export default {
             langSelect,
             colorSelect,
             upDownColorSelect,
-            back,
             inviteVis,
             langItem,
             ...toRefs(state)
@@ -294,6 +299,9 @@ export default {
         line-height: rem(130px);
         background: var(--contentColor);
         border-radius: rem(10px);
+        :root .night & {
+            background: var(--assistColor) !important;
+        }
         &:last-child {
             margin-bottom: 0;
         }
@@ -311,10 +319,10 @@ export default {
                 vertical-align: middle;
             }
             .color-red {
-                color: #B72122;
+                color: #EF5353;
             }
             .color-green {
-                color: #2B70AE;
+                color: #26A69A;
             }
         }
         .van-radio {
@@ -414,6 +422,14 @@ export default {
             .updown-icon {
                 width: rem(40px);
                 margin-right: rem(20px);
+            }
+            label {
+                display: inline-flex;
+                align-items: center;
+                i {
+                    margin-left: rem(-10px);
+                    font-size: rem(42px);
+                }
             }
         }
     }

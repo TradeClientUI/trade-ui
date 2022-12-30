@@ -44,6 +44,7 @@
                         class='cellMarginTop'
                         :direction='direction'
                         :product='product'
+                        @change='previewMarinHandler'
                     />
                     <!-- 手数 -->
                     <OrderVolume
@@ -52,14 +53,25 @@
                         :account='account'
                         class='cellMarginTop'
                         :product='product'
+                        @change='previewMarinHandler'
                     />
                     <!-- 订单金额 -->
                     <Assets
                         v-if='account'
                         :account='account'
                         :direction='direction'
+                        :preview-fee='previewFee'
+                        :preview-margin='previewMargin'
                         :product='product'
                         :volume='volume'
+                    />
+                    <!-- 过期类型 -->
+                    <CellExpireType
+                        v-if='orderType===10 && [1,2].includes(product.tradeType)'
+                        v-model='expireType'
+                        :btn-list='expireTypeList'
+                        class='mtop10'
+                        :title="$t('trade.expireTime')"
                     />
                     <!-- 止盈止损 -->
                     <ProfitlossSet
@@ -69,17 +81,9 @@
                         :direction='direction'
                         :product='product'
                     />
-                    <!-- 过期类型 -->
-                    <CellExpireType
-                        v-if='orderType===10 && [1,2].includes(product.tradeType)'
-                        v-model='expireType'
-                        :btn-list='expireTypeList'
-                        class='mtop20'
-                        :title="$t('trade.expireTime')"
-                    />
                 </div>
             </div>
-            <div v-if='!customerInfo' class='footerBtn' :class='[direction]'>
+            <div v-if='!customerInfo' class='footerBtn'>
                 <van-button block size='normal' @click='toRegister'>
                     {{ $t('trade.loginOrRegister') }}
                 </van-button>
@@ -122,9 +126,9 @@ import plansType from '@plans/components/plansType.vue'
 import sidebarProduct from '@plans/components/sidebarProduct.vue'
 import hooks from './orderHooks'
 import { toolHooks } from '@plans/hooks/handicap'
-import { addMarketOrder } from '@/api/trade'
-import { Toast } from 'vant'
-import { delayAwaitTime } from '@/utils/util'
+import { addMarketOrder, calculateMarketOrder } from '@/api/trade'
+import { Toast, Dialog } from 'vant'
+import { delayAwaitTime, debounce } from '@/utils/util'
 export default {
     components: {
         Direction,
@@ -148,8 +152,16 @@ export default {
         const router = useRouter()
         const originTitle = document.title
         const { t } = useI18n({ useScope: 'global' })
-        const { symbolId, direction, tradeType } = route.query
-        if (symbolId && tradeType) store.commit('_quote/Update_productActivedID', `${symbolId}_${tradeType}`)
+        const { direction, tradeType } = route.query
+
+        watch(() => route.query, (query) => {
+            const { symbolId, tradeType } = query
+            if (symbolId && tradeType) {
+                store.commit('_quote/Update_productActivedID', `${symbolId}_${tradeType}`)
+                store.commit('_quote/Update_lastProductActivedID', `${symbolId}_${tradeType}`)
+            }
+        }, { immediate: true })
+
         const symbolKey = computed(() => store.state._quote.productActivedID)
         const state = reactive({
             loading: false,
@@ -171,7 +183,10 @@ export default {
             stopLoss: '',
             stopProfit: '',
             multipleVal: '', // 杠杆倍数
-            productKeys: [] // 交易记录组件需要订阅的产品
+            productKeys: [], // 交易记录组件需要订阅的产品
+            previewMargin: '', // 预估保证金
+            previewFee: '', // 预估手续费
+
         })
         const roderRecordRef = ref(null) // 交易记录组件对象
         const pendingRef = ref(null)
@@ -203,12 +218,12 @@ export default {
         const productTradeType = ref(tradeType)
 
         const positionList = computed(() => store.state._trade.positionList[productTradeType.value] ?? [])
-        // 合约全仓的当前产品的持仓杠杆倍数
+        // 全仓合约的当前产品的持仓杠杆倍数
         const multipleValPosition = computed(() => {
-            const position = positionList.value.find(el => parseInt(el.symbolId) === parseInt(product.value.symbolId))
-            return position ? position.crossLevelNum : ''
+            const position = positionList.value.find(el => parseInt(el.symbolId) === parseInt(product.value?.symbolId))
+            return position ? position.crossLevelNum : state.multipleVal
         })
-        // 合约全仓监听当前产品持仓的杠杆倍数修改
+        // 全仓合约监听当前产品持仓的杠杆倍数修改
         watch(
             () => multipleValPosition.value,
             newval => {
@@ -221,11 +236,7 @@ export default {
         const accountList = computed(() => store.state._user.customerInfo?.accountList)
 
         const directionText = computed(() => {
-            if ([1, 2].includes(Number(product.value.tradeType))) {
-                return state.direction === 'buy' ? t('trade.buyText') : t('trade.sellText')
-            } else {
-                return state.direction === 'buy' ? t('trade.buy') : t('trade.sell')
-            }
+            return state.direction === 'buy' ? t('trade.buyText') : t('trade.sellText')
         })
 
         store.commit('_trade/Update_modifyPositionId', 0)
@@ -258,9 +269,9 @@ export default {
         watch(
             () => state.direction,
             () => {
-                state.volume = ''
                 queryAccountInfo()
                 if (product.value?.tradeType !== 2) setVolumeType()
+                previewMarinHandler()
             },
         )
         // 监听玩法类型
@@ -284,6 +295,7 @@ export default {
         // 切换订单类型
         const changeOrderType = (val) => {
             store.commit('_trade/Update_pendingEnable', val === 10)
+            previewMarinHandler()
         }
         // 侧边栏-切换产品
         const onSelectProduct = (product, close) => {
@@ -334,6 +346,7 @@ export default {
                 // state.volume = product.minVolume  不需要设置默认手数
                 state.volume = ''
                 state.pendingPrice = ''
+                resetPreviewMargin()
 
                 quoteSubscribe() // 订阅产品行情
                 // 订阅产品五档报价
@@ -357,26 +370,32 @@ export default {
             })
         }
 
+        watch(symbolKey, () => {
+            init()
+        })
+
         // 验证下单数据是否异常
         const paramsInvalid = () => {
-            if (state.orderType === 10 && !state.pendingPrice) return Toast(t('trade.inputPendingPrice'))
-            else if (state.orderType === 10 && isNaN(state.pendingPrice)) return Toast(t('trade.pendingPriceError'))
-            else if (!state.volume) return Toast(t('trade.inputVolume'))
-            else if (isNaN(state.volume)) return Toast(t('trade.volumeError'))
-            else if (!account.value) return Toast(t('trade.nullAssets'))
+            if (state.orderType === 10 && !state.pendingPrice) return t('trade.inputPendingPrice')
+            else if (state.orderType === 10 && isNaN(state.pendingPrice)) return t('trade.pendingPriceError')
+            else if (!state.volume) return t('trade.inputVolume')
+            else if (isNaN(state.volume)) return t('trade.volumeError')
+            else if (!account.value) return t('trade.nullAssets')
             return pendingWarn.value || profitLossWarn.value
         }
 
         // 下单参数
         const orderParams = () => {
-            if (paramsInvalid()) return null
+            const paramsInvalidResult = paramsInvalid()
+            typeof (paramsInvalidResult) === 'string' && Toast(paramsInvalidResult)
+            if (paramsInvalidResult) return null
             let requestPrice = state.direction === 'sell' ? product.value.sell_price : product.value.buy_price
             const [symbolId, tradeType] = symbolKey.value.split('_')
             const direction = state.direction === 'sell' ? 2 : 1
             if (state.orderType === 10) {
                 requestPrice = state.pendingPrice
             }
-            const price_digits = product.value.hasOwnProperty('price_digits') && product.value.price_digits !== undefined ? product.value.price_digits : product.value.symbolDigits
+            const price_digits = product.value.hasOwnProperty('price_digits') ? product.value.price_digits : product.value.symbolDigits
             const p = Math.pow(10, price_digits)
             const params = {
                 bizType: bizType.value, // 业务类型。1-市价开；2-限价开
@@ -408,8 +427,14 @@ export default {
             state.loading = true
             addMarketOrder(params)
                 .then(async res => {
-                    if (res.invalid()) {
+                    const isReal = store.state._user.customerInfo.companyType === 'real'
+                    if (['E000027', '20010', 'E000030', 'E000033', 'E000031', 'E000029', 'E000025'].includes(res.code) && isReal) {
+                        depositGuideDialog()
                         state.loading = false
+                        return false
+                    } else if (res.invalid()) {
+                        state.loading = false
+                        res.toast()
                         return false
                     }
                     const data = res.data
@@ -423,6 +448,7 @@ export default {
                     sessionStorage.setItem('order_' + orderId, JSON.stringify(localData))
                     state.volume = ''
                     state.pendingPrice = ''
+                    resetPreviewMargin()
                     Toast({
                         message: [1, 12].includes(params.bizType) ? t('trade.orderSuccessToast') : t('trade.orderPendingSuccessToast'),
                         duration: 1000,
@@ -435,6 +461,45 @@ export default {
                 .catch(err => {
                     state.loading = false
                 })
+        }
+
+        // 下单时余额不足的充值引导
+        const depositGuideDialog = () => {
+            const plans = store.state._base.plans
+            const tradeType = product.value.tradeType
+            const isTransferAction = plans.length > 1 && tradeType !== 5
+            const btnText = isTransferAction ? t('trade.transfer') : t('trade.desposit')
+            const { accountId, currency } = account.value
+            Dialog.confirm({
+                title: '',
+                message: t('withdrawMoney.hint_5'),
+                confirmButtonText: btnText
+            }).then(() => {
+                let routePrams = ''
+                if (isTransferAction) {
+                    routePrams = {
+                        name: 'Transfer',
+                        query: {
+                            tradeType,
+                            accountId,
+                            currency
+                        }
+                    }
+                } else {
+                    routePrams = {
+                        name: 'DepositChoose',
+                        query: {
+                            tradeType,
+                            currency,
+                            accountId,
+                            back: 'historyBack'
+                        }
+                    }
+                }
+                router.push(routePrams)
+            }).catch(() => {
+                // on cancel
+            })
         }
 
         // 价格跳动修改页面title
@@ -453,6 +518,53 @@ export default {
             router.push('/register')
         }
 
+        // 预估保证金
+        let intervalCalculateMargin = null
+        let intervalCalculating = false // 是否处于轮询获取预估保证金的状态
+        const intervalCalculateMarginRequest = (params) => {
+            calculateMarketOrder(params).then(res => {
+                if (res.check() && params.symbolId === product.value.symbolId && intervalCalculating) {
+                    state.previewFee = res.data.fee
+                    state.previewMargin = res.data.margin
+                } else {
+                    resetPreviewMargin()
+                }
+            }).catch(() => {
+                clearIntervalCalculate()
+            })
+        }
+
+        const previewMarinHandler = debounce((type, e) => {
+            if ([1, 2].indexOf(product.value?.tradeType) === -1) return false
+            clearIntervalCalculate()
+            const paramsInvalidResult = paramsInvalid()
+            if (paramsInvalidResult) {
+                state.previewFee = ''
+                state.previewMargin = ''
+                return null
+            }
+            const params = orderParams()
+            intervalCalculateMarginRequest(params)
+            // 500ms循环调用接口获取实时预估手续费和保证金
+            intervalCalculating = true
+            intervalCalculateMargin = setInterval(() => {
+                const paramsInvalidResult = paramsInvalid()
+                if (!paramsInvalidResult) intervalCalculateMarginRequest(orderParams())
+            }, 500)
+        }, 400)
+
+        // 清理轮询获取预估保证金
+        const clearIntervalCalculate = () => {
+            intervalCalculating = false
+            intervalCalculateMargin && clearInterval(intervalCalculateMargin)
+        }
+        // 切换产品和下单成功清空预估保证金
+        const resetPreviewMargin = () => {
+            state.previewFee = ''
+            state.previewMargin = ''
+            clearIntervalCalculate()
+        }
+
         init()
 
         onBeforeUnmount(() => {
@@ -462,6 +574,8 @@ export default {
             QuoteSocket.cancel_subscribe(1)
             QuoteSocket.cancel_subscribe(3)
             store.commit('_quote/Delete_dealList')
+
+            intervalCalculateMargin && clearInterval(intervalCalculateMargin)
         })
         return {
             ...toRefs(state),
@@ -485,6 +599,7 @@ export default {
             submitHandler,
             toRegister,
             directionText,
+            previewMarinHandler,
             setProductKeys
         }
     }
@@ -514,10 +629,10 @@ export default {
     color: var(--color);
 }
 .orderWrap {
+    margin-top: 2px;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    margin-bottom: rem(100px);
+    height: calc(100% - 2px);
     overflow-y: auto;
     color: var(--color);
     background: var(--bgColor);
@@ -568,19 +683,21 @@ export default {
         vertical-align: middle;
         opacity: 0.5;
     }
+    .van-button {
+        color: #FFF;
+        font-size: rem(30px);
+        background: var(--primary);
+        border-color: var(--primary);
+        border-radius: rem(6px);
+    }
     &.buy {
         .van-button {
-            color: #FFF;
-            font-size: rem(30px);
             background: var(--riseColor);
             border-color: var(--riseColor);
-            border-radius: rem(6px);
         }
     }
     &.sell {
         .van-button {
-            color: #FFF;
-            font-size: rem(30px);
             background: var(--fallColor);
             border-color: var(--fallColor);
         }

@@ -4,7 +4,7 @@
             {{ stopLossWarn || stopProfitWarn }}
         </FloatTip>
 
-        <div v-if='enabled' class='van-hairline--top'>
+        <div v-if='enabled'>
             <ProfitLossBar
                 ref='stopLossRef'
                 v-model='stopLossPrice'
@@ -115,7 +115,7 @@ export default {
     }
 }
 .priceRange {
-    color: var(--minorColor);
+    color: var(--color);
     font-size: rem(24px);
 }
 .floatTip {

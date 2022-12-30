@@ -1,10 +1,17 @@
-import { computed, unref, ref } from 'vue'
+import { computed, unref, ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { gte } from '@/utils/calculation'
 import { localGet, localSet } from '@/utils/util'
 
-export default function ({ tradeType, categoryType, isSort = true }) {
+export default function ({
+    tradeType,
+    categoryType,
+    isSort = true,
+    isSelfSymbol = true,
+    defaultSortField = null, // 初始化排序字段
+    defaultSortType = null, // 初始化排序类型
+}) {
     // tradeType 玩法 categoryType 板块id isSort 是否需要排序
 
     const { t } = useI18n({ useScope: 'global' })
@@ -23,16 +30,21 @@ export default function ({ tradeType, categoryType, isSort = true }) {
             listByUser: Array.isArray(listByUser) ? listByUser : [listByUser]
         }
         const tradeTypeQuote = (unref(userProductCategory)[unref(tradeType)] || []).filter(e => e.listByUser.length)
-
-        return [
-            selfSymbol,
-            ...tradeTypeQuote
-        ]
+        return isSelfSymbol ? [selfSymbol, ...tradeTypeQuote] : [...tradeTypeQuote]
     })
 
     // 排序
     const sortField = ref(localGet('productListSortField') || '') // 排序字段
     const sortType = ref(localGet('productListSortType') || '') // 排序方式， asc-升序； desc-降序；
+
+    onMounted(() => {
+        if (defaultSortField !== null) {
+            sortField.value = defaultSortField
+        }
+        if (defaultSortType !== null) {
+            sortType.value = defaultSortType
+        }
+    })
 
     // 所选板块的产品列表
     const productList = computed(() => {
@@ -42,7 +54,7 @@ export default function ({ tradeType, categoryType, isSort = true }) {
         const systemOptional = unref(categoryList.value)[unref(categoryType.value)]?.listByUser || [] // 系统默认推送的自选列表
 
         if (!customerInfo.value) { // 未登录
-            if (unref(categoryType.value) === 0) {
+            if (unref(categoryType.value) === 0 && isSelfSymbol) {
                 // 取本地缓存的自选列表
                 const localSelfSymbolList = localGet('localSelfSymbolList') ? JSON.parse(localGet('localSelfSymbolList')) : []
                 const newArr = {}
@@ -96,7 +108,7 @@ export default function ({ tradeType, categoryType, isSort = true }) {
                     } else {
                         return 0
                     }
-                } else if (sortField.value === 'rolling_upDownWidth') {
+                } else if (['rolling_upDownAmount', 'rolling_upDownWidth'].includes(sortField.value)) {
                     const firtstValue = parseFloat(firstEl[sortField.value]) || defaultInfinity
                     const secondValue = parseFloat(secondEl[sortField.value]) || defaultInfinity
                     return firtstValue - secondValue

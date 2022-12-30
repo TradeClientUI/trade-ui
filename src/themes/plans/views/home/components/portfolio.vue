@@ -43,27 +43,26 @@
 </script>
 
 <style lang="scss" scoped>
-.portfolio{
+.portfolio {
     margin: rem(40px) auto 0;
-    .h2title{
-        font-family: "Microsoft Yahei";
+    .h2title {
         font-size: 24px;
         font-weight: bold;
         text-align: center;
         padding-bottom: 20px;
     }
-    .titleDesc{
+    .titleDesc {
         text-align: center;
         font-size: 16px;
     }
-    .list{
+    .list {
         margin-top: 40px;
     }
-    .row{
+    .row {
         position: relative;
         padding-bottom: 40px;
         text-align: center;
-        .icon{
+        .icon {
             display: block;
             margin: 0 auto;
             width: 78px;
@@ -71,24 +70,23 @@
             background-size: contain;
             background-repeat: no-repeat;
         }
-        .icon1{
+        .icon1 {
             background-image: url('../../../images/home/portfolio-icon1.png');
         }
-        .icon2{
+        .icon2 {
             background-image: url('../../../images/home/portfolio-icon2.png');
         }
-        .icon3{
+        .icon3 {
             background-image: url('../../../images/home/portfolio-icon3.png');
         }
     }
-    .title{
+    .title {
         margin-bottom: 8px;
         padding-top: 10px;
         color: #1E2329;
         font-weight: 500;
         font-size: 20px;
         line-height: 28px;
-
     }
 }
 </style>

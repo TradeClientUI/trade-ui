@@ -28,7 +28,7 @@
             <dealList v-else :biz-type-text='bizTypeText' :list='dealList' :trade-type='tradeType' />
         </div>
         <!-- 持仓 -->
-        <positionList v-if="current === 'position'" :show-header='false' />
+        <positionList v-if="current === 'position'" :show-header='false' :show-trade-btn='false' />
         <!-- 资产 -->
         <div v-if="current === 'assets'" class='assets-list'>
             <!-- 资产搜索 -->
@@ -130,8 +130,8 @@ export default {
             if ([1, 2].includes(Number(props.tradeType))) {
                 tabList = [
                     { title: t('trade.curTrust'), value: 'pending' },
-                    { title: t('trade.dealList'), value: 'deal' },
-                    { title: t('trade.position'), value: 'position' }
+                    { title: t('trade.position'), value: 'position' },
+                    { title: t('trade.dealList'), value: 'deal' }
                 ]
             }
             if ([3, 5, 9].includes(Number(props.tradeType))) {
@@ -299,7 +299,6 @@ export default {
 .header-case {
     position: sticky;
     top: -1px;
-    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;

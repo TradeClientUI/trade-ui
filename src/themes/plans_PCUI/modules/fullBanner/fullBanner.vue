@@ -36,6 +36,7 @@ export default {
 
 <style lang="scss" scoped>
 .swiper-module {
+    // craig-modify
     position: fixed;
     z-index: 0;
     left: 0;

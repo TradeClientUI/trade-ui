@@ -6,13 +6,23 @@
     <Loading :show='pageLoading' />
     <div class='filter-wrap'>
         <van-dropdown-menu :active-color='style.primary' :overlay='true'>
+            <!-- <van-dropdown-item
+                v-model='typeVal'
+                :options='typeList'
+                @change='changeType'
+            /> -->
+            <van-dropdown-item
+                v-model='currencyVal'
+                :options='currencyList'
+                @change='changeCurrency'
+            />
             <van-dropdown-item
                 ref='timeDropdown'
                 v-model='timeVal'
                 :options='timeList'
                 @change='timeChange'
             >
-                <template #title v-if='timeVal === 5'>
+                <template v-if='timeVal === 5' #title>
                     {{ customDate }}
                 </template>
                 <template #default>
@@ -42,114 +52,7 @@
                     :loading-text="$t('compLang.loading')"
                     @load='onLoad'
                 >
-                    <van-collapse
-                        v-for='(item, index) in list'
-                        :key='index'
-                        v-model='activeIndex'
-                        accordion
-                        :border='false'
-                        @change='handleFold(index)'
-                    >
-                        <van-collapse-item :name='index+1'>
-                            <template #title>
-                                <p class='amount'>
-                                    {{ item.intendAmount }} {{ item.depositCurrency }}
-                                </p>
-                                <p class='time'>
-                                    {{ formatTime(item.createTime) }}
-                                </p>
-                            </template>
-                            <template #right-icon>
-                                <div>
-                                    <span class='state'>
-                                        {{ handleState(item.checkStatus, item.depositStatus) }}
-                                        <!-- {{ checkStatus[item.checkStatus] }} -->
-                                    </span>
-                                    <van-icon :name='activeIndex === index+1 ? "arrow-up" : "arrow-down"' />
-                                </div>
-                            </template>
-                            <div class='withdraw-desc'>
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('deposit.cashAmount') }}
-                                    </span>
-                                    <span class='right-val'>
-                                        {{ item.intendAmount }} {{ item.depositCurrency }}
-                                    </span>
-                                </div>
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('common.fee') }}
-                                    </span>
-                                    <span v-if='item.depositFee' class='right-val'>
-                                        {{ item.depositFee }} {{ item.depositCurrency }}
-                                    </span>
-                                    <span v-else class='right-val'>
-                                        --
-                                    </span>
-                                </div>
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('common.enterAccount') }}
-                                    </span>
-                                    <span v-if='item.finalAmount' class='right-val'>
-                                        {{ item.finalAmount }} {{ item.depositCurrency }}
-                                    </span>
-                                    <span v-else class='right-val'>
-                                        --
-                                    </span>
-                                </div>
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('common.status') }}
-                                    </span>
-                                    <span class='right-val state'>
-                                        {{ handleState(item.checkStatus, item.depositStatus) }}
-                                        <!-- {{ Number(item.depositStatus) ===2 ? '存款成功' : '待支付' }} -->
-                                    </span>
-                                </div>
-
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        TXID
-                                    </span>
-                                    <span class='right-val w250'>
-                                        <span class='val'>
-                                            {{ item.txid || '--' }}
-                                        </span>
-                                        <span v-if='item.txid' class='copy-btn' :data-clipboard-text='item.txid' @click='copyTXID'>
-                                            <img alt='' src='../../../assets/copy.png' srcset='' />
-                                        </span>
-                                    </span>
-                                </div>
-
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('deposit.submitTime') }}
-                                    </span>
-                                    <span class='right-val'>
-                                        {{ formatTime(item.createTime) }}
-                                    </span>
-                                </div>
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('deposit.arriveTime') }}
-                                    </span>
-                                    <span class='right-val'>
-                                        {{ item.depositStatus === 2 ? formatTime(item.updateTime) : '--' }}
-                                    </span>
-                                </div>
-                                <div class='w-item'>
-                                    <span class='left-label'>
-                                        {{ $t('common.remark') }}
-                                    </span>
-                                    <span class='right-val'>
-                                        {{ item.remark || '--' }}
-                                    </span>
-                                </div>
-                            </div>
-                        </van-collapse-item>
-                    </van-collapse>
+                    <deposit-record-list :list='list' :type='typeVal.toString()' />
                 </van-list>
             </van-pull-refresh>
         </div>
@@ -157,40 +60,31 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, onBeforeMount, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, toRefs, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import Top from '@/components/top'
 import { useStore } from 'vuex'
-import { queryDepositPageList } from '@/api/user'
+import { getDepositCoinList, queryDepositPageList } from '@/api/user'
 import { isEmpty } from '@/utils/util'
-import { Toast } from 'vant'
 import { useI18n } from 'vue-i18n'
-import Clipboard from 'clipboard'
 import dateRange from '@plans/components/dateRange'
+import depositRecordList from './components/deposit-record-list.vue'
+
 export default {
     components: {
         Top,
-        dateRange
+        dateRange,
+        depositRecordList
     },
     setup (props) {
-        const router = useRouter()
+        const route = useRoute()
         const store = useStore()
+        const { type, currency } = route.query
         const { t } = useI18n({ useScope: 'global' })
         // 获取账户信息
-        const customInfo = computed(() => store.state._user.customerInfo)
+        const customerInfo = computed(() => store.state._user.customerInfo)
         const style = computed(() => store.state.style)
-        const handleState = (checkStatus, depositStatus) => {
-            // 存款成功 待支付 已取消
-            if (Number(depositStatus) === 2) {
-                return t('deposit.depositSuccess')
-            } else if (Number(checkStatus) === 3) {
-                return t('common.canceled')
-            } else {
-                return t('deposit.tobePay')
-            }
-        }
 
-        const activeIndex = ref(0)
         const state = reactive({
             loading: false,
             size: 20,
@@ -201,7 +95,6 @@ export default {
             finishedText: t('common.noMore'),
             finished: false,
             pageLoading: false,
-            txid: '',
             customDate: '',
             timeVal: 2,
             timeList: [
@@ -209,22 +102,48 @@ export default {
                 { text: t('common.curWeek'), value: 2 },
                 { text: t('common.curMonth'), value: 3 },
                 { text: t('common.curThreeMonth'), value: 4 }
+            ],
+            typeVal: Number(type) || 2,
+            typeList: [
+                { text: '汇兑', value: 2 },
+                { text: '直充', value: 1 }
+            ],
+            currencyVal: 0,
+            currencyList: [
+                { text: t('common.all'), value: 0 }
             ]
         })
-        const handleFold = (val) => {
-            activeIndex.value = val
-        }
 
         const onRefresh = () => {
             state.current = 1
             state.finished = false
             state.list = []
-            getWithdrawList()
+            getRecordList()
         }
 
-        const getWithdrawList = () => {
+        // 获取客户支持的存款币种列表
+        const queryDepositCoinList = () => {
+            getDepositCoinList({ clientType: 'mobile' }).then(res => {
+                const result = []
+                res.data.map((el, index) => {
+                    result.push({ text: el, value: index + 1 })
+                })
+                if (currency) {
+                    const item = result.find(el => el.text === currency)
+                    if (item) state.currencyVal = item.value
+                }
+
+                state.currencyList = state.currencyList.concat(result)
+
+                // 获取列表数据
+                getRecordList()
+            })
+        }
+
+        const getRecordList = () => {
             const params = {
-                customerNo: customInfo.value.customerNo,
+                customerNo: customerInfo.value.customerNo,
+                depositCurrency: state.currencyVal === 0 ? '' : state.currencyList[state.currencyVal].text,
                 size: state.size,
                 current: state.current,
                 startTime: state.startTime,
@@ -271,8 +190,7 @@ export default {
             } else if (timeType === 4) {
                 state.startTime = window.dayjs(window.dayjs().subtract(3, 'month').format('YYYY/MM/DD')).valueOf()
             }
-            resetParams()
-            getWithdrawList()
+            onRefresh()
         }
 
         // 选择自定义时间
@@ -283,51 +201,41 @@ export default {
                 state.endTime = timeList[1]
                 state.customDate = window.dayjs(timeList[0]).format('YYYY/MM/DD') + '-' + window.dayjs(timeList[1]).format('YYYY/MM/DD')
             }
-            resetParams()
-            getWithdrawList()
+            onRefresh()
         }
 
-        // 重置参数
-        const resetParams = () => {
-            state.current = 1
-            state.finished = false
-            state.list = []
-            activeIndex.value = 0
+        // 选择类型
+        const changeType = () => {
+            onRefresh()
+        }
+
+        // 选择币种
+        const changeCurrency = () => {
+            onRefresh()
         }
 
         // 底部加载更多
         const onLoad = () => {
             state.current++
-            getWithdrawList()
-        }
-
-        // 复制txid
-        const copyTXID = () => {
-            var clipboard = new Clipboard('.copy-btn')
-            clipboard.on('success', e => {
-                Toast(t('common.copySuccess'))
-                // 释放内存
-                clipboard.destroy()
-            })
+            getRecordList()
         }
 
         onMounted(() => {
-            getWithdrawList()
+            // 获取存款支持的币种
+            queryDepositCoinList()
         })
 
         return {
-            activeIndex,
-            handleFold,
-            customInfo,
+            style,
+            ...toRefs(state),
             onRefresh,
             formatTime,
             onLoad,
-            handleState,
-            copyTXID,
-            ...toRefs(state),
-            style,
             timeChange,
-            onRangeChange
+            onRangeChange,
+            queryDepositCoinList,
+            changeType,
+            changeCurrency
         }
     }
 }
@@ -340,68 +248,6 @@ export default {
     height: 100%;
     overflow: auto;
     background-color: var(--bgColor);
-    .withdraw-desc {
-        .w-item {
-            display: flex;
-            line-height: rem(60px);
-            span {
-                flex: 1;
-                font-size: rem(24px);
-            }
-            .right-val {
-                display: flex;
-                justify-content: flex-end;
-                color: var(--color);
-                font-weight: bold;
-                text-align: right;
-                &.w250 {
-                    width: rem(600px);
-                }
-                &.state {
-                    color: var(--primary);
-                }
-                .val {
-                    display: inline-block;
-                    width: rem(300px);
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    vertical-align: middle;
-                }
-                .copy-btn {
-                    display: inline-block;
-                    margin-left: rem(5px);
-                    flex: none;
-                    img {
-                        width: rem(40px);
-                        vertical-align: middle;
-                    }
-                }
-            }
-            .left-label {
-                color: var(--minorColor);
-            }
-        }
-    }
-    .record-list {
-        height: 100%;
-        .van-collapse-item {
-            border-bottom: solid rem(20px) var(--bgColor);
-        }
-        .amount {
-            color: var(--color);
-            font-weight: bold;
-            font-size: rem(28px);
-        }
-        .time {
-            color: var(--minorColor);
-            font-size: rem(20px);
-        }
-        .state {
-            margin-right: rem(5px);
-            color: var(--primary);
-        }
-    }
 }
 .filter-wrap {
     :deep(.van-dropdown-menu) {

@@ -613,7 +613,6 @@ export default {
                 tradeType,
                 fundPwd: md5(state.fundPwd),
                 googleCode: state.googleCode,
-                bankCode: state.channel.code,
                 extend: JSON.stringify({ 'phone': '+63' + state.phone, 'bankCode': state.channel.code })
             }
             handleWithdraw(params).then(res => {

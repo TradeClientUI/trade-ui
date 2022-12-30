@@ -1,0 +1,43 @@
+<template>
+    <div class='privacyPolicy'>
+        <div class='content'>
+            <h1 class='content-title'>
+                隐私政策
+            </h1>
+            <div class='content_section'>
+                <p class='text'>
+                    MagnaMarkets的个人资料私隐政策是根据《个人资料（私隐）条例》以保护客户权益。在MagnaMarkets使用客户资料以提供其最佳之服务时，亦会高度关注对于其客户资料使用之安排，为此，MagnaMarkets会确保其雇员遵守法例规定的保安和保密严谨标准。
+                </p>
+                <p class='text'>
+                    阁下可能在任何时间包括现在或将来或阁下曾经向一间或多于一间MagnaMarkets提供其个人资料而这些个人资料包括姓名、地址和一些个人财务或其他资料或MagnaMarkets和阁下在延续正常业务运作中或提供财务或信贷时进一步收集的资料(所有这些资料在本政策下统称为“资料”)。我们的隐私条款会不时根据法律革新和科技升级 、我们运作和实践上的改变而更新，以确保其持续适合不断变化的环境，请阁下定期浏览本网页查阅任何修改。
+                </p>
+                <p class='text'>
+                    若MagnaMarkets 持有客户个人资料，客户同意MagnaMarkets（在符合本条例规定的前提下）可能将此等个人资料用于下列用途：
+                </p>
+            </div>
+            <div class='content_section'>
+                <p class='li'>
+                    1、MagnaMarkets收集的各项个人资料，只供MagnaMarkets进行业务运作及其他有关活动之用；
+                </p>
+                <p class='li'>
+                    2、MagnaMarkets致力确保其网站是安全及符合业界标准，并且使用其他资料保障工具，例如：防火墙、认证系统（密码和个人身份证号码等）和操控机制来控制未获授权的系统进入网站和存取资料；
+                </p>
+                <p class='li'>
+                    3、MagnaMarkets会将客户个人资料保密储存，保护客户的个人资料以防止被盗用，MagnaMarkets雇员亦会尊重客户的私隐，绝不会向未获授权人士透露任何资料；
+                </p>
+                <p class='li'>
+                    4、客户可不时查阅及更改由MagnaMarkets所保存的有关其个人资料；
+                </p>
+                <p class='li'>
+                    5、客户同意MagnaMarkets会根据任何法例或监管机构之规定，向监管当局及其他政府机构披露客户所有资料（及其他资料）；
+                </p>
+                <p class='li'>
+                    6、MagnaMarkets可能会在客户的电脑设定及存取MagnaMarkets Cookies，以协助MagnaMarkets分析并了解有关之市场推广策略的效果。MagnaMarkets及其雇员可能会于MagnaMarkets的产品和服务使用Cookies 来追踪客户在BT Global网站的浏览，收集得来和共用的资料是不具姓名及无法被个别辨识的；
+                </p>
+                <p class='li'>
+                    7、客户同意MagnaMarkets向客户提供服务时，MagnaMarkets可以授权一些并非隶属MagnaMarkets的公司使用客户个人资料，包括以合约形式协助提供便利的平台服务予客户的公司，执行必要的维护和开发等工作。MagnaMarkets要求这些公司对相关的个人资料进行保密
+                </p>
+            </div>
+        </div>
+    </div>
+</template>

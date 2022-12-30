@@ -185,6 +185,7 @@ export default {
                 display: inline-block;
                 margin-right: rem(10px);
                 text-align: right;
+                color: var(--normalColor);
                 &.header {
                     text-align: center;
                 }

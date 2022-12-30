@@ -249,7 +249,8 @@ export default {
     position: relative;
     min-width: 1200px;
     height: 380px;
-    background: #15191E;
+    // background: #15191E;
+    background: var(--bgColor);
     .footer-auto {
         display: flex;
         align-items: center;

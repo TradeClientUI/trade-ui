@@ -1,5 +1,5 @@
 <template>
-    <div class='page-wrap' :class='{ hasNav: $hasNav }'>
+    <div class='page-wrap'>
         <PageComp class='minePageComp' :data='pageModules' />
         <!-- <div class='support'>
             <img alt='' src='/images/support.png' />
@@ -34,9 +34,6 @@ export default {
     .minePageComp {
         min-height: 100%;
         padding-bottom: rem(110px);
-    }
-    &.hasNav {
-        //padding-bottom: rem(100px);
     }
     .support {
         width: rem(300px);

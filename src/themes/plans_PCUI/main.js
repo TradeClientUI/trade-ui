@@ -15,7 +15,7 @@ import PageComp from '@planspc/components/PageComp'
 import LayoutTop from '@planspc/layout/centerViewTop'
 import { setRootVariable } from './colorVariables'
 import { setRouter, modifybaseURL } from '@/utils/request'
-import { getLoginParams, localRemove, getToken, isEmpty, removeLoginParams, checkUserKYC, localGet, localSet, getCookie, sessionSet } from '@/utils/util'
+import { getLoginParams, getToken, isEmpty, removeLoginParams, checkUserKYC, localGet, localSet, getCookie, sessionSet, localRemove } from '@/utils/util'
 import BigNumber from 'bignumber.js'
 import preventReClick from '@/directives/preventReClick'
 import positiveNumber from '@/directives/positiveNumber'
@@ -23,6 +23,7 @@ import positiveNumber from '@/directives/positiveNumber'
 import { getPreDemoAccountParams } from './officialDemoAccount.js'
 import Setup from './setup'
 import { requestBusinessConfig } from '@/api/wpApi'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -52,17 +53,18 @@ app.config.errorHandler = (err, vm, info) => {
 // 如果有缓存有登录信息，先执行异步登录或者拉取用户信息
 let loginParams = getLoginParams()
 if (loginParams) localRemove('loginParams') // 删除之前缓存登录密码
+
 const token = getToken()
 
 // 设置默认主题色
 if (isEmpty(localGet('invertColor'))) {
-    localSet('invertColor', 'light')
+    localSet('invertColor', 'night') // 默认黑色主题
 }
 
 setRouter(router)
 setRootVariable(localGet('invertColor'))
 
-if (loginParams || token) store.commit('_user/Update_loginLoading', true)
+if (token) store.commit('_user/Update_loginLoading', true)
 else if (location.search.includes('from=officialWebsite')) loginParams = getPreDemoAccountParams() // 从官网过来自动分配pre的Demo账号
 
 // 加载业务渠道自定义配置json

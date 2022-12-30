@@ -160,10 +160,10 @@ class SocketEvent {
         const productMap = this.$store.state._quote.productMap
         this.$store.dispatch('_quote/querySymbolBaseInfoList', null).then(() => {
             const product = productMap[`${symbol_id}_${trade_type}`]
-            this.subscribeDeal = [{ symbol_id, depth_level, merge_accuracy, trade_type, trade_info_count, trade_mode: product.dealMode }]
+            this.subscribeDeal = [{ symbol_id, depth_level, merge_accuracy, trade_type, trade_info_count, trade_mode: product?.dealMode }]
             const list = [{
                 symbol_id: Number(symbol_id), // 产品ID ，类型：uint64
-                trade_mode: product.dealMode, // 成交模式
+                trade_mode: product?.dealMode, // 成交模式
                 trade_type, // 交易类型，类型：uint32，1：cfd，2：me
                 depth_level, // 深度层级，类型：uint32，该字段有效范围1到10之间
                 merge_accuracy,

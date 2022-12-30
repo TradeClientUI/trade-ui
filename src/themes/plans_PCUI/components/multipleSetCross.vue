@@ -1,5 +1,5 @@
 <template>
-    <!-- 合约全仓杠杆倍数设置 -->
+    <!-- 全仓合约杠杆倍数设置 -->
     <div class='dialog-layer'>
         <el-dialog
             v-model='multipleShow'
@@ -126,9 +126,10 @@ export default {
             }
         })
 
+        console.log('props.multipleVal===', props.multipleVal)
         const state = reactive({
             loading: false,
-            multipleValue: '',
+            multipleValue: props.multipleVal,
             max: 100,
             min: 1,
             step: 1,
@@ -215,6 +216,9 @@ export default {
 
         watch(() => show.value, val => {
             state.multipleShow = val
+        })
+        watch(() => props.multipleVal, val => {
+            state.multipleValue = val
         })
 
         return {

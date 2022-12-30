@@ -3,20 +3,22 @@
         <img v-if='h5Preview' alt='' :src='exampleImg' />
         <ul v-else>
             <li v-for='item in products' :key='item.symbloKey' @click='goOrder(item)'>
-                <p class='row_1'>
-                    <span>{{ item.symbolName }}</span>
-                    <strong :class='item.rolling_upDownColor'>
-                        {{ item.rolling_upDownWidth || '--' }}
-                    </strong>
+                <p class='row_new'>
+                    {{ item.symbolName }}
                 </p>
-                <p class='row_2'>
-                    <span>{{ item.rolling_last_price || '--' }}</span>
-                </p>
-                <p class='row_3'>
-                    <span :class='item.rolling_upDownColor'>
-                        {{ item.rolling_upDownAmount > 0 ? '+' : '' }}{{ item.rolling_upDownAmount || '--' }}
-                    </span>
-                </p>
+                <div>
+                    <p class='row_2'>
+                        <span>{{ item.rolling_last_price || '--' }}</span>
+                    </p>
+                    <p class='row_1'>
+                        <span :class='item.rolling_upDownColor'>
+                            {{ item.rolling_upDownAmount > 0 ? '+' : '' }}{{ item.rolling_upDownAmount || '--' }}
+                        </span>
+                        <strong :class='item.rolling_upDownColor'>
+                            ({{ item.rolling_upDownWidth || '--' }})
+                        </strong>
+                    </p>
+                </div>
             </li>
         </ul>
     </div>
@@ -92,17 +94,18 @@ export default {
 <style lang="scss" scoped>
 .product-module {
     height: 120px;
-    background: #000730;
+    background: #020730;
     ul {
-        display: flex;
         height: 100%;
+        margin: 0 auto;
+        display: flex;
     }
     li {
         position: relative;
         display: flex;
         flex: 1;
-        flex-direction: column;
-        justify-content: center;
+        justify-content: space-around;
+        align-items: center;
         height: 100%;
         padding: 0 24px;
         cursor: pointer;
@@ -119,6 +122,16 @@ export default {
         &:last-of-type::after {
             background-color: transparent;
         }
+        .row_new {
+            font-size: 22px;
+            color: #FFF;
+        }
+        div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+        }
         .row_1 {
             display: flex;
             align-items: center;
@@ -134,9 +147,10 @@ export default {
         }
         .row_2 {
             margin-top: 3px;
+            margin-bottom: 10px;
             span {
-                color: #B7C0E7;
-                font-size: 24px;
+                color: #FFF;
+                font-size: 22px;
             }
         }
         .row_3 {
@@ -144,6 +158,45 @@ export default {
             span {
                 color: #5B658E;
                 font-size: 16px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .product-module {
+        height: auto;
+        ul {
+            width: 90%;
+            flex-direction: column;
+            box-sizing: border-box;
+            padding: 10px 0;
+            li {
+                box-sizing: border-box;
+                padding: 10px 20px;
+                border-bottom: 1px dashed #B7C0E7;
+                &::after {
+                    display: none;
+                }
+                .row_new {
+                    font-size: 18px;
+                }
+                .row_2 {
+                    span {
+                        font-size: 16px;
+                    }
+                }
+                .row_1 {
+                    span {
+                        font-size: 14px;
+                    }
+                    strong {
+                        font-size: 14px;
+                    }
+                }
+            }
+            li:nth-child(3) {
+                border-bottom: none;
             }
         }
     }

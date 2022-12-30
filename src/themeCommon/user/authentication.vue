@@ -1,11 +1,8 @@
 <template>
     <!-- 头部导航 -->
-    <LayoutTop :custom-back='true' :menu='false' :title='$t("route.mine")' @back='back' />
+    <LayoutTop :custom-back='true' :menu='false' :title='$t("cRoute.regKyc")' @back='back' />
     <div class='page-wrap'>
         <Loading :show='loading' />
-        <p class='header'>
-            {{ $t('cRoute.regKyc') }}
-        </p>
         <div v-if='customInfo.openAccountType===1' class='business'>
             {{ $t('auth.authToPC') }}
         </div>
@@ -29,7 +26,7 @@
                         </span>
                     </div>
                     <div v-else class='btn'>
-                        <span v-if='[0,3].includes(Number(item.status))' class='unverified' @click='handleNext(item)'>
+                        <span v-if='[0,3].includes(Number(item.status))' class='unverified mobile_kyc_unverified_ga' @click='handleNext(item)'>
                             {{ kycAuditStatus[item.status] }}
                             <van-icon :color='style.fallColor' name='arrow' />
                         </span>
@@ -96,7 +93,7 @@ export default {
         }
 
         const back = () => {
-            router.replace('/mine')
+            router.replace('/')
         }
 
         onBeforeRouteLeave((to, from) => {
@@ -176,7 +173,6 @@ export default {
                     color: var(--color);
                     font-weight: 500;
                     font-size: rem(24px);
-                    font-family: PingFang SC;
                     line-height: rem(49px);
                 }
             }

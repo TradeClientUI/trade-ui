@@ -16,12 +16,13 @@
             <div class='field-wrap'>
                 <input
                     v-model='amount'
+                    class='mobile_withdraw_quantity_input_ga'
                     :placeholder='amountPlaceholder'
                     type='number'
                     @change='changeAmount'
                     @input='changeAmount'
                 />
-                <button class='get-btn' plain round size='small' @click='getAll'>
+                <button class='get-btn mobile_withdraw_all_ga' plain round size='small' @click='getAll'>
                     {{ $t('withdrawMoney.allBtn') }}
                 </button>
             </div>
@@ -33,14 +34,19 @@
                 <p class='bw-t'>
                     {{ $t('withdrawMoney.bankName') }}
                 </p>
-                <div v-if='!isEmpty(checkedBank)' class='bank bank-flex' @click='openSheet'>
-                    <i class='bank-icons-sm' :class="'bk-'+ checkedBank?.bankCode"></i>
-                    <span class='bank-no'>
-                        {{ checkedBank?.bankName }} {{ hideMiddle(checkedBank?.bankCardNumber) }}
-                    </span>
+                <div v-if='!isEmpty(checkedBank)' class='bank' @click='openSheet'>
+                    <van-icon class='card' name='card' />
+                    <div class='row'>
+                        <p class='name'>
+                            {{ checkedBank?.bankName }}
+                        </p>
+                        <p class='account'>
+                            {{ checkedBank?.bankAccount }}
+                        </p>
+                    </div>
                     <van-icon name='arrow-down' />
                 </div>
-                <div v-else class='bank no-data' @click='openSheet'>
+                <div v-else class='bank no-data mobile_add_bankcard_ga' @click='openSheet'>
                     <span>{{ $t('withdrawMoney.bankNone') }}</span>
                     <van-icon name='arrow-down' />
                     <!-- <van-button plain round size='mini' type='success' @click='toAddBank'>
@@ -54,7 +60,7 @@
         </div>
     </div>
 
-    <van-button block class='confirm-btn' type='primary' @click='confirm'>
+    <van-button block class='confirm-btn mobile_withdraw_confirm_ga' type='primary' @click='confirm'>
         <span>{{ $t('withdraw.confirm') }}</span>
     </van-button>
 
@@ -64,20 +70,23 @@
             <div
                 v-for='(item, index) in bankList'
                 :key='index'
-                class='bank'
+                class='bank-item'
                 :class='{ disabled: item.bankCurrency !== currency }'
                 @click='chooseBank(item)'
             >
-                <div class='bank-item'>
-                    <i class='bank-icons-sm' :class="'bk-'+ item.bankCode"></i>
-                    <div class='bank-no'>
-                        <p>{{ item.bankName }} {{ hideMiddle(item.bankCardNumber) }}</p>
-                        <p v-if='item.bankCurrency !== currency' class='tips'>
-                            {{ $t('withdrawMoney.bankTips') }}
-                        </p>
-                    </div>
-                    <van-icon v-if='item.checked' class='icon-success' color='#53C51A' name='success' />
+                <van-icon class='card' name='card' />
+                <div class='row'>
+                    <p class='name'>
+                        {{ item.bankName }}
+                    </p>
+                    <p class='account'>
+                        {{ item.bankAccount }}
+                    </p>
+                    <p v-if='item.bankCurrency !== currency' class='tips'>
+                        {{ $t('withdrawMoney.bankTips') }}
+                    </p>
                 </div>
+                <van-icon v-if='item.checked' class='icon-success' color='#53C51A' name='success' />
             </div>
             <div class='add-bank' @click='toAddBank'>
                 <van-icon class='icon-plus' name='plus' size='13' />
@@ -178,7 +187,6 @@ export default {
         DialogFundPwd
     },
     setup (props) {
-        console.log('========', md5('111111'))
         const { t } = useI18n({ useScope: 'global' })
         const store = useStore()
         const router = useRouter()
@@ -382,6 +390,7 @@ export default {
 
         // 选择银行卡
         const chooseBank = (item) => {
+            if (item.bankCurrency !== currency) return
             state.withdrawCurrency = item.bankCurrency
             state.checkedBank = item
             state.bankList.map(item => {
@@ -514,7 +523,8 @@ export default {
         const hideMiddle = (value) => {
             if (!isEmpty(value)) { return `${value.substring(0, 4)} ${'*'.repeat(value.length - 8).replace(/(.{4})/g, '$1 ')}${value.length % 4 ? ' ' : ''}${value.slice(-4)}` }
         }
-
+        const isMobile = process.env.VUE_APP_theme === 'plans'
+        const gaClass = isMobile ? 'mobile_withdraw_kyc_ga' : 'pc_withdraw_kyc_ga'
         // kyc验证
         const checkKyc = () => {
             state.loading = true
@@ -525,6 +535,8 @@ export default {
                 state.loading = false
                 if (Number(res.data) !== 2) {
                     return Dialog.alert({
+                        // 埋点类名
+                        className: Number(res.data) !== 1 ? gaClass : '',
                         title: t('withdraw.hint'),
                         confirmButtonText: Number(res.data) === 1 ? t('withdraw.kycBtn_1') : t('withdraw.kycBtn_2'),
                         message: Number(res.data) === 2 ? t('withdraw.kycMsg_1') : t('withdraw.kycMsg_2'),
@@ -662,7 +674,7 @@ export default {
             }
 
             if (amountDigitsLength > accountCurrency.digits) {
-                return Toast(t('withdraw.withdrawDigitsTip'))
+                return Toast(t('withdraw.withdrawDigitsTip', { digit: accountCurrency.digits }))
             }
             if (amount > withdrawAmount) {
                 return Toast(t('withdrawMoney.hint_5'))
@@ -689,7 +701,7 @@ export default {
                 withdrawRateSerialNo: state.withdrawRate.withdrawRateSerialNo,
                 bankAccountName: state.checkedBank.lastName + state.checkedBank.firstName,
                 bankName: state.checkedBank.bankName,
-                bankCardNo: state.checkedBank.bankCardNumber,
+                bankCardNo: state.checkedBank.bankAccount,
                 withdrawType: 1,
                 withdrawMethod: currentTab,
                 tradeType,
@@ -807,19 +819,6 @@ export default {
                 font-size: rem(24px);
             }
         }
-        .bank-wrap {
-            margin-top: rem(20px);
-            .bw-t {
-                color: var(--color);
-                font-size: rem(28px);
-                line-height: rem(72px);
-            }
-            .bw-t2 {
-                color: var(--minorColor);
-                font-size: rem(24px);
-                line-height: rem(60px);
-            }
-        }
     }
 }
 .confirm-btn {
@@ -834,74 +833,99 @@ export default {
         font-size: rem(30px);
     }
 }
-.bank {
-    align-items: center;
-    margin: rem(10px) rem(10px) rem(10px) 0;
-    border: rem(1px) solid var(--lineColor);
-    &.disabled {
-        pointer-events: none;
-        .bank-no {
-            color: var(--placeholdColor);
+.bank-wrap {
+    margin-top: rem(20px);
+    .bw-t {
+        color: var(--color);
+        font-size: rem(28px);
+        line-height: rem(72px);
+    }
+    .bw-t2 {
+        color: var(--minorColor);
+        font-size: rem(24px);
+        line-height: rem(60px);
+    }
+    .bank {
+        display: flex;
+        align-items: center;
+        padding: rem(20px) rem(30px);
+        border: rem(1px) solid var(--lineColor);
+        .card {
+            margin-top: rem(-12px);
+            margin-right: rem(18px);
+            color: var(--minorColor);
+            font-size: rem(48px);
+        }
+        .row {
+            flex: 1;
+        }
+        .name {
+            margin-bottom: rem(10px);
+        }
+        &.no-data {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            line-height: rem(90px);
+            span {
+                margin-left: rem(30px);
+                color: var(--minorColor);
+                vertical-align: middle;
+            }
+            .van-button {
+                padding: 0 rem(20px);
+                vertical-align: middle;
+            }
         }
     }
-    &.bank-flex {
-        display: flex;
-        justify-content: center;
-    }
+}
+.bank-list {
     .bank-item {
         display: flex;
         align-items: center;
-        border-radius: rem(4px);
+        padding: rem(20px) rem(30px);
+        border-color: var(--lineColor);
+        border-style: solid;
+        border-width: 0 0 1px;
+        &.disabled {
+            color: var(--placeholdColor);
+        }
+        .card {
+            margin-top: rem(-12px);
+            margin-right: rem(18px);
+            color: var(--minorColor);
+            font-size: rem(48px);
+        }
+        .row {
+            flex: 1;
+        }
+        .tips {
+            margin-top: rem(4px);
+            font-size: rem(24px);
+            color: var(--placeholdColor);
+        }
+        .name {
+            margin-bottom: rem(4px);
+        }
+        .icon-success {
+            font-size: rem(36px);
+        }
     }
-    .tips {
-        //padding: 0 rem(90px) rem(20px);
-        color: var(--placeholdColor);
-    }
-    .bank-no {
-        flex: 1;
-    }
-    .bank-icons-sm {
-        margin: rem(30px) rem(15px) rem(30px) rem(30px);
-    }
-    .van-icon {
-        height: rem(40px);
-        margin-right: rem(20px);
-    }
-    &.no-data {
+    .add-bank {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        line-height: rem(90px);
+        height: rem(96px);
+        .icon-plus {
+            margin: rem(20px) rem(20px) rem(20px) rem(45px);
+            vertical-align: middle;
+        }
         span {
-            margin-left: rem(30px);
-            color: var(--minorColor);
+            flex: 1;
             vertical-align: middle;
         }
-        .van-button {
-            padding: 0 rem(20px);
-            vertical-align: middle;
+        .icon-arrow {
+            margin-right: rem(30px);
         }
-    }
-}
-.bank-list .bank {
-    border-color: var(--lineColor);
-    border-style: solid;
-    border-width: 0 0 1px;
-}
-.add-bank {
-    display: flex;
-    align-items: center;
-    height: rem(96px);
-    .icon-plus {
-        margin: rem(20px) rem(20px) rem(20px) rem(45px);
-        vertical-align: middle;
-    }
-    span {
-        flex: 1;
-        vertical-align: middle;
-    }
-    .icon-arrow {
-        margin-right: rem(30px);
     }
 }
 </style>

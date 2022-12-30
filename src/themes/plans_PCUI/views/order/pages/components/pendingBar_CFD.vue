@@ -9,6 +9,7 @@
             v-model='pendingPrice'
             :direction='direction'
             :product='product'
+            @change='onChange'
         />
     </div>
 </template>
@@ -27,7 +28,7 @@ export default {
         PendingBar,
     },
     props: ['modelValue', 'product', 'direction'],
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'change'],
     setup (props, { emit }) {
         const store = useStore()
         const { t } = useI18n({ useScope: 'global' })
@@ -77,6 +78,8 @@ export default {
             const defaultPendingPrice = pendingRang.value[props.direction === 'buy' ? 'defaultBuyPrice' : 'defaultSellPrice']
             if (defaultPendingPrice && !isNaN(defaultPendingPrice)) emit('update:modelValue', defaultPendingPrice)
         }
+
+        const onChange = (e) => emit('change', e)
         onMounted(() => {
             firstChange()
         })
@@ -87,6 +90,7 @@ export default {
             pendingRang,
             pendingPrice,
             change,
+            onChange,
             priceIntroduce,
             firstChange,
         }

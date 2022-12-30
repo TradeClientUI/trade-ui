@@ -214,7 +214,7 @@ export default {
                 tradeType: state.fromAccount.id
             }).then(res => {
                 if (res.check()) {
-                    state.maxTransfer = res.data.available
+                    state.maxTransfer = res.data.withdrawAmount
                 }
             }).catch(err => {
                 state.loading = false
@@ -223,8 +223,10 @@ export default {
 
         watch(() => accountList, val => {
             if (val.value.length > 0) {
-                state.curCurrency = accountList.value[0]
-                state.curTradeType = accountList.value[0]?.tradeType
+                const queryCurrency = accountList.value.find(({ currency }) => currency === route.query.currency)
+                const curAccount = queryCurrency || accountList.value[0]
+                state.curCurrency = curAccount
+                state.curTradeType = curAccount.tradeType
             }
         }, {
             immediate: true

@@ -97,11 +97,29 @@ if (isAdminMode) {
         index: {
             entry: `src/themes/${theme}/main.js`,
             template: 'public/index.html',
+            minify: {
+                collapseWhitespace: true,
+                keepClosingSlash: true,
+                removeComments: false,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true
+            },
             filename: process.env.NODE_ENV === 'production' ? 'index_template.html' : 'index.html',
         },
         upgrading: {
             entry: 'src/themes/upgrading/main.js',
             template: 'public/index.html',
+            minify: {
+                collapseWhitespace: true,
+                keepClosingSlash: true,
+                removeComments: false,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true
+            },
             filename: process.env.NODE_ENV === 'production' ? 'upgrading.html' : 'upgrading.html',
         }
         // index: 'src/themes/mt4/main.js'
@@ -141,6 +159,7 @@ const config = {
     devServer: {
         port: isAdminMode ? 8080 : 8090,
         open: false,
+        host: '0.0.0.0',
         overlay: {
             warnings: false,
             errors: true
@@ -149,8 +168,24 @@ const config = {
             '/wp-content/uploads': {
                 target: h5URL || 'https://prewpadmin_10.cmfbl.com',
             },
+            '/api/geoip': {
+                target: h5URL || 'https://prewpadmin_10.cmfbl.com',
+            },
+            '/api/': {
+                target: h5URL || 'https://prewpadmin_10.cmfbl.com',
+                onProxyReq: function (proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
+                    if (req.body) {
+                        const reg = new RegExp('application/json')
+                        if (reg.test(proxyReq.getHeader('Content-Type'))) {
+                            const bodyData = JSON.stringify(req.body)
+                            proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+                            proxyReq.write(bodyData)
+                        }
+                    }
+                }
+            },
             '/wp-json/wp': {
-                target: 'http://prewpadmin_9.cmfbl.com', // http://prewpadmin.cmfbl.com/
+                target: 'https://prewpadmin_10.cmfbl.com', // http://prewpadmin.cats-trade.com/
                 // changeOrigin: false,
                 disableHostCheck: true,
                 onProxyReq: function (proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
@@ -166,7 +201,7 @@ const config = {
                 }
             },
             '/cats-manage-api': {
-                target: h5URL || 'https://uatwph5-5.cmfbl.com', // prewph5公司id为2 prewph5_1公司id为60  'http://prewph5_9.cmfbl.com'  // h5URL
+                target: h5URL || 'https://prewpadmin_10.cmfbl.com', // prewph5公司id为2 prewph5_1公司id为60  'http://prewph5_9.cats-trade.com'  // h5URL
                 disableHostCheck: true,
                 onProxyReq: function (proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
                     if (req.body) {
@@ -181,14 +216,37 @@ const config = {
                 }
             },
             '/upload': {
-                target: 'https://uatcom-03b1ee05fa3b4fcbe21e9da72e5516cd-prebo.cmfbl.com/cats-gateway/upload'
+                target: 'https://prewpadmin_10.cmfbl.com/cats-gateway/upload'
+            },
+            '/infura/': {
+                target: 'https://uatwph5-5.cmfbl.com',
+                onProxyReq: function (proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
+                    if (req.body) {
+                        const reg = new RegExp('application/json')
+                        if (reg.test(proxyReq.getHeader('Content-Type'))) {
+                            const bodyData = JSON.stringify(req.body)
+                            proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+                            // stream the content
+                            proxyReq.write(bodyData)
+                        }
+                    }
+                }
             }
         },
         before: require('./mock/mock-server.js')
     },
     chainWebpack: config => {
         // 移除 prefetch 插件
-        config.plugins.delete('preload-index').delete('prefetch-index')
+        config.plugins.delete('preload-index')
+
+        config.plugin('prefetch-index').tap(options => {
+            options[0].fileWhitelist = options[0].fileWhitelist || []
+            options[0].fileWhitelist.push(/Home(.)+?\.js$/)
+            options[0].fileWhitelist.push(/Order(.)+?\.js$/)
+            options[0].fileWhitelist.push(/Quote(.)+?\.js$/)
+            options[0].fileWhitelist.push(/Assets(.)+?\.js$/)
+            return options
+        })
         config.resolve.alias.set('vue-i18n', 'vue-i18n/dist/vue-i18n.cjs.js')
     },
     pages

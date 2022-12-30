@@ -1,5 +1,5 @@
 export default {
-    title: '文本组件',//'文本组件',
+    title: '文本组件', // '文本组件',
     tag: 'text',
     // exclude:['nav'],   // 排除的页面code
     tagIcon: 'el-icon-document',
@@ -10,12 +10,6 @@ export default {
             label: '文本内容',
             type: 'Textarea',
             default: ''
-        },
-        {
-            name: 'color',
-            label: '字体颜色',
-            type: 'Input',
-            default: '#333333'
         },
         {
             name: 'fontSize',

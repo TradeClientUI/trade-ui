@@ -1,4 +1,5 @@
 <template>
+    <Loading :show='loading' />
     <div :style='data.styleObj'>
         <div v-if="userAccountType==='G'" class='mineGuest'>
             <img class='faceImg' :src='faceImg' />
@@ -53,9 +54,10 @@ import ImgComp from '../img/img'
 import { computed, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { hideEmailInfo, hideMobileInfo } from '@/utils/util'
+import { hideEmailInfo, hideMobileInfo, localSet, localGet, setToken, sessionSet, localGetObj, localSetObj } from '@/utils/util'
 import { Toast } from 'vant'
 import fund from './components/fund.vue'
+import { switchUserAccount } from '@/api/user'
 const faceImgDefault = require('@plans/images/face.png')
 
 export default {
@@ -81,7 +83,9 @@ export default {
         const assets = computed(() => store.state._user.accountAssets)
         const miniAmountText = computed(() => assets.value?.balance?.length + assets.value?.availableMargin?.length > 25)
         const state = reactive({
-
+            accountVis: false,
+            accountType: localGetObj('mockAccount', 'accountType'),
+            loading: false
         })
 
         const kycMap = {
@@ -140,8 +144,8 @@ export default {
     background: var(--contentColor);
     .faceImg {
         display: block;
-        width: rem(160px);
-        height: rem(160px);
+        width: rem(140px);
+        height: rem(140px);
         margin: 0 auto;
         border-radius: 50%;
     }
@@ -162,13 +166,29 @@ export default {
     }
 }
 .personInfo {
-    padding: rem(60px) rem(20px);
+    padding: rem(20px) rem(20px) rem(60px) rem(20px);
     color: var(--color);
     background: var(--contentColor);
 }
 .personNo {
     position: relative;
     text-align: center;
+    .account{
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        text-align: right;
+        padding-right: rem(20px);
+        .triangle{
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 6px 6px 0 6px;
+            border-color: var(--minorColor) transparent transparent transparent;
+            margin-left: rem(10px);
+        }
+    }
     .faceImg {
         margin: 0 auto;
         display: block;
@@ -237,6 +257,53 @@ export default {
     background: var(--assistColor);
     img {
         width: 100%;
+    }
+}
+.account-sheet{
+    .account-type{
+        background: var(--bgColor);
+        display: flex;
+        align-items: center;
+        margin-bottom: rem(20px);
+        margin: rem(20px);
+        padding: rem(40px);
+        border-radius: rem(10px);
+        .radio{
+            margin-right: rem(20px);
+            width: rem(40px);
+            height: rem(40px);
+            border-radius: 50%;
+            border: solid 1px var(--minorColor);
+            &.active{
+                border: solid 1px var(--primary);
+                &::after{
+                    position: absolute;
+                    left: rem(8px);
+                    top: rem(8px);
+                    content: '';
+                    width: rem(20px);
+                    height: rem(20px);
+                    border-radius: 50%;
+                    background: var(--primary);
+                }
+            }
+        }
+        &.active{
+            color: var(--primary);
+             .radio{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: solid 1px var(--primary);
+                  &::after{
+                    content: '';
+                    width: rem(20px);
+                    height: rem(20px);
+                    border-radius: 50%;
+                    background: var(--primary);
+                }
+             }
+        }
     }
 }
 </style>

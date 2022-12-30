@@ -53,7 +53,7 @@
                             {{ $t('walletAdd.codeBtn') }}
                         </span>
                         <span v-else class='time'>
-                            {{ countDown }}{{ $t('walletAdd.codeHint') }}
+                            {{ countDown }}s
                         </span>
                     </div>
                     <div v-if='googleCodeVis' class='box field-google'>
@@ -254,12 +254,10 @@ export default {
                 googleCode: state.googleCode,
             }).then(res => {
                 if (res.check()) {
-                    Dialog.alert({
-                        message: t('withdraw.successHint'),
-                    }).then(() => {
+                    Toast.success(t('withdraw.successHint'))
+                    setTimeout(() => {
                         router.go(-1)
-                    })
-                    // Toast.success(t('withdraw.successHint'))
+                    }, 300)
                 } else {
                     Toast(res.msg)
                 }

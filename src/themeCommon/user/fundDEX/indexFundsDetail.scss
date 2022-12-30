@@ -44,17 +44,17 @@
                 }
                 &.purchase {
                     @include hover();
-                    color: #fff;
+                    color: #FFF;
                     background: #0062FF;
                     cursor: pointer;
                 }
                 &.redeem {
                     color: #0062FF;
-                    background: #fff;
+                    background: #FFF;
                     border: 1px solid #0062FF;
                     cursor: pointer;
                     &:hover {
-                        color: #fff;
+                        color: #FFF;
                         background: #0062FF;
                     }
                 }
@@ -66,7 +66,6 @@
                 color: #FFF;
                 font-weight: 500;
                 font-size: 14px;
-                font-family: Inter, Arial;
                 line-height: 33px;
                 background: linear-gradient(248.86deg, #5292F1 10.51%, #5BECBC 90.41%);
                 border-radius: 4px;
@@ -210,7 +209,7 @@
                     justify-content: flex-end;
                 }
                 .inline {
-                   width: 130px;
+                    width: 130px;
                 }
                 .label {
                     margin-bottom: 4px;
@@ -287,7 +286,7 @@
         .switch-tabs {
             top: 10px;
             right: 0;
-            transform: scale(.8);
+            transform: scale(0.8);
         }
         .chart-box {
             margin-top: 40px;
@@ -338,13 +337,13 @@
             }
             &.purchase {
                 @include hover();
-                color: #fff;
+                color: #FFF;
                 background: var(--primary);
                 cursor: pointer;
             }
             &.redeem {
                 color: var(--primary);
-                background: #fff;
+                background: #FFF;
                 border: 1px solid var(--primary);
                 cursor: pointer;
             }

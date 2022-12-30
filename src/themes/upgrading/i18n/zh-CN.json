@@ -1,0 +1,4 @@
+{
+    "dear": "亲爱的客户",
+    "upgrade": "系统维护中，暂停所有服务。预计于今天 <span id='endTime'>{time}</span> 恢复。"
+}

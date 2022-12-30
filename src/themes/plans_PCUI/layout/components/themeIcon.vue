@@ -12,6 +12,7 @@ import { reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import Colors, { setRootVariable } from '@planspc/colorVariables'
 import { localGet } from '@/utils/util'
+
 export default {
     setup () {
         const store = useStore()

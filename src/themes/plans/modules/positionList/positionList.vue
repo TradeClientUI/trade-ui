@@ -1,10 +1,5 @@
 <template>
-    <van-empty
-        v-if='positionList?.length === 0'
-        :description="$t('trade.positionEmpty')"
-        image='/images/empty.png'
-    />
-    <div v-else class='position-wrap'>
+    <div v-if='positionList.length > 0' class='position-wrap'>
         <p v-if='showHeader' class='header'>
             <span>{{ $t('trade.position') }}({{ positionList?.length }})</span>
             <span class='fr' :class="userAccount?.profitLoss > 0 ? 'riseColor': 'fallColor'">
@@ -24,6 +19,19 @@
             @showSLTP='showSLTP'
         />
     </div>
+    <div v-else-if='showTradeBtn' class='none-data'>
+        <button @click='onTrade'>
+            {{ $t('common.startTrade') }}
+        </button>
+        <p class='tip'>
+            {{ $t('trade.positionEmpty') }}
+        </p>
+    </div>
+    <van-empty
+        v-else
+        :description="$t('trade.positionEmpty')"
+        image='/images/empty.png'
+    />
 
     <!-- {{ subscribList }} -->
 
@@ -88,6 +96,11 @@ export default {
     props: {
         // 是否显示头部标题
         showHeader: {
+            type: Boolean,
+            default: true
+        },
+        // 是否显示交易按钮
+        showTradeBtn: {
             type: Boolean,
             default: true
         }
@@ -163,6 +176,12 @@ export default {
             state.showSetProfit = val
         }
 
+        // 点击开始交易
+        const onTrade = () => {
+            store.commit('_quote/setQuoteTradeType', tradeType.value)
+            router.push({ path: '/quote' })
+        }
+
         return {
             ...toRefs(state),
             positionList,
@@ -175,7 +194,8 @@ export default {
             saveMultiple,
             tradeType,
             loading,
-            userAccount
+            userAccount,
+            onTrade
         }
     }
 }
@@ -183,6 +203,31 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
+.none-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: rem(160px) 0;
+    margin-top: rem(20px);
+    background: var(--contentColor);
+    border-radius: 4px;
+    button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: rem(200px);
+        height: rem(72px);
+        color: #FFF;
+        background: var(--primary);
+        border-radius: rem(10px);
+    }
+    .tip {
+        margin-top: rem(25px);
+        font-size: rem(27px);
+        letter-spacing: 1px;
+        color: var(--minorColor);
+    }
+}
 .position-wrap {
     background-color: var(--contentColor);
     .header {

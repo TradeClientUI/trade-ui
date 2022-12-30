@@ -80,7 +80,8 @@
                         </div>
                         <div class='lead-right'>
                             <van-popover v-model:show='showPopover' theme='dark'>
-                                <p style='line-height:30px;padding:2px 10px'>
+                                <p style='line-height: 30px;
+padding: 2px 10px;'>
                                     The app is running in testnet mode.
                                 </p>
                                 <template #reference>
@@ -404,14 +405,14 @@ onBeforeUnmount(() => {
 .wrap {
     min-height: calc(100vh - 162px);
     padding: 20px 20px 150px;
-    @media (max-width: 768px){
+    @media (max-width: 768px) {
         padding: 0;
     }
 }
 .limit-width {
     max-width: 1200px;
     margin: 0 auto;
-    @media (max-width: 768px){
+    @media (max-width: 768px) {
         max-width: 750px;
     }
 }
@@ -421,7 +422,7 @@ onBeforeUnmount(() => {
 .main-content {
     flex: 1;
     overflow: hidden;
-    @media (max-width: 768px){
+    @media (max-width: 768px) {
         padding-top: 55px;
     }
 }
@@ -430,7 +431,7 @@ onBeforeUnmount(() => {
     margin-right: 10px;
     padding-top: 20px;
     padding-left: 10px;
-    @media (max-width: 768px){
+    @media (max-width: 768px) {
         display: none;
     }
     .van-icon {
@@ -508,7 +509,7 @@ onBeforeUnmount(() => {
     background: var(--contentColor);
     border-radius: 4px;
     box-shadow: rgb(0 0 0 / 5%) 0 2px 1px, rgb(0 0 0 / 25%) 0 0 1px;
-    @media (max-width: 768px){
+    @media (max-width: 768px) {
         padding: 0 10px;
         width: 100%;
         height: 55px;
@@ -545,7 +546,7 @@ onBeforeUnmount(() => {
         .split {
             margin: 0 5px;
         }
-        @media (max-width: 768px){
+        @media (max-width: 768px) {
             font-size: 13px;
             .back {
                 margin-right: 4px;
@@ -568,7 +569,7 @@ onBeforeUnmount(() => {
         background: var(--normalColor);
         border-radius: 5px;
         cursor: pointer;
-        @media (max-width: 768px){
+        @media (max-width: 768px) {
             transform: scale(0.8);
             margin-right: 0;
         }
@@ -593,15 +594,15 @@ onBeforeUnmount(() => {
         .icon {
             width: 20px;
             height: 20px;
-           margin-right: 5px;
+            margin-right: 5px;
             border-radius: 50%;
         }
         .arrow {
             margin-top: -5px;
             //margin-left: 5px;
         }
-        .address{
-            margin-right:  5px;
+        .address {
+            margin-right: 5px;
         }
         &:hover {
             border: 1px solid var(--primary);
@@ -614,7 +615,6 @@ onBeforeUnmount(() => {
             color: #FFF;
             font-weight: 500;
             font-size: 14px;
-            font-family: Inter, Arial;
             line-height: 36px;
             background: linear-gradient(248.86deg, #5292F1 10.51%, #5BECBC 90.41%);
             border-radius: 4px;
@@ -622,7 +622,7 @@ onBeforeUnmount(() => {
             cursor: pointer;
             -webkit-transition: all 0.2s ease;
             transition: all 0.2s ease;
-            @media (max-width: 768px){
+            @media (max-width: 768px) {
                 padding: 0 8px;
                 font-size: 12px;
                 line-height: 30px;
@@ -647,7 +647,7 @@ onBeforeUnmount(() => {
     border-radius: 4px;
     box-shadow: rgb(0 0 0 / 20%) 0 0 2px, rgb(0 0 0 / 10%) 0 2px 10px;
     transform-origin: 32px 0;
-    transition: all ease-in-out .2s;
+    transition: all ease-in-out 0.2s;
     &.show {
         transform: scale(1, 1);
         visibility: visible;
@@ -732,11 +732,11 @@ onBeforeUnmount(() => {
     position: relative;
     z-index: 100;
     margin-left: 12px;
-    @media (max-width: 768px){
-         display: none;
+    @media (max-width: 768px) {
+        display: none;
     }
 }
-.setting-module-wap{
+.setting-module-wap {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -749,15 +749,14 @@ onBeforeUnmount(() => {
     justify-content: center;
     align-items: center;
     display: none;
-    @media (max-width: 768px){
+    @media (max-width: 768px) {
         display: flex;
         width: 30px;
         height: 30px;
-         .icon_chouti1{
+        .icon_chouti1 {
             font-size: 14px;
         }
     }
-
 }
 .setting-control {
     display: flex;
@@ -788,7 +787,7 @@ onBeforeUnmount(() => {
     border-radius: 4px;
     box-shadow: rgb(0 0 0 / 20%) 0 0 2px, rgb(0 0 0 / 10%) 0 2px 10px;
     transform-origin: 32px 0;
-    transition: all ease-in-out .2s;
+    transition: all ease-in-out 0.2s;
     &.show {
         transform: scale(1, 1);
         visibility: visible;
@@ -823,59 +822,57 @@ onBeforeUnmount(() => {
     }
 }
 //手机端弹窗菜单样式
-
-.menu-wrap{
+.menu-wrap {
 
     //background: rgba(56, 61, 81, 0.88);
     //backdrop-filter: blur(20px);
-    .head{
+    .head {
         padding: 20px 30px;
         display: flex;
         font-size: 16px;
         justify-content: space-between;
         line-height: 30px;
-            color: var(--minorColor);
-        .van-icon{
+        color: var(--minorColor);
+        .van-icon {
             font-weight: bold;
             color: var(--color);
         }
-
     }
-    .menus{
+    .menus {
         padding: 0 30px;
         border-bottom: solid 1px var(--lineColor);
-        li{
+        li {
             margin-bottom: 20px;
-            .van-icon,.svg-icon,.text{
+            .van-icon,
+            .svg-icon,
+            .text {
                 vertical-align: middle;
             }
-            .van-icon{
+            .van-icon {
                 margin-top: -3px;
             }
-            .text{
+            .text {
                 font-size: 18px;
             }
-
         }
-
     }
-    .setting-wrap{
-        padding:  30px;
-        .header-title{
+    .setting-wrap {
+        padding: 30px;
+        .header-title {
             font-size: 16px;
             color: var(--minorColor);
-            margin-bottom: 15px ;
+            margin-bottom: 15px;
         }
-        .testnet-mode{
+        .testnet-mode {
             //font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            .switch-text{
+            .switch-text {
                 vertical-align: middle;
                 margin-right: 5px;
             }
-            .van-switch{
+            .van-switch {
                 vertical-align: middle;
             }
         }

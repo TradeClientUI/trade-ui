@@ -1,6 +1,7 @@
 {
     "//": "pcuiLogo 请配置https://开头的图片地址，如果不配置则显示公版默认Logo",
-    "pcuiLogo": "http://www.alloyteam.com/wp-content/themes/alloyteam/images/qcloud-logo.svg",
+    "pcuiLogo": "https://prewppc-3.cmfbl.com/wp-content/uploads/2022/12/logo-2.png",
+    "pcuiLogoLight": "https://prewppc-3.cmfbl.com/wp-content/uploads/2022/12/logo-2.png",
     "v10Link//": "V10基金介绍页地址，如果配置了此地址，则点击行情列表页面的申购和图表页面的申购按钮跳转到此地址，如：/fundV10/index",
     "v10Link": "/api",
     "fundDEX//": "是否显示去中心化基金功能",
@@ -8,5 +9,33 @@
     "enterpriseLogin//": "是否显示企业登录功能",
     "enterpriseLogin": false,
     "fundLogin//": "是否显示基金登录功能",
-    "fundLogin": false
+    "fundLogin": false,
+    "tradeTypeShowCash//": "玩法是否显示出入金",
+    "tradeTypeShowCash": "[1, 2, 5]",
+    "isDepositExchange//": "是否开放入金汇兑功能",
+	"isDepositExchange": true,
+    "isRegisterSuccDesposit//": "注册成功页是否显示立即存款",
+    "isRegisterSuccDesposit": false,
+    "registerSuccessText1//": "注册成功文案1",
+    "registerSuccessText1": "Too many choices? When to invest?",
+    "registerSuccessText2//": "注册成功文案1",
+    "registerSuccessText2": "V10 Index Fund eliminates this problem for new crypto investors.",
+    "registerSuccessBanners//": "注册成功banner数组",
+    "registerSuccessBanners": [
+        {
+            "imgSrc": "http://prewpadmin_4.cmfbl.com/wp-content/uploads/2022/09/register-baanner-pc.png",
+            "link": "/earning"
+        },
+        {
+            "imgSrc": "http://prewpadmin_4.cmfbl.com/wp-content/uploads/2022/09/register-baanner-pc.png",
+            "link": "/fundV10/index"
+        }
+    ],
+    "isWithdrawBank//": "是否开放出金银行卡功能",
+	"isWithdrawBank": true,
+    "productKeys//": "行情页推荐的品种，区分真实和模拟",
+    "productKeys": ["1353_1", "1349_1", "1352_1", "1437_1", "1436_1"],
+    "productKeysDemo": ["695_1", "699_1", "1423_1", "1437_1", "1436_1"],
+    "topNavDeposit//": "是否显示顶部导航充值按钮",
+    "topNavDeposit": true
 }

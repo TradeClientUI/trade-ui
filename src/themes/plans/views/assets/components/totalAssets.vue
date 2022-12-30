@@ -41,8 +41,7 @@
                 <p>{{ assetsInfo?.totalInterest }}</p>
             </li>
         </ul>
-
-        <div v-if='[3,5].includes(Number(tradeType))' class='btns'>
+        <div v-if='businessConfig?.tradeTypeShowCash.includes(Number(tradeType)) && customerInfo.companyType === "real"' class='btns'>
             <!-- <van-button
                 v-if='Number(tradeType) === 3'
                 size='mini'
@@ -52,7 +51,7 @@
                 {{ $t('trade.loan') }}
             </van-button> -->
             <van-button
-                v-if='Number(tradeType) === 5'
+                class='mobile_assets_deposit_ga'
                 size='mini'
                 type='primary'
                 @click='toDesposit'
@@ -68,13 +67,24 @@
                 {{ $t('trade.repayment') }}
             </van-button>
             <van-button
-                v-else
                 size='mini'
                 type='primary'
                 @click='toWirhdraw'
             >
                 {{ $t('trade.withdraw') }}
             </van-button>
+        </div>
+        <div v-if="customerInfo.companyType === 'demo'" class='btns'>
+            <van-button
+                size='mini'
+                type='primary'
+                @click='resetUserAccount'
+            >
+                {{ $t('mockAccount.resetAccount') }}
+            </van-button>
+        </div>
+        <div v-if="customerInfo.companyType === 'demo'" class='reset-desc' @click='showExplain(11)'>
+            <span>{{ $t('assetsExplain.text29') }}</span>
         </div>
         <div v-if='$store.state._base.plans.length>1' class='btns2'>
             <van-button
@@ -86,28 +96,53 @@
             </van-button>
         </div>
     </div>
+    <!-- 说明弹窗 -->
+    <explain-popup
+        v-model='isExplain'
+        :explain-type='explainType'
+        :user-account='userAccount'
+    />
 </template>
 
 <script>
-import { computed, watchEffect } from 'vue'
+import { computed, watchEffect, reactive } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { Toast } from 'vant'
 import { useI18n } from 'vue-i18n'
+import { resetAccount } from '@/api/user'
+import explainPopup from './explain-popup.vue'
 
 export default {
     components: {
+        explainPopup
     },
     setup () {
         const store = useStore()
         const router = useRouter()
         const { t } = useI18n({ useScope: 'global' })
+
+        const state = reactive({
+            // 是否显示说明弹窗
+            isExplain: false,
+            // 说明类型
+            explainType: 0,
+        })
+
         const assetsInfo = computed(() => store.state._user.assetsInfo[tradeType.value] || {})
         // 获取玩法列表
+        const customerInfo = computed(() => store.state._user.customerInfo)
         const plans = computed(() => store.state._base.plans)
         const tradeType = computed(() => store.state._quote.curTradeType || plans.value[0].id)
         const accountList = computed(() => store.state._user.customerInfo.accountList.filter(el => Number(el.tradeType) === Number(tradeType.value)))
         const accountInfo = computed(() => accountList?.value[0])
+        const businessConfig = computed(() => store.state.businessConfig)
+
+        // 显示说明弹窗
+        const showExplain = (type) => {
+            state.explainType = type
+            state.isExplain = true
+        }
 
         // 跳转充值页面
         const toDesposit = () => {
@@ -178,6 +213,15 @@ export default {
             }
         }
 
+        // 重置账户
+        const resetUserAccount = () => {
+            resetAccount().then(res => {
+                if (res.check()) {
+                    Toast(t('mockAccount.resetSuccess'))
+                }
+            })
+        }
+
         const riskLevelMap = {
             1: t('riskLevel.safety'),
             2: t('riskLevel.warn'),
@@ -191,7 +235,11 @@ export default {
             toWirhdraw,
             toLoan,
             toRepayment,
-            riskLevelMap
+            riskLevelMap,
+            customerInfo,
+            resetUserAccount,
+            businessConfig,
+            showExplain
         }
     }
 }
@@ -264,12 +312,12 @@ export default {
     }
 }
 .btns {
+    flex: 1;
     display: flex;
-    height: rem(65px);
     :deep(.van-button) {
         display: block;
         width: 50%;
-        height: 100%;
+        height: rem(65px);
         margin-right: rem(20px);
         font-size: rem(28px);
         line-height: rem(70px);
@@ -286,7 +334,14 @@ export default {
         }
     }
 }
+.reset-desc {
+    margin: rem(30px) 0;
+    text-align: right;
+    text-decoration: underline;
+    color: var(--normalColor);
+}
 .btns2 {
+    flex: 1;
     height: rem(65px);
     margin-top: rem(30px);
     :deep(.van-button) {
@@ -302,18 +357,20 @@ export default {
     }
 }
 .riskLevel {
+    display: inline-flex;
+    align-items: center;
     position: relative;
-    margin-left: rem(10px);
-    padding-left: rem(25px);
+    margin-left: rem(16px);
+    padding-left: rem(20px);
     font-size: rem(22px);
     &::before {
         position: absolute;
-        top: 45%;
+        top: 50%;
         left: 0%;
         display: block;
-        width: rem(16px);
-        height: rem(16px);
-        border-radius: 16px;
+        width: rem(12px);
+        height: rem(12px);
+        border-radius: 50%;
         transform: translate(0, -50%);
         content: '';
     }

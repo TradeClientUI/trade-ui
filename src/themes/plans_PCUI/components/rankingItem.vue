@@ -205,7 +205,7 @@ export default {
         width: 150px;
         :deep(.el-input__inner) {
             background: none;
-            border: 1px solid var(--lineColor);
+            //border: 1px solid var(--lineColor);
         }
     }
 }

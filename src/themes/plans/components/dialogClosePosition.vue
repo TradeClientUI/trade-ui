@@ -127,9 +127,10 @@ import { useStore } from 'vuex'
 import Stepper from '@plans/components/stepper'
 import BigNumber from 'bignumber.js'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { addMarketOrder } from '@/api/trade'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
+
 export default {
     components: {
         Stepper,
@@ -139,6 +140,7 @@ export default {
     setup (props, context) {
         const store = useStore()
         const router = useRouter()
+        const route = useRoute()
         const { t } = useI18n({ useScope: 'global' })
         const fastBtns = [
             { title: t('trade.allPosition'), activeIndex: 1, divValue: 1 },
@@ -219,16 +221,18 @@ export default {
                     sessionStorage.setItem('order_' + orderId, JSON.stringify(localData))
                     // router.push({ name: 'ClosePositionSuccess', query: { orderId } })
                     closed()
-                    Toast({
+                    Dialog.alert({
                         message: t('trade.closeSuccessToast'),
-                        duration: 1000,
-                        forbidClick: true,
-                    })
-                    store.dispatch('_trade/queryPositionPage', {
-                        tradeType: props.data.tradeType,
-                        sortFieldName: 'openTime',
-                        sortType: 'desc',
-                        accountId
+                    }).then(() => {
+                        if (route.path === '/positionDetail') {
+                            router.go(-1)
+                        }
+                        store.dispatch('_trade/queryPositionPage', {
+                            tradeType: props.data.tradeType,
+                            sortFieldName: 'openTime',
+                            sortType: 'desc',
+                            accountId
+                        })
                     })
                 })
                 .catch(err => {

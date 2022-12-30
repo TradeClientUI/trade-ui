@@ -1,6 +1,6 @@
 <template>
-    <div class='quoteWrap' :class='{ hasNav: $hasNav }'>
-        <plansType v-if='plansLen>1' :list='plansList' :value='tradeType' @change='handleTradeType' />
+    <div class='quoteWrap'>
+        <plansType v-if='plansLen > 1' :list='plansList' :value='tradeType' @change='handleTradeType' />
         <div class='tradeNav'>
             <TopTab
                 ref='tabList'
@@ -50,11 +50,11 @@
 import TopTab from '@plans/components/topTab'
 import productListComp from '@plans/modules/productList/productList.vue'
 import SortIcon from '@plans/components/sortIcon.vue'
-import { ref, watch, computed, onActivated, unref, nextTick } from 'vue'
+import { ref, watch, computed, onActivated, unref, nextTick, onMounted } from 'vue'
 import plansType from '@/themes/plans/components/plansType.vue'
 import useProduct from '@plans/hooks/useProduct'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { localSet, localGet } from '@/utils/util'
 export default {
@@ -67,6 +67,7 @@ export default {
     },
     setup () {
         const store = useStore()
+        const route = useRoute()
         const router = useRouter()
         const { t, locale } = useI18n({ useScope: 'global' })
 
@@ -83,9 +84,9 @@ export default {
         const symbolKey = computed(() => store.state._quote.productActivedID || '')
         const productTradeType = computed(() => unref(symbolKey).split('_')[1] || 0)
         const customerInfo = computed(() => store.state._user.customerInfo)
+        const quoteTradeType = computed(() => store.state._quote.quoteTradeType) // 行情页面显示的默认玩法
         // 1.玩法类型
         const tradeType = ref(unref(productTradeType))
-
         const tradeTypeOld = ref(0)
         const categoryTypeOld = ref(0)
         // 2.板块类型
@@ -95,6 +96,16 @@ export default {
             tradeType, categoryType
         })
 
+        // 初始化需要显示的板块
+        watch(() => route.query.categoryType, (value) => {
+            if (value) {
+                categoryType.value = Number(value)
+                console.log(value, categoryType.value)
+            }
+        }, {
+            immediate: true
+        })
+
         const localSelfSymbolListCur = ref(localGet('localSelfSymbolList'))
 
         const localSymbolUpdate = computed(() => store.state._user.localSelfSymbolList)
@@ -102,9 +113,16 @@ export default {
         const plansLen = computed(() => {
             const userProductCategory = store.getters.userProductCategory
             let arr = Object.keys(userProductCategory)
-            arr = arr.filter(el => {
-                return userProductCategory[el]?.find(o => o.listByUser?.length)
-            })
+            if (isWallet) {
+                arr = arr.filter(el => {
+                    return userProductCategory[el]?.find(o => o.listByUser?.length) && Number(el) !== 5
+                })
+            } else {
+                arr = arr.filter(el => {
+                    return userProductCategory[el]?.find(o => o.listByUser?.length)
+                })
+            }
+
             return arr.length
         })
 
@@ -121,6 +139,14 @@ export default {
             await nextTick()
             unref(productList).length && store.commit('_quote/Update_productActivedID', unref(productList)[0].symbolId + '_' + val)
         }
+
+        // 监听行情页面默认玩法
+        watch(() => quoteTradeType.value, () => {
+            if (quoteTradeType.value) {
+                tradeType.value = quoteTradeType.value.toString()
+                store.commit('_quote/setQuoteTradeType', '')
+            }
+        }, { immediate: true })
 
         // 监听玩法类型/板块类型的变化，触发产品订阅
         // 获取productList.vue组件的ref对象和产品列表均是异步，所以第一次产品订阅在productList.vue组件内
@@ -205,18 +231,16 @@ export default {
 <style lang="scss" scoped>
 @import '@/sass/mixin.scss';
 .quoteWrap {
+    margin-top: 2px;
     display: flex;
     flex: 1;
     flex-direction: column;
     justify-content: flex-start;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 2px);
     // margin-top: rem(90px);
     overflow: auto;
     background: var(--bgColor);
-    &.hasNav {
-        padding-bottom: rem(100px);
-    }
     .productListWrap {
         flex: 1;
         overflow-y: auto;
@@ -291,6 +315,7 @@ export default {
         font-weight: bold;
         line-height: rem(160px);
         border: none;
+        background: var(--contentColor);
     }
 }
 </style>

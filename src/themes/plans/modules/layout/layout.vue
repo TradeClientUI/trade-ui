@@ -71,6 +71,7 @@ export default {
     .label {
         padding: 5px 0;
         text-align: center;
+        font-size: rem(32px);
     }
     .link {
         color: inherit;

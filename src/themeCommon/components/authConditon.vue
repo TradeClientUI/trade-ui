@@ -31,7 +31,7 @@
                     <p class='upload-text'>
                         {{ item.elementName }}
                     </p>
-                    <van-uploader :after-read='afterRead' :name='item.elementCode' result-type='file'>
+                    <van-uploader :after-read='afterRead' :class='uploadImgGaClass' :name='item.elementCode' result-type='file'>
                         <img
                             v-if='item.elementValue'
                             :id='item.elementCode'
@@ -77,7 +77,7 @@
                 </div>
             </div>
         </div>
-        <van-button v-if='!hideSubmitBtn' class='confirm-btn' @click='onConfirm'>
+        <van-button v-if='!hideSubmitBtn' :class='["confirm-btn", submitGaClass]' @click='onConfirm'>
             {{ $t('common.submit') }}
         </van-button>
     </div>
@@ -129,6 +129,9 @@ export default {
         const route = useRoute()
         const { t } = useI18n({ useScope: 'global' })
         const levelCode = route.query.levelCode
+        const isMobile = process.env.VUE_APP_theme === 'plans'
+        const uploadImgGaClass = isMobile ? 'mobile_kyc_image_ga' : 'pc_kyc_image_ga'
+        const submitGaClass = isMobile ? 'mobile_kyc_submit_ga' : 'pc_kyc_submit_ga'
 
         // 证件类型对应的上传图片项
         const cardTypeMap = {
@@ -448,7 +451,9 @@ export default {
             dateConfirm,
             handleDateClick,
             toFaceAuth,
-            hideSubmitBtn
+            hideSubmitBtn,
+            uploadImgGaClass,
+            submitGaClass
         }
     }
 }

@@ -25,6 +25,7 @@
         <input
             ref='inputEl'
             class='input'
+            :placeholder='inputPlaceholder'
             type='text'
             :value='modelValue'
             @blur='onBlur'
@@ -83,6 +84,13 @@ export default {
             }
         })
 
+        const inputPlaceholder = computed(() => {
+            const product = props.product
+            const curTradeType = product.tradeType
+            const volumeRange = product.minVolume ? `${t('trade.orderVolume')} ${product.minVolume + t('trade.volumeUnit')} - ${product.maxVolume + t('trade.volumeUnit')}` : ''
+            return parseInt(props.entryType) === 1 && curTradeType === 1 ? volumeRange : ''
+        })
+
         const onInput = (e) => {
             let newval = e.target.value
             if (/[^0-9\.]/.test(newval)) { // 只能输入数字
@@ -120,6 +128,7 @@ export default {
             inputEl,
             entryTypeUpdate,
             placeholder,
+            inputPlaceholder,
             onInput,
             onBlur,
         }

@@ -472,8 +472,10 @@ export default {
                     } else {
                         return false
                     }
-                } else {
+                } else if (product.value) {
                     return store.getters.userSelfSymbolList[product.value.tradeType]?.find(id => parseInt(id) === parseInt(product.value.symbolId))
+                } else {
+                    return false
                 }
             },
             set: (val) => {
@@ -571,7 +573,7 @@ export default {
         const contractRoute = computed(() => (`${route.path}/contract?symbolId=${product.value?.symbolId}&tradeType=${product.value?.tradeType}`))
 
         // 实时更新买卖价线
-        watch(() => [product.value.buy_price, product.value.sell_price, product.value.cur_price, product.value.tick_time], (newValues) => {
+        watch(() => [product.value?.buy_price, product.value?.sell_price, product.value?.cur_price, product.value?.tick_time], (newValues) => {
             state.onChartReadyFlag && unref(chartRef).setTick(product.value.cur_price, product.value.tick_time, dealLastPrice.value.volume)
 
             state.onChartReadyFlag && unref(chartRef).updateLineData({
@@ -596,8 +598,10 @@ export default {
                         state.isOptional = false
                     }
                 }
-            } else {
+            } else if (product.value) {
                 state.isOptional = store.getters.userSelfSymbolList[product.value.tradeType]?.find(id => parseInt(id) === parseInt(product.value.symbolId))
+            } else {
+                state.isOptional = false
             }
         }
 
@@ -808,8 +812,8 @@ export default {
             }
             const locale = chartLocaleJSON[lang] || chartLocaleJSON['en-US']
 
-            // 当前产品是否可以显示成交量，外汇、商品、指数类产品不显示成交量
-            const canUseVolume = !product.value.isFX && !product.value.isCommodites && !product.value.isIndex
+            // 当前产品是否可以显示成交量，外汇、商品、指数、贵金属、能源类产品不显示成交量
+            const canUseVolume = unincludeLable(['FX', 'commodites', 'index', 'Metal', 'Energy'], product.value.labels)
             // 如果当前可以展示成交量，则显示在副图指标第一位，否则不显示成交量指标
             if (canUseVolume && SUBSTUDIES[0].name !== 'Volume') {
                 SUBSTUDIES.unshift(VolumeStudy)
@@ -905,6 +909,17 @@ export default {
 
             // 自选星标状态
             checkIsSelfSymbol()
+        }
+
+        // 排除某些标签的产品
+        function unincludeLable (arr = [], labels) {
+            if (!labels) return false
+            const labelsArr = labels.split(',')
+            for (const label of arr) {
+                const item = labelsArr.find(el => el === label)
+                if (item) return false
+            }
+            return true
         }
 
         // 设置图表类型
@@ -1404,8 +1419,9 @@ export default {
     .side-study {
         width: 100%;
         font-size: 12px;
+        padding: 0 8px;
         .content {
-            display: flex;
+            display: inline-flex;
             flex: 1;
             flex-direction: row;
             flex-wrap: nowrap;
@@ -1417,7 +1433,7 @@ export default {
                 flex-direction: row;
                 align-items: flex-end;
                 justify-content: center;
-                padding: 0 rem(10px);
+                padding: 0 10px;
                 color: #646566;
                 text-align: center;
                 cursor: pointer;
@@ -1444,7 +1460,6 @@ export default {
         flex-direction: row;
         align-items: flex-end;
         justify-content: center;
-        margin: 0 10px;
         .inner-label {
             flex: 1;
             height: 25px;

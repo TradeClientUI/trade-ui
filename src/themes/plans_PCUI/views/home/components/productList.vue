@@ -11,12 +11,11 @@
             <div class='bg'>
                 {{ $t('homeJD.buy') }}
             </div>
-
-            <div v-if='!isFX' class='flex-end'>
+            <div v-if='isCrypto' class='flex-end'>
                 {{ $t('homeJD.24hChange') }}
             </div>
 
-            <div v-if='isFX' class='flex-end'>
+            <div v-if='!isCrypto' class='flex-end'>
                 {{ $t('homeJD.change') }}
             </div>
             <div v-else class='flex-end'>
@@ -27,7 +26,7 @@
             <ProductItem
                 v-for='(item, index) in currentList'
                 :key='item + "_" + index'
-                :is-f-x='isFX'
+                :is-crypto='isCrypto'
                 :symbol-key='item'
             />
         </ul>
@@ -44,7 +43,7 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
-    isFX: Boolean // 是否外汇
+    isCrypto: Boolean // 是否外汇
 })
 
 // symbolKeys

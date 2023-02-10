@@ -10,26 +10,17 @@
             <p class='banner-text'>
                 {{ $t('homeJD.signalsTradeDesc') }}
             </p>
-            <div v-if='isLogin' class='register-btn'>
-                <button class='btn' @click='toDeposit'>
-                    {{ $t('homeJD.deposit') }}
-                </button>
-                <button class='detail-btn btn' @click='toQuote'>
-                    {{ $t('homeJD.checkSignals') }}
-                </button>
-            </div>
-            <banner-register v-else />
+            <banner-register />
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed, unref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import bannerRegister from '@planspc/views/home/components/bannerRegister'
-import bannerWifi from '@planspc/views/home/components/bannerWifi'
-import useMethods from '@plans/hooks/useMethods'
+import bannerRegister from './bannerRegister'
+import bannerWifi from '@/themeCommon/components/signalWifi.vue'
 
 export default {
     components: {
@@ -42,7 +33,6 @@ export default {
 
         const store = useStore()
         const isLogin = computed(() => store.state._user.customerInfo)
-        const { toDeposit } = useMethods()
 
         // 去注册
         const goRegister = () => {
@@ -50,6 +40,7 @@ export default {
             query[registerAccount.value.includes('@') ? 'email' : 'mobile'] = registerAccount.value
             router.push({ name: 'Register', query })
         }
+
         const goActive = (id) => {
             router.push({
                 path: '/noticeDetail',
@@ -58,11 +49,6 @@ export default {
                     type: 'notice'
                 }
             })
-        }
-
-        // 去V10
-        const goV10Detail = () => {
-            router.push('/fundV10/index')
         }
 
         const toQuote = () => {
@@ -74,8 +60,6 @@ export default {
             goRegister,
             goActive,
             isLogin,
-            toDeposit,
-            goV10Detail,
             toQuote
         }
     }

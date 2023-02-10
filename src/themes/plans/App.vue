@@ -20,14 +20,16 @@
         </template>
     </Suspense>
     <Notice />
+    <!-- 行情、交易、资产页面显示活动倒计时 -->
+    <registerActivityNoticeBar v-if="['Order', 'Quote', 'Assets'].includes(route.name)" />
     <!-- <router-view />  -->
 </template>
 
 <script>
 import Notice from '@plans/components/notice'
 import { useStore } from 'vuex'
-import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { Dialog } from 'vant'
 import { useI18n } from 'vue-i18n'
 import { MsgSocket } from '@/plugins/socket/socket'
@@ -36,14 +38,17 @@ import Base from '@/store/modules/base'
 import { setRootVariable } from '@plans/colorVariables'
 import onWindowMessage from '@/plugins/onWindowMessage/onMessage'
 import { configSystem } from '@/api/base'
+import { registerActivityNoticeBar } from '@/components/registerActivity'
 
 export default {
     components: {
-        Notice
+        Notice,
+        registerActivityNoticeBar
     },
     setup () {
         const store = useStore()
         const router = useRouter()
+        const route = useRoute()
         const { t } = useI18n({ useScope: 'global' })
         const cacheViews = computed(() => store.state.cacheViews)
         const googleAnalytics = computed(() => store.state._base.wpCompanyInfo.googleAnalytics)
@@ -141,7 +146,8 @@ export default {
         })
 
         return {
-            cacheViews
+            cacheViews,
+            route
         }
     },
     created () {

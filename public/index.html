@@ -230,7 +230,7 @@
     <script>
         (function(){
             // uniapp环境需要嵌套这个插件
-            if(navigator.userAgent.toLowerCase().includes('uni-app')){
+            if(navigator.userAgent.toLowerCase().includes('uni-app') && location.href.indexOf('isUniapp=true') > -1){
                 document.write('<script type="text\/javascript" src="\/libs\/uni-app\/uni.webview.1.5.2.js"><\/script>')
             }
         })()

@@ -994,8 +994,8 @@ export default {
                 downColor = '#26a69a'
             }
 
-            // 当前产品是否可以显示成交量，外汇、商品、指数类产品不显示成交量
-            const canUseVolume = !product.value?.isFX && !product.value?.isCommodites && !product.value?.isIndex
+            // 当前产品是否可以显示成交量，外汇、商品、指数、贵金属、能源类产品不显示成交量
+            const canUseVolume = unincludeLable(['FX', 'commodites', 'index', 'Metal', 'Energy'], product.value.labels)
             // 如果当前可以展示成交量，则显示在副图指标第一位，否则不显示成交量指标
             if (canUseVolume && SUBSTUDIES[0].name !== 'Volume') {
                 SUBSTUDIES.unshift(VolumeStudy)
@@ -1102,6 +1102,17 @@ export default {
             }
             firstDetail.value = true
             checkIsSelfSymbol()
+        }
+
+        // 排除某些标签的产品
+        function unincludeLable (arr = [], labels) {
+            if (!labels) return false
+            const labelsArr = labels.split(',')
+            for (const label of arr) {
+                const item = labelsArr.find(el => el === label)
+                if (item) return false
+            }
+            return true
         }
 
         // 图表初始值
@@ -1429,7 +1440,7 @@ export default {
                 font-weight: normal !important;
             }
             .icon_zixuan2 {
-                color: #FC822F;
+                color: var(--primary);
                 animation: heartBeat 1.3s ease-in-out forwards;
             }
             .loading {

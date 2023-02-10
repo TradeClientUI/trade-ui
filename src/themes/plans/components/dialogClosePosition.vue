@@ -151,7 +151,7 @@ export default {
         const state = reactive({
             showCP: true,
             loading: false,
-            fastBtnIndex: 1,
+            fastBtnIndex: '',
             closeVolume: '',
         })
 
@@ -175,7 +175,9 @@ export default {
             }
         })
 
-        const change = () => {}
+        const change = () => {
+            state.fastBtnIndex = ''
+        }
 
         // 平仓接口参数
         const submitCloseParam = () => {
@@ -214,26 +216,29 @@ export default {
             addMarketOrder(params)
                 .then(res => {
                     state.loading = false
-                    if (res.invalid()) return false
-                    const data = res.data
-                    const localData = Object.assign({}, params, data)
-                    const orderId = data.orderId || data.id
-                    sessionStorage.setItem('order_' + orderId, JSON.stringify(localData))
-                    // router.push({ name: 'ClosePositionSuccess', query: { orderId } })
-                    closed()
-                    Dialog.alert({
-                        message: t('trade.closeSuccessToast'),
-                    }).then(() => {
-                        if (route.path === '/positionDetail') {
-                            router.go(-1)
-                        }
-                        store.dispatch('_trade/queryPositionPage', {
-                            tradeType: props.data.tradeType,
-                            sortFieldName: 'openTime',
-                            sortType: 'desc',
-                            accountId
+                    if (res.check()) {
+                        const data = res.data
+                        const localData = Object.assign({}, params, data)
+                        const orderId = data.orderId || data.id
+                        sessionStorage.setItem('order_' + orderId, JSON.stringify(localData))
+                        // router.push({ name: 'ClosePositionSuccess', query: { orderId } })
+                        closed()
+                        Dialog.alert({
+                            message: t('trade.closeSuccessToast'),
+                        }).then(() => {
+                            if (route.path === '/positionDetail') {
+                                router.go(-1)
+                            }
+                            store.dispatch('_trade/queryPositionPage', {
+                                tradeType: props.data.tradeType,
+                                sortFieldName: 'openTime',
+                                sortType: 'desc',
+                                accountId
+                            })
                         })
-                    })
+                    } else {
+                        Toast(res.msg)
+                    }
                 })
                 .catch(err => {
                     state.loading = false
@@ -248,6 +253,7 @@ export default {
             const minVolume = props.product.minVolume
             const volumeStep = props.product.volumeStep
             const volumeDigit = getDecimalNum(props.product.minVolume)
+            state.fastBtnIndex = item.activeIndex
             if (BigNumber(positionVolume.value).lte(minVolume)) {
                 state.closeVolume = minVolume
             } else {
@@ -262,13 +268,13 @@ export default {
                 state.closeVolume = positionVolume.value
             }
         })
-        watchEffect(() => { // 根据输入的手数高亮快速平仓手数
-            const fastBtnsItem = fastBtns.find(el => {
-                const elVolume = div(positionVolume.value, el.divValue)
-                if (eq(elVolume, state.closeVolume)) return true
-            })
-            state.fastBtnIndex = fastBtnsItem ? fastBtnsItem.activeIndex : -1
-        })
+        // watchEffect(() => { // 根据输入的手数高亮快速平仓手数
+        //     const fastBtnsItem = fastBtns.find(el => {
+        //         const elVolume = div(positionVolume.value, el.divValue)
+        //         if (eq(elVolume, state.closeVolume)) return true
+        //     })
+        //     state.fastBtnIndex = fastBtnsItem ? fastBtnsItem.activeIndex : -1
+        // })
 
         return {
             ...toRefs(state),
@@ -326,7 +332,7 @@ export default {
         position: absolute;
         top: 0;
         right: 0;
-        padding:rem(35px) rem(25px) rem(25px) rem(25px);
+        padding: rem(35px) rem(25px) rem(25px) rem(25px);
         color: var(--normalColor);
         font-size: rem(28px);
     }
@@ -345,10 +351,10 @@ export default {
         background: var(--assistColor);
         border-radius: rem(6px);
         flex: 1;
-            margin-right: 15px;
-            &:last-child{
-                margin-right: 0;
-         }
+        margin-right: 15px;
+        &:last-child {
+            margin-right: 0;
+        }
         &.active {
             color: #FFF;
             background: var(--primary);
@@ -402,7 +408,6 @@ export default {
             .open-price {
                 color: var(--color);
             }
-
             .right {
                 display: flex;
                 flex: 1;
@@ -420,23 +425,23 @@ export default {
                 }
             }
         }
-         .left {
+        .left {
             width: rem(300px);
             margin-bottom: rem(40px);
-            .direction{
+            .direction {
                 display: inline-block;
                 height: rem(36px);
                 line-height: rem(40px);
                 border-radius: rem(6px);
-                color: #fff;
+                color: #FFF;
                 text-align: center;
                 padding: 0 rem(8px);
                 font-size: rem(24px);
                 margin-right: rem(10px);
-                &.riseColor{
+                &.riseColor {
                     background: var(--riseColor);
                 }
-                &.fallColor{
+                &.fallColor {
                     background: var(--fallColor);
                 }
             }
@@ -455,9 +460,7 @@ export default {
             .val {
                 flex: 1;
                 text-align: right;
-
             }
-
         }
         .step-2 {
             padding-bottom: rem(60px);

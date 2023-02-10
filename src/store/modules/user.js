@@ -20,6 +20,7 @@ export default {
         selfSymbolList: [], // 自选产品列表
         kycList: [], // kyc 验证列表
         localSelfSymbolList: [], // 缓存在本地的自选产品列表
+        switchAccounting: false // 是否在真实模拟切换中
     },
     getters: {
         userAccountType (state) {
@@ -56,7 +57,11 @@ export default {
             state.loginData = ''
             state.customerInfo = ''
             state.accountAssets = {}
+            state.selfSymbolList = []
             state.kycState = ''
+        },
+        Empty_selfSymbolList (state, data) { // 清空用户自选
+            state.selfSymbolList = []
         },
         Update_loginLoading (state, data) {
             state.loginLoading = data
@@ -117,6 +122,9 @@ export default {
                 vue_set(state.accountAssets, tradeType, data)
             }
         },
+        Update_emptyAccountAssets (state) {
+            state.accountAssets = {}
+        },
         Update_kycState (state, data) {
             state.kycState = data
         },
@@ -133,8 +141,11 @@ export default {
         },
         Update_kycList (state, data) {
             state.kycList = data
-        }
-
+        },
+        // 设置真实模拟切换的状态
+        Update_switchAccounting (state, value) {
+            state.switchAccounting = value
+        },
     },
     actions: {
         // 登录

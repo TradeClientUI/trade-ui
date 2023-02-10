@@ -10,7 +10,7 @@
         </div>
         <CategoryList v-model='categoryType' :list='categoryList' />
         <ProductList
-            :is-f-x='isFX'
+            :is-crypto='isCrypto'
             :product-list='baseList'
         />
         <div class='tips'>
@@ -48,13 +48,13 @@ const { categoryList, productList } = useProduct({
     categoryType,
     isSelfSymbol: false,
     defaultSortField: '',
-    defaultSortType: 'desc'
+    defaultSortType: ''
 })
 
-// 判断当前列表是否是外汇
-const isFX = computed(() => {
+// 判断当前列表是否是数字货币
+const isCrypto = computed(() => {
     const firstProduct = unref(productList)[0]
-    return firstProduct?.isFX ?? false
+    return firstProduct?.isCryptocurrency ?? false
 })
 
 // 展示的列表
@@ -78,15 +78,15 @@ const subscribeSymbolsList = computed(() => {
     return symbolKeys
 })
 
-watch([() => subscribeSymbolsList.value, () => isFX.value], (val) => {
-    if (val) {
+watch([() => subscribeSymbolsList.value, () => isCrypto.value], (val) => {
+    const switchAccounting = store.state._user.switchAccounting // 是否处于真实模拟切换中
+    if (!switchAccounting && val) {
         if (unref(val[1])) {
-            // 外汇
-            unSubscribeFX = QuoteSocket.add_subscribe({ moduleId, symbolKeys: val[0] })
-        } else {
-            // 其他 [外汇只需要实时行情，数字货币需要24h数据]
+            // 数字货币需要24h数据
             unSubscribeFX = QuoteSocket.add_subscribe({ moduleId, symbolKeys: val[0] })
             unSubscribe = QuoteSocket.add_subscribe24H({ moduleId, symbolKeys: val[0] })
+        } else {
+            unSubscribeFX = QuoteSocket.add_subscribe({ moduleId, symbolKeys: val[0] })
         }
     }
 }, {

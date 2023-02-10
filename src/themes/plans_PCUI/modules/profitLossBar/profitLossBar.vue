@@ -87,6 +87,7 @@ export default {
     }
     :deep(.input) {
         width: rem(240px);
+        color: var(--normalColor);
         &::-webkit-input-placeholder {
             color: var(--placeholdColor);
         }

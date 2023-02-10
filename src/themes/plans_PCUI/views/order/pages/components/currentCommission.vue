@@ -33,7 +33,9 @@ const symbolKeys = computed(() => tableData.value.map(e => `${e.symbolId}_${e.tr
 let unSubscribe = () => {}
 
 watch(() => symbolKeys.value, () => {
-    unSubscribe = QuoteSocket.add_subscribe({ moduleId: 'currentCommission', symbolKeys: symbolKeys.value })
+    if (!store.state._user.switchAccounting) {
+        unSubscribe = QuoteSocket.add_subscribe({ moduleId: 'currentCommission', symbolKeys: symbolKeys.value })
+    }
 }, {
     immediate: true,
     deep: true
@@ -46,8 +48,8 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-:deep(){
-    .crossLevelNum{
+:deep() {
+    .crossLevelNum {
         margin-left: 4px;
         vertical-align: middle;
         position: relative;
@@ -59,7 +61,7 @@ onUnmounted(() => {
         color: var(--color);
         border-radius: 3px;
         border: 1px solid var(--color);
-        &.marginleft0{
+        &.marginleft0 {
             margin-left: 0;
         }
     }

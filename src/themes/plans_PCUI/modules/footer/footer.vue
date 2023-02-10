@@ -30,7 +30,7 @@
                                 </a>
                             </p> -->
                             <p v-for='(item, index) in categoryList' :key='index' class='name'>
-                                <a href='javascript:;' @click='jumpUrl("trading")'>
+                                <a href='javascript:;' @click='toTrade(item)'>
                                     {{ item.title }}
                                 </a>
                             </p>
@@ -50,7 +50,7 @@
                                 </a>
                             </p> -->
                             <p class='name'>
-                                <a href='javascript:;' @click='jumpUrl("customer")'>
+                                <a href='javascript:;' @click='goService'>
                                     {{ $t('newHomeFooter.customer') }}
                                 </a>
                             </p>
@@ -99,8 +99,8 @@
                         <li @click='jumpUrl("yt")'>
                             <img class='icon' src='../../images/home/youtube.png' />
                         </li>
-                        <li @click='jumpUrl("tiktok")'>
-                            <img class='icon icon-tiktok' src='../../images/home/tiktok.png' />
+                        <li @click='jumpUrl("ins")'>
+                            <img class='icon icon-ins' src='../../images/home/instagram.png' />
                         </li>
                     </ul>
 
@@ -132,7 +132,6 @@ import { ref, computed, unref, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { getCookie } from '@/utils/util.js'
-import langDialog from '../../layout/components/lang-dialog.vue'
 import useMethods from '@planspc/hooks/useMethods'
 import Wave from '../../utils/wave'
 import { useI18n } from 'vue-i18n'
@@ -164,10 +163,10 @@ export default {
 
         const { t } = useI18n({ useScope: 'global' })
         const categoryList = ref([
-            { title: t('newHomeFooter.forex') },
-            { title: t('newHomeFooter.gold') },
-            { title: t('newHomeFooter.crude') },
-            { title: t('newHomeFooter.cryptocurrency') }
+            { title: t('newHomeFooter.forex'), value: 'FX' },
+            { title: t('newHomeFooter.gold'), value: 'Metal' },
+            { title: t('newHomeFooter.crude'), value: 'Energy' },
+            { title: t('newHomeFooter.cryptocurrency'), value: 'cryptocurrency' }
         ])
         // 底部nav跳转
         const jumpUrl = (index) => {
@@ -205,7 +204,8 @@ export default {
                 twitter: 'https://twitter.com/MagnaMarkets',
                 telegram: 'https://t.me/magnamarket',
                 yt: 'https://www.youtube.com/channel/UC8Stt_tYcUqHZKdPrLQuGhw',
-                tiktok: 'https://tiktok.com/@officialMagnaMarkets'
+                tiktok: 'https://tiktok.com/@officialMagnaMarkets',
+                ins: 'https://www.instagram.com/magnamarkets_/'
             }
             switch (index) {
                 case 'trading':
@@ -276,6 +276,20 @@ export default {
             }
         }
 
+        // 跳转指定标签类的产品到交易页面
+        const toTrade = (item) => {
+            const curLabel = item.value
+            const productList = store.state._quote.productList
+            const findProduct = productList.find(el => el.labels.split('.').includes(curLabel))
+            if (findProduct) {
+                const { symbolKey, symbolCode, symbolId, tradeType } = findProduct
+                store.commit('_quote/Update_productActivedID', symbolKey)
+                router.push(`/order?name=${symbolCode}&symbolId=${symbolId}&tradeType=${tradeType}`)
+            } else {
+                toOrderPriority(1)
+            }
+        }
+
         // 跳转板块
         const jumpQuote = (categoryType) => {
             router.push({
@@ -324,6 +338,7 @@ export default {
             langDialogShow,
             toAbout,
             jumpQuote,
+            toTrade,
             categoryList
         }
     }

@@ -165,6 +165,19 @@ const config = {
             errors: true
         },
         proxy: {
+            '/activity': {
+                target: 'https://uatcatsapi.cats-trade.com',
+                onProxyReq: function (proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
+                    if (req.body) {
+                        const reg = new RegExp('application/json')
+                        if (reg.test(proxyReq.getHeader('Content-Type'))) {
+                            const bodyData = JSON.stringify(req.body)
+                            proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+                            proxyReq.write(bodyData)
+                        }
+                    }
+                }
+            },
             '/wp-content/uploads': {
                 target: h5URL || 'https://prewpadmin_10.cmfbl.com',
             },

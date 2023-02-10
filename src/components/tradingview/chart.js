@@ -529,6 +529,8 @@ class Chart {
                 if (['barStyle', 'candleStyle', 'haStyle', 'hollowCandleStyle'].includes(styleName)) {
                     overrides['mainSeriesProperties.' + styleName + '.upColor'] = property.upColor
                     overrides['mainSeriesProperties.' + styleName + '.downColor'] = property.downColor
+                    overrides['mainSeriesProperties.' + styleName + '.wickUpColor'] = property.upColor
+                    overrides['mainSeriesProperties.' + styleName + '.wickDownColor'] = property.downColor
                 }
                 if (['candleStyle', 'haStyle', 'hollowCandleStyle'].includes(styleName)) {
                     overrides['mainSeriesProperties.' + styleName + '.borderUpColor'] = property.upColor

@@ -80,7 +80,7 @@ export default {
             { id: 1, type: 'Forex', name: 'AUD/NZD', contract: '100000', margin: '0.20%', long: '-1.4878%', short: '-0.3600%', min: '0.01', max: '20' },
             { id: 2, type: 'Energy', name: 'US Oil', contract: '1000', margin: '1%', long: '-2.7175%', short: '-3.9240%', min: '0.01', max: '20' },
             { id: 2, type: 'Energy', name: 'UK Oil', contract: '1000', margin: '1%', long: '-0.9679%', short: '-3.9240%', min: '0.01', max: '20' },
-            { id: 2, type: 'Energy', name: 'Natural Gas', contract: '10000', margin: '-5.5579%', long: '-3.9240%', short: '-3.9240%', min: '0.01', max: '20' },
+            { id: 2, type: 'Energy', name: 'Natural Gas', contract: '10000', margin: '1.00%', long: '-3.9240%', short: '-3.9240%', min: '0.01', max: '20' },
             { id: 3, type: 'Metal', name: 'platinum', contract: '50', margin: '2%', long: '-5.6633%', short: '-3.9240%', min: '0.01', max: '20' },
             { id: 3, type: 'Metal', name: 'palladium', contract: '100', margin: '2%', long: '-5.6633%', short: '-3.9240%', min: '0.01', max: '20' },
             { id: 3, type: 'Metal', name: 'GOLD', contract: '100', margin: '0.50%', long: '-4.7065%', short: '-3.9240%', min: '0.01', max: '20' },

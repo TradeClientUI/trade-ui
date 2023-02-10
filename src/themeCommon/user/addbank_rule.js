@@ -3,7 +3,7 @@ export default function (t) {
     return {
         firstName: [
             {
-                message: [t('bank.bankPersonFirstName')],
+                message: [t('common.input') + t('bank.bankPersonFirstName')],
                 validator: (rule, value, callback, source, options) => {
                     return !!value
                 },
@@ -11,7 +11,7 @@ export default function (t) {
         ],
         lastName: [
             {
-                message: [t('bank.bankPersonLastName')],
+                message: [t('common.input') + t('bank.bankPersonLastName')],
                 validator: (rule, value, callback, source, options) => {
                     return !!value
                 },

@@ -1,6 +1,6 @@
 <template>
     <router-view />
-    <div class='login'>
+    <div v-if='!accessFlag' class='login'>
         <topNav class='header' />
         <div class='login-wrap'>
             <div class='pageTitle'>
@@ -151,6 +151,7 @@ import LoginHook from './loginHook'
 import googleVerifyCode from '@/themeCommon/components/googleVerifyCode.vue'
 import thirdLogin from '@/themeCommon/components/thirdLogin'
 import { checkGoogleMFAStatus } from '@/api/user'
+import useMethods from '@planspc/hooks/useMethods'
 
 export default {
     name: 'Login',
@@ -172,6 +173,7 @@ export default {
         const checkCodeEmailEl = ref()
         const checkCodeMobileEl = ref()
         const { t } = useI18n({ useScope: 'global' })
+        const accessFlag = computed(() => store.state._base.accessFlag)
         const businessConfig = computed(() => store.state.businessConfig)
         const state = reactive({
             loading: false,
@@ -262,6 +264,13 @@ export default {
             }
         })
 
+        // ip没权限。跳转受限页面
+        watch(() => accessFlag.value, val => {
+            if (val) router.replace('/noAccess')
+        }, {
+            immediate: true
+        })
+
         // 跳转路由
         const toRoute = path => {
             router.push('/home').then(() => {
@@ -304,7 +313,9 @@ export default {
                 const resData = res.data
                 const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
                 const isReal = !lastAccountType || lastAccountType === 'real'
-                if (isReal && Number(resData.companyKycStatus) === 1) {
+                if (!isReal) {
+                    noticeSetPwd(resData.loginPassStatus)
+                } else if (Number(resData.companyKycStatus) === 1) {
                     if (Number(resData.kycAuditStatus === 0)) {
                         return Dialog.alert({
                             title: t('common.tip'),
@@ -436,7 +447,8 @@ export default {
             getGooleVerifyCode,
             onLoginNameKeyupEnter,
             businessConfig,
-            changeLoginType
+            changeLoginType,
+            accessFlag
         }
     }
 }

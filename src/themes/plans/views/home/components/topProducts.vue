@@ -54,7 +54,7 @@ const { categoryList, productList } = useProduct({
     isSort: false,
     isSelfSymbol: false,
     defaultSortField: '',
-    defaultSortType: 'desc'
+    defaultSortType: ''
 })
 
 // 判断当前列表是否是外汇
@@ -178,10 +178,12 @@ const moreHandle = () => {
     border-bottom: 1px solid var(--lineColor);
     margin-bottom: 10px;
     :deep(.van-tabs__wrap) {
-        .van-tab {
-            flex: 1;
-            &.van-tab--active {
-                background: none;
+        .van-tabs__nav {
+            .van-tab.van-tab--line {
+                flex: 1;
+                &.van-tab--active {
+                    background: none;
+                }
             }
         }
         .van-tabs__line {

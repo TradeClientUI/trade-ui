@@ -5,3 +5,17 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
+/* 高开低收文字样式调整 */
+.series-12hzsxbp .valueItem-3JDGGSt_:last-child{
+    line-height: normal;
+}
+.series-12hzsxbp .valueItem-3JDGGSt_ .valueTitle-1myNPdtH{
+    color: #EA5A26;
+    padding-right: 2px;
+}
+.chart-widget__top--themed-dark .series-12hzsxbp .valueItem-3JDGGSt_ .valueTitle-1myNPdtH{
+    color: #EA5A26;
+}
+.series-12hzsxbp .valueItem-3JDGGSt_ .valueValue-3kA0oJs5{
+    color: #656667!important
+}

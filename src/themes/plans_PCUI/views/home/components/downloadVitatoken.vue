@@ -10,7 +10,7 @@
                 </p>
                 <div class='download'>
                     <div class='qrcode-box'>
-                        <img alt='qrcode' class='qrcode_img' src='/images/qrcode.png' />
+                        <img alt='qrcode' class='qrcode_img' src='/images/qrcode.png?key=new' />
                         <p class='download-text'>
                             {{ $t('homeJD.investDownload') }}
                         </p>
@@ -19,10 +19,10 @@
                         <!-- <a class='btn ios' :href="downloads['ios']">
                             {{ $t('homeJD.appleAppStore') }}
                         </a> -->
-                        <a class='btn google' :href="downloads['google']">
+                        <a class='btn google' :href="downloads['google']" target='_blank'>
                             {{ $t('homeJD.googleAppStore') }}
                         </a>
-                        <a class='btn android' :href="downloads['android']">
+                        <a class='btn android' :href="downloads['android']" target='_blank'>
                             {{ $t('homeJD.apkDownload') }}
                         </a>
                     </div>
@@ -37,9 +37,9 @@
 
 <script setup>
 const downloads = {
-    'ios': 'https://apps.apple.com/hk/app/vitatoken-pro/id1620283367',
+    'ios': '',
     'android': 'https://www.magnamarkets.com/site/magnamarkets.apk',
-    'google': window.location.origin
+    'google': 'https://play.google.com/store/apps/details?id=com.magnamarkets.app'
 }
 </script>
 

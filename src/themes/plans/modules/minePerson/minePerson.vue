@@ -1,8 +1,8 @@
 <template>
     <Loading :show='loading' />
     <div :style='data.styleObj'>
-        <div v-if="userAccountType==='G'" class='mineGuest'>
-            <img class='faceImg' :src='faceImg' />
+        <div v-if='!customerInfo' class='mineGuest'>
+            <img class='faceImg' :src='faceImgDefault' />
             <div class='guestBts'>
                 <button class='btn' @click="$router.push('/login')">
                     {{ $t('login.loginOrRegist') }}
@@ -11,39 +11,26 @@
         </div>
         <div v-else class='personInfo'>
             <div class='personNo'>
-                <img class='faceImg' :src='faceImg' />
+                <img class='faceImg' :src='faceImgDefault' />
                 <div v-if='customerInfo' class='customerNo'>
                     <p class='text1'>
                         Hi,
                         <span v-if='customerInfo?.phone'>
-                            {{ hideMobileInfo(customerInfo?.phone) }}
+                            {{ customerInfo?.phone }}
                         </span>
                         <span v-else>
-                            {{ hideEmailInfo(customerInfo?.email) }}
+                            {{ customerInfo?.email }}
                         </span>
                     </p>
                     <p class='text2'>
                         ID: {{ customerInfo.customerNo }}
                         <i class='icon_fuzhi copy-btn' :data-clipboard-text='customerInfo.customerNo' @click='copyCustomerNo'></i>
                     </p>
-                    <!-- <span v-if='Number(customerInfo.kycStatus) !== 0' class='status' :class='kycStateMap[customerInfo.kycStatus].className' @click="$router.push('/authentication')">
-                        <span class='icon' :class='customerInfo.kycStatus === -1 ? kycStateMap[customerInfo.kycStatus].icon[customerInfo.kycRemark] : kycStateMap[customerInfo.kycStatus].icon'>
-                        </span>
-
-                        <span v-if='customerInfo.kycStatus === -1'>
-                            {{ kycMap[customerInfo.kycRemark] }}
-                        </span>
-                        <span v-else-if='customerInfo.kycStatus!==0'>
-                            {{ kycStateTextMap[customerInfo.kycStatus] }}
-                        </span>
-                    </span> -->
                 </div>
             </div>
-            <div v-if='data.src' class='capitalImg'>
-                <!-- <img alt='' src='/images/minePlace.png' /> -->
+            <!-- <div v-if='data.src' class='capitalImg'>
                 <ImgComp :data='data' />
-            </div>
-            <!-- <fund /> -->
+            </div> -->
         </div>
     </div>
 </template>
@@ -54,7 +41,7 @@ import ImgComp from '../img/img'
 import { computed, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { hideEmailInfo, hideMobileInfo, localSet, localGet, setToken, sessionSet, localGetObj, localSetObj } from '@/utils/util'
+import { localSet, localGet, setToken, sessionSet, localGetObj, localSetObj } from '@/utils/util'
 import { Toast } from 'vant'
 import fund from './components/fund.vue'
 import { switchUserAccount } from '@/api/user'
@@ -129,9 +116,8 @@ export default {
             kycMap,
             kycStateTextMap,
             kycStateMap,
-            hideMobileInfo,
-            hideEmailInfo,
-            copyCustomerNo
+            copyCustomerNo,
+            faceImgDefault
         }
     }
 }
@@ -173,18 +159,18 @@ export default {
 .personNo {
     position: relative;
     text-align: center;
-    .account{
+    .account {
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: flex-end;
         text-align: right;
         padding-right: rem(20px);
-        .triangle{
+        .triangle {
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 6px 6px 0 6px;
+            border-width: 6px 6px 0;
             border-color: var(--minorColor) transparent transparent transparent;
             margin-left: rem(10px);
         }
@@ -200,15 +186,15 @@ export default {
         display: inline-block;
         padding-top: rem(24px);
         font-size: rem(32px);
-        .text1{
+        .text1 {
             font-size: rem(48px);
             font-weight: bold;
             margin-bottom: rem(6px);
         }
-        .text2{
+        .text2 {
             font-size: rem(28px);
             color: var(--minorColor);
-            .copy-btn{
+            .copy-btn {
                 font-size: rem(22px);
             }
         }
@@ -259,8 +245,8 @@ export default {
         width: 100%;
     }
 }
-.account-sheet{
-    .account-type{
+.account-sheet {
+    .account-type {
         background: var(--bgColor);
         display: flex;
         align-items: center;
@@ -268,15 +254,15 @@ export default {
         margin: rem(20px);
         padding: rem(40px);
         border-radius: rem(10px);
-        .radio{
+        .radio {
             margin-right: rem(20px);
             width: rem(40px);
             height: rem(40px);
             border-radius: 50%;
             border: solid 1px var(--minorColor);
-            &.active{
+            &.active {
                 border: solid 1px var(--primary);
-                &::after{
+                &::after {
                     position: absolute;
                     left: rem(8px);
                     top: rem(8px);
@@ -288,21 +274,21 @@ export default {
                 }
             }
         }
-        &.active{
+        &.active {
             color: var(--primary);
-             .radio{
+            .radio {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 border: solid 1px var(--primary);
-                  &::after{
+                &::after {
                     content: '';
                     width: rem(20px);
                     height: rem(20px);
                     border-radius: 50%;
                     background: var(--primary);
                 }
-             }
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <li class='product-item' @click='handleJump'>
+    <li v-if='product' class='product-item' @click='handleJump'>
         <div class='symbol-name'>
             <div v-if='currencyList.length' class='icon'>
                 <img :src='`/images/currency_icon/${currencyList[0]}.png`' />
@@ -45,7 +45,7 @@
         </div>
 
         <div
-            v-if='!isFX'
+            v-if='isCrypto'
             class='flex-end'
         >
             <span> {{ getVal(product.rolling_upDownWidth) }} </span>
@@ -53,7 +53,7 @@
 
         <div class='flex-end'>
             <span
-                v-if='isFX'
+                v-if='!isCrypto'
             >
                 {{ getVal(product.upDownWidth) }}
             </span>
@@ -85,7 +85,7 @@ import useSymbolIcon from '@/hooks/useSymbolIcon'
 
 const props = defineProps({
     symbolKey: String,
-    isFX: Boolean
+    isCrypto: Boolean
 })
 
 const store = useStore()

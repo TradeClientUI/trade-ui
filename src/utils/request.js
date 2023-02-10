@@ -7,6 +7,9 @@ import { apiDomain } from '@/config'
 let router = null
 export const setRouter = r => (router = r)
 
+let store = null
+export const setStore = s => (store = s)
+
 let pk = null
 export const setPk = s => (pk = s)
 
@@ -62,8 +65,9 @@ service.interceptors.response.use(
         // token失效重新登录
         const loginParams = getLoginParams()
         const routeName = router?.currentRoute?.value?.name
+        const switchAccounting = store.state._user.switchAccounting
         // const isUserRoute = router?.currentRoute?.value?.meta?.roles?.includes('User')
-        if (['GATEWAY_CODE_001', 'GATEWAY_CODE_005'].includes(data.code) && router && routeName && routeName !== 'Login') {
+        if (!switchAccounting && ['GATEWAY_CODE_001', 'GATEWAY_CODE_005'].includes(data.code) && router && routeName && routeName !== 'Login') {
             localRemoveKey('mockAccount', 'accountType')
             removeLoginParams()
             let backPath = location.pathname.split('/')

@@ -131,7 +131,7 @@ export default {
         }
         .tb {
             width: rem(210px);
-            text-align: right
+            text-align: right;
         }
         .ft {
             width: rem(210px);
@@ -152,7 +152,6 @@ export default {
         color: var(--color);
         font-weight: 400;
         font-size: rem(30px);
-        line-height: 1.15;
         padding-bottom: 1px;
         &.small {
             font-size: rem(26px);
@@ -179,7 +178,7 @@ export default {
             font-size: rem(22px);
         }
     }
-    .sell_price{
+    .sell_price {
         font-weight: bold;
     }
     .col {

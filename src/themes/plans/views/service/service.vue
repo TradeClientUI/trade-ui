@@ -18,3 +18,10 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.page-wrap {
+    flex: 1;
+    overflow-y: auto;
+}
+</style>

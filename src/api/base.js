@@ -122,3 +122,12 @@ export function findCompanyCountry (data) {
         data
     })
 }
+
+/* 获取客户端IP所在国家 */
+export function geoipCountry (data = {}) {
+    return axios.get('/api/geoip/country', {
+        params: {
+            timestamp: Date.now()
+        }
+    }).then(res => res.data)
+}

@@ -286,7 +286,7 @@ const routes = [{
     component: () =>
         import(/* webpackChunkName: "authentication" */ '../user/authentication.vue'),
     meta: {
-        title: 'cRoute.authentication',
+        title: 'cRoute.regKyc',
         footerMenu: false,
         roles: ['User']
     },
@@ -300,7 +300,7 @@ const routes = [{
     component: () =>
         import(/* webpackChunkName: "authentication" */ '../user/authForm.vue'),
     meta: {
-        title: 'cRoute.authForm',
+        title: 'cRoute.regKyc',
         footerMenu: false,
         roles: ['User']
     }

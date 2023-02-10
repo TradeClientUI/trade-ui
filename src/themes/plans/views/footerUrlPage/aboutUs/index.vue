@@ -1,6 +1,8 @@
 <template>
-    <about />
-    <NewFooter />
+    <div class='layout'>
+        <about />
+        <NewFooter />
+    </div>
 </template>
 
 <script>
@@ -16,3 +18,10 @@ export default {
     }
 }
 </script>
+
+<style scoped lang="scss">
+.layout {
+    flex: 1;
+    overflow-y: auto;
+}
+</style>

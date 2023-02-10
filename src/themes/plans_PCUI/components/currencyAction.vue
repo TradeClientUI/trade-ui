@@ -4,26 +4,20 @@
         class='field'
         :input-align='inputAlign'
         :label='$t("bank.bankCurrency")'
-        :placeholder='$t("register.accountCurrency")'
+        :placeholder='$t("bank.inputBankCurrency")'
         readonly
+        required
         right-icon='arrow-down'
         type='text'
-        @click='actionSheetVisible=true'
+        @click='openDialog'
     />
-    <!-- <van-cell
-        arrow-direction='down'
-        is-link
-        title='账户币种'
-        :value='modelValue'
-        v-bind='$attrs'
-        @click='actionSheetVisible=true'
-    /> -->
-    <van-action-sheet v-model:show='actionSheetVisible' :actions='actionsList' :round='false' @select='actionOnSelect' />
+    <van-action-sheet v-model:show='actionSheetVisible' :actions='list' :round='false' @select='actionOnSelect' />
 </template>
 
 <script>
-import { reactive, toRefs, onMounted } from 'vue'
-import { getAssetsList } from '@/api/base'
+import { reactive, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { Toast } from 'vant'
 
 export default {
     props: {
@@ -31,33 +25,38 @@ export default {
         inputAlign: {
             true: String,
             default: 'right'
+        },
+        // 列表数据
+        list: {
+            type: Array,
+            default: () => []
         }
     },
     emits: ['update:modelValue'],
     setup (props, { emit }) {
+        const { t } = useI18n({ useScope: 'global' })
         const state = reactive({
-            actionsList: [],
+            // 是否显示弹窗
             actionSheetVisible: false
         })
+
+        // 打开弹窗
+        const openDialog = () => {
+            if (props.list.length === 0) {
+                return Toast(t('bank.bankCountryTip'))
+            }
+            state.actionSheetVisible = true
+        }
+
+        // 点击选择
         const actionOnSelect = (item) => {
             emit('update:modelValue', item.code)
             state.actionSheetVisible = false
         }
 
-        onMounted(() => {
-            // 获取资产列表
-            getAssetsList().then(res => {
-                if (res.check()) {
-                    res.data.map(el => {
-                        el.name = el.code
-                    })
-                }
-                state.actionsList = res.data
-            })
-        })
-
         return {
             ...toRefs(state),
+            openDialog,
             actionOnSelect
         }
     }
@@ -74,6 +73,5 @@ export default {
             cursor: pointer;
         }
     }
-
 }
 </style>

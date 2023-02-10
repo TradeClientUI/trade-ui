@@ -4,6 +4,9 @@ import MsgSocketEvent from './msgSocketEvent'
 import { ungzip } from './socketUtil'
 import { getToken, getQueryString } from '@/utils/util.js'
 
+let _store = null
+let _router = null
+
 export const QuoteSocket = new QuoteSocketEvent() // 行情websocket
 export const MsgSocket = new MsgSocketEvent() // 消息websocket
 
@@ -105,24 +108,41 @@ function msgWSEvent (msgWS) {
 
 export default {
     install: (app, { $store, $router } = {}) => {
-        const quoteService = getQuoteService()
-        const msgService = window['msgService']
-        const quoteWS = CreateSocket(quoteService)
-        const msgWS = CreateSocket(msgService)
-        // const tradeWS = CreateSocket(tradeService)   // 交易socket，目前用不上
+        _store = $store
+        _router = $router
+        connectWebsocket()
 
-        QuoteSocket.init(quoteWS, $store, $router)
-        MsgSocket.init(msgWS, $store, $router)
         app.config.globalProperties.$QuoteSocket = QuoteSocket
         app.config.globalProperties.$MsgSocket = MsgSocket
+    }
+}
 
-        quoteWS.open()
-        quoteWSEvent(quoteWS) // 行情事件处理
+// 连接消息和行情websocket
+export const connectWebsocket = () => {
+    // 连接行情websocket
+    connectQuoteWS()
 
-        // 默认开启消息推送，uniapp环境下不开
-        if (!getQueryString('isUniapp')) {
-            msgWS.open()
-            msgWSEvent(msgWS) // 消息事件处理
-        }
+    // 连接消息websocket
+    connectMsgWS()
+}
+
+// 连接行情websocket
+export const connectQuoteWS = () => {
+    const quoteService = getQuoteService()
+    const quoteWS = CreateSocket(quoteService)
+    QuoteSocket.init(quoteWS, _store, _router)
+    quoteWS.open()
+    quoteWSEvent(quoteWS) // 行情事件处理
+}
+
+// 连接消息websocket
+// 默认开启消息推送，uniapp环境下不开
+export const connectMsgWS = () => {
+    if (!getQueryString('isUniapp')) {
+        const msgService = window['msgService']
+        const msgWS = CreateSocket(msgService)
+        MsgSocket.init(msgWS, _store, _router)
+        msgWS.open()
+        msgWSEvent(msgWS) // 消息事件处理
     }
 }

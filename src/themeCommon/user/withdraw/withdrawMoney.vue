@@ -523,8 +523,6 @@ export default {
         const hideMiddle = (value) => {
             if (!isEmpty(value)) { return `${value.substring(0, 4)} ${'*'.repeat(value.length - 8).replace(/(.{4})/g, '$1 ')}${value.length % 4 ? ' ' : ''}${value.slice(-4)}` }
         }
-        const isMobile = process.env.VUE_APP_theme === 'plans'
-        const gaClass = isMobile ? 'mobile_withdraw_kyc_ga' : 'pc_withdraw_kyc_ga'
         // kyc验证
         const checkKyc = () => {
             state.loading = true
@@ -536,7 +534,7 @@ export default {
                 if (Number(res.data) !== 2) {
                     return Dialog.alert({
                         // 埋点类名
-                        className: Number(res.data) !== 1 ? gaClass : '',
+                        className: Number(res.data) !== 1 ? 'mobile_withdraw_kyc_ga' : '',
                         title: t('withdraw.hint'),
                         confirmButtonText: Number(res.data) === 1 ? t('withdraw.kycBtn_1') : t('withdraw.kycBtn_2'),
                         message: Number(res.data) === 2 ? t('withdraw.kycMsg_1') : t('withdraw.kycMsg_2'),

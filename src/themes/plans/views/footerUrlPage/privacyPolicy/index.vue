@@ -21,3 +21,10 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.privacyPolicy {
+    flex: 1;
+    overflow-y: auto;
+}
+</style>

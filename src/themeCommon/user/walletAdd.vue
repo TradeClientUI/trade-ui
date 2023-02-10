@@ -329,6 +329,7 @@ export default {
         :deep(.van-cell) {
             padding-left: 0;
             padding-right: 0;
+            font-size: rem(28px);
             &::after {
                 border: none;
             }

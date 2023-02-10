@@ -254,7 +254,7 @@ export default {
                     background: none;
                 }
                 .icon_zixuan2 {
-                    color: #FC822F;
+                    color: var(--primary);
                     animation: heartBeat 1.3s ease-in-out forwards;
                 }
                 .activeText {

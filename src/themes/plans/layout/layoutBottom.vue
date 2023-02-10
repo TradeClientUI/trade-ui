@@ -2,7 +2,7 @@
     <div v-show='!isUniapp' id='nav-footer'>
         <div class='footer-wrap'>
             <div class='menu'>
-                <div class='main' @click="expand('about')">
+                <div class='main' @click="expand('aboutus')">
                     <span>{{ $t('newHomeFooter.aboutus') }}</span>
                     <van-icon :name='aboutVis ? "minus" : "plus"' />
                 </div>
@@ -10,7 +10,7 @@
                     <p class='link' @click='jumpUrl("notice")'>
                         {{ $t('route.noticeTitle') }}
                     </p>
-                    <p class='link' @click='jumpUrl("about")'>
+                    <p class='link' @click='jumpUrl("aboutus")'>
                         {{ $t('newHomeFooter.aboutus') }}
                     </p>
                 </div>
@@ -26,7 +26,7 @@
                     </p>
                 </div> -->
                 <div v-show='productVis' class='sub'>
-                    <p v-for='(item, index) in categoryList' :key='index' class='link' @click='jumpUrl("trading")'>
+                    <p v-for='(item, index) in categoryList' :key='index' class='link' @click='toTrade(item)'>
                         {{ item.title }}
                     </p>
                 </div>
@@ -43,7 +43,7 @@
                     <!-- <p class='link' @click='jumpUrl("buyUSDT")'>
                         {{ $t('JG_HomeFooter.buyUSDT') }}
                     </p> -->
-                    <p v-if='onlineService' class='link' @click='jumpUrl("customer")'>
+                    <p v-if='onlineService' class='link' @click='goService'>
                         {{ $t('newHomeFooter.customer') }}
                     </p>
                     <p class='link' @click='jumpUrl("fees")'>
@@ -86,8 +86,8 @@
                 <li class='box-item' @click='jumpUrl("yt")'>
                     <img alt='youtube' class='item-icon' src='../images/home/youtube.png' />
                 </li>
-                <li class='box-item' @click='jumpUrl("tiktok")'>
-                    <img alt='instagram' class='item-icon item-icon-tiktok' src='../images/home/tiktok.png' />
+                <li class='box-item' @click='jumpUrl("ins")'>
+                    <img alt='instagram' class='item-icon' src='../images/home/instagram.png' />
                 </li>
             </ul>
             <div class='risk'>
@@ -133,7 +133,7 @@ const expand = module => {
         serviceVis.value = !serviceVis.value
     } else if (module === 'help') {
         helpVis.value = !helpVis.value
-    } else if (module === 'about') {
+    } else if (module === 'aboutus') {
         aboutVis.value = !aboutVis.value
     } else if (module === 'active') {
         activeVis.value = !activeVis.value
@@ -142,10 +142,10 @@ const expand = module => {
 
 const { t } = useI18n({ useScope: 'global' })
 const categoryList = ref([
-    { title: t('newHomeFooter.forex') },
-    { title: t('newHomeFooter.gold') },
-    { title: t('newHomeFooter.crude') },
-    { title: t('newHomeFooter.cryptocurrency') }
+    { title: t('newHomeFooter.forex'), value: 'FX' },
+    { title: t('newHomeFooter.gold'), value: 'Metal' },
+    { title: t('newHomeFooter.crude'), value: 'Energy' },
+    { title: t('newHomeFooter.cryptocurrency'), value: 'cryptocurrency' }
 ])
 // 底部nav跳转
 const jumpUrl = (index) => {
@@ -180,10 +180,11 @@ const jumpUrl = (index) => {
     }
     const community = {
         fb: 'https://www.facebook.com/profile.php?id=100088996032867',
-        twitter: ' https://twitter.com/MagnaMarkets',
+        twitter: 'https://twitter.com/MagnaMarkets',
         telegram: 'https://t.me/magnamarket',
         yt: 'https://www.youtube.com/channel/UC8Stt_tYcUqHZKdPrLQuGhw',
-        tiktok: 'https://tiktok.com/@officialMagnaMarkets'
+        tiktok: 'https://tiktok.com/@officialMagnaMarkets',
+        ins: 'https://www.instagram.com/magnamarkets_/'
     }
     const symbolId = store.state._quote.productList.find(el => Number(el.tradeType) === 5 && el.symbolName)?.symbolId
     switch (index) {
@@ -214,8 +215,8 @@ const jumpUrl = (index) => {
                 })
             }
             break
-        case 'about':
-            router.push('about')
+        case 'aboutus':
+            router.push('aboutus')
             break
         case 'faqs':
             router.push('/faqs')
@@ -257,9 +258,24 @@ const jumpUrl = (index) => {
             }
     }
 }
+// 跳转指定标签类的产品到交易页面
+const toTrade = (item) => {
+    const curLabel = item.value
+    const productList = store.state._quote.productList
+    const findProduct = productList.find(el => el.labels.split('.').includes(curLabel))
+    if (findProduct) {
+        const { symbolKey, symbolCode, symbolId, tradeType } = findProduct
+        store.commit('_quote/Update_productActivedID', symbolKey)
+        router.push(`/order?name=${symbolCode}&symbolId=${symbolId}&tradeType=${tradeType}`)
+    } else {
+        const { symbolCode, symbolId, tradeType } = store.getters.productActived
+        router.push(`/order?name=${symbolCode}&symbolId=${symbolId}&tradeType=${tradeType}`)
+    }
+}
+
 const toAbout = () => {
     router.push({
-        path: '/about',
+        path: '/aboutus',
         query: {
             activeName: 'second'
         }

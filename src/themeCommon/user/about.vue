@@ -9,7 +9,7 @@
                     </p>
                 </div>
                 <div class='right'>
-                    <img v-if='logoUrl' :src='logoUrl' srcset='' />
+                    <img src='/images/about/magnaMarketsLimited_1.jpeg' />
                 </div>
             </div>
         </div>

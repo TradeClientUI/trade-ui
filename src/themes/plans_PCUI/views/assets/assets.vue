@@ -75,6 +75,8 @@ export default {
         const store = useStore()
         // 玩法列表
         const plansList = unref(computed(() => store.state._base.plans))
+        // 是否显示全仓玩法真实模拟净值
+        const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
         // 设置默认玩法
         state.tradeType = Number(plansList[0].tradeType)
 
@@ -128,7 +130,9 @@ export default {
         onBeforeUnmount(() => {
             // 取消订阅
             QuoteSocket.cancel_subscribe()
-            MsgSocket.cancelSubscribeAsset()
+            if (!showFullNetAsset.value) {
+                MsgSocket.cancelSubscribeAsset()
+            }
         })
 
         return {

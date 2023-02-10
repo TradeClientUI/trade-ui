@@ -1,4 +1,4 @@
 {
     "dear": "Dear Customer",
-    "upgrade": "During system upgrade, all services are suspended until today <span id='endTime'>(time)</span>"
+    "upgrade": "During system upgrade, all services are suspended until today <span id='endTime'>{time}</span>"
 }

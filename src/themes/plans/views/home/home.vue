@@ -55,7 +55,7 @@
             </div>
         </div>
     </div> -->
-    <div class='serviceIcon' @click='toService'>
+    <div class='serviceIcon' @click='goService'>
         <!-- 置顶-->
         <!-- <img v-if='showTop' alt='' class='img' src='../../images/home/top.png' @click='toTop' /> -->
         <!-- 客服 -->
@@ -65,6 +65,8 @@
 
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { MsgSocket } from '@/plugins/socket/socket'
+import { localGet, localSet } from '@/utils/util'
 import newQuick from './components/new-quick.vue'
 import newNotice from './components/new-notice.vue'
 import tradeSignal from './components/tradeSignal.vue'
@@ -79,7 +81,6 @@ import opportunities from './components/opportunities.vue'
 import privacyTip from './components/privacy-tip.vue'
 import downloadVitatoken from './components/downloadVitatoken.vue'
 import startInvestment from './components/startInvestment.vue'
-import { localGet, localSet } from '@/utils/util'
 
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -89,6 +90,8 @@ const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const store = useStore()
 const customerInfo = computed(() => store.state._user.customerInfo)
+// 是否显示全仓玩法真实模拟净值
+const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
 
 const bannerClick = () => {
     // 游客去到开户界面，登录去V10
@@ -108,33 +111,27 @@ if (!localGet('privacyFlag')) {
     privacyVis.value = true
 }
 
-const toService = () => {
-    router.push({
-        name: 'service',
-    })
-}
-// const showTop = ref(false)
-// const handleScroll = () => { // 显示回到顶部按钮
-//     if (document.documentElement.scrollTop > 900) { showTop.value = true } else showTop.value = false
-// }
-// onMounted(() => { // 绑定滚动事件
-//     window.addEventListener('scroll', handleScroll)
-// })
-// onBeforeUnmount(() => { // 移出滚动事件
-//     window.removeEventListener('scroll', handleScroll)
-// })
-// 回到顶部
-// const toTop = () => {
-//     window.scrollTo({
-//         top: 0,
-//         behavior: 'smooth' // 平滑滚动
-//     })
-// }
+onMounted(() => {
+    // 订阅资产
+    if (showFullNetAsset.value) {
+        MsgSocket.subscribedListAdd(() => {
+            MsgSocket.subscribeAsset(1)
+        })
+    }
+})
+
+onBeforeUnmount(() => {
+    // 取消订阅资产
+    if (!showFullNetAsset.value) {
+        MsgSocket.cancelSubscribeAsset()
+    }
+})
 </script>
 
 <style lang='scss' scoped>
 @import '@/sass/mixin.scss';
 .homePage {
+    padding-top: rem(116px);
     position: relative;
     background: var(--contentColor);
     color: var(--color);
@@ -259,5 +256,11 @@ body.night {
     .banner {
         background: #21262F;
     }
+}
+</style>
+
+<style lang="scss">
+.nav-wrap-Home {
+    position: fixed !important;
 }
 </style>

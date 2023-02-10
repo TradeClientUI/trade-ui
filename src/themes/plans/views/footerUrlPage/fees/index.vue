@@ -17,6 +17,8 @@ import fees from '@/themeCommon/user/fees.vue'
 .vita_dwt_fees {
     margin: 0 auto;
     width: 100vw;
+    flex: 1;
+    overflow-y: auto;
     .content-title {
         text-align: center;
         font-size: rem(48px);

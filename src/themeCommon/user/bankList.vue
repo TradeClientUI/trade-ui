@@ -1,10 +1,10 @@
 <template>
-    <LayoutTop :back='true' :menu='false' :title='$t("route.mine")' />
+    <LayoutTop :back='true' :menu='false' :title='$t("cRoute.bankList")' />
     <div class='page-wrap'>
         <Loading :show='loading' />
-        <p class='header'>
+        <!-- <p class='header'>
             {{ $t('cRoute.bankList') }}
-        </p>
+        </p> -->
         <div class='list'>
             <p v-if='bankList.length === 0' class='no-data'>
                 {{ $t('bank.noBanks') }}
@@ -50,7 +50,6 @@ export default {
             loading: false
         })
         const getBankList = () => {
-            console.log('banklist')
             state.loading = true
             queryBankList().then(res => {
                 state.loading = false
@@ -89,7 +88,7 @@ export default {
     overflow: hidden;
     padding-top: rem(110px);
     background: var(--bgColor);
-    .header{
+    .header {
         font-size: rem(48px);
         padding-left: rem(30px);
         padding-bottom: rem(20px);

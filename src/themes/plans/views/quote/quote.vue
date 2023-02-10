@@ -50,13 +50,15 @@
 import TopTab from '@plans/components/topTab'
 import productListComp from '@plans/modules/productList/productList.vue'
 import SortIcon from '@plans/components/sortIcon.vue'
-import { ref, watch, computed, onActivated, unref, nextTick, onMounted } from 'vue'
 import plansType from '@/themes/plans/components/plansType.vue'
-import useProduct from '@plans/hooks/useProduct'
+import { ref, watch, computed, onActivated, unref, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { MsgSocket } from '@/plugins/socket/socket'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { localSet, localGet } from '@/utils/util'
+import useProduct from '@plans/hooks/useProduct'
+
 export default {
     name: 'Quote',
     components: {
@@ -95,6 +97,8 @@ export default {
         const { categoryList, productList, sortField, sortType, sortFunc } = useProduct({
             tradeType, categoryType
         })
+        // 是否显示全仓玩法真实模拟净值
+        const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
 
         // 初始化需要显示的板块
         watch(() => route.query.categoryType, (value) => {
@@ -197,6 +201,22 @@ export default {
         const goSearchPage = () => {
             router.push(`/productSearch?tradeType=${tradeType.value}`)
         }
+
+        onMounted(() => {
+            // 订阅资产
+            if (showFullNetAsset.value) {
+                MsgSocket.subscribedListAdd(() => {
+                    MsgSocket.subscribeAsset(1)
+                })
+            }
+        })
+
+        onBeforeUnmount(() => {
+            // 取消订阅资产
+            if (!showFullNetAsset.value) {
+                MsgSocket.cancelSubscribeAsset()
+            }
+        })
 
         return {
             locale,

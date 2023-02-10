@@ -1,7 +1,11 @@
 <template>
     <centerViewDialog>
         <div>
-            <LayoutTop :custom-back="true" :menu='false' title='' @back='back' />
+            <Top
+                back
+                left-icon='arrow-left'
+                show-center
+            />
             <div class='page-wrap'>
                 <Loading :show='loading' />
                 <div v-if='kycList && kycList.length === 0' class='empty-data'>
@@ -57,6 +61,7 @@
 
 <script>
 import centerViewDialog from '@planspc/layout/centerViewDialog'
+import Top from '@/components/top'
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import { findAllBizKycList } from '@/api/user'
 import { useStore } from 'vuex'
@@ -67,7 +72,8 @@ import { useI18n } from 'vue-i18n'
 export default {
     name: 'Authentication',
     components: {
-        centerViewDialog
+        centerViewDialog,
+        Top
     },
     setup (props, { emit, attrs }) {
         const store = useStore()
@@ -145,7 +151,6 @@ export default {
 .page-wrap {
     flex: 1;
     overflow: auto;
-    margin-top: rem(90px);
     background: var(--bgColor);
     .empty-data {
         padding-top: rem(200px);

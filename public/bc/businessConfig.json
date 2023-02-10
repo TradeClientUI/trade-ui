@@ -31,11 +31,17 @@
             "link": "/fundV10/index"
         }
     ],
+    "registerSuccessProductIds//": "注册成功展示的产品列表id",
+    "registerSuccessProductIds": [1],
+    "registerActivityPk//": "注册成功展示的产品列表id",
+    "registerActivityPk": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCszs/Vm6jQWeaK0GAHP+XD50pWRLR4v/m+qlAh9lJCkdH9rh1r7vfuMwfhtaOOIoTz8X+GbWl1PazgDtidXrdnmU7fw3b0UlHOkr35EJaEFonfnP8XqzqygJ+bG/Lk3kwpeGTtt+bf7FUPCkmEov9tJTPJ0MoaHY+rwB1otk1WtwIDAQAB",
     "isWithdrawBank//": "是否开放出金银行卡功能",
 	"isWithdrawBank": true,
     "productKeys//": "行情页推荐的品种，区分真实和模拟",
     "productKeys": ["1353_1", "1349_1", "1352_1", "1437_1", "1436_1"],
     "productKeysDemo": ["695_1", "699_1", "1423_1", "1437_1", "1436_1"],
     "topNavDeposit//": "是否显示顶部导航充值按钮",
-    "topNavDeposit": true
+    "topNavDeposit": true,
+    "noAccessArea//" : "禁止访问系统的国家code,数组形式",
+    "noAccessArea" : ["CN"]
 }

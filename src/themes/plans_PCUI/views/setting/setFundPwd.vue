@@ -1,7 +1,7 @@
 <template>
     <centerViewDialog>
         <div class='pageWrap'>
-            <Top back left-icon='arrow-left' :right-action='false' show-center>
+            <Top back left-icon='arrow-left' :right-action='false' show-center :title="$t(isFirstSet ? 'common.settings' : 'common.modify') + $t('common.fundPwd')">
                 <template #left>
                     <a class='topBack' href='javascript:;' @click='$router.back()'>
                         <span class='icon_icon_close_big'></span>
@@ -11,9 +11,9 @@
                 </template>
             </Top>
             <header class='header'>
-                <h1 class='pageTitle'>
-                    {{ $t(isFirstSet ? "common.settings" : 'common.modify') + $t("common.fundPwd") }}
-                </h1>
+                <!-- <h1 class='pageTitle'>
+                    {{ $t(isFirstSet ? 'common.settings' : 'common.modify') + $t('common.fundPwd') }}
+                </h1> -->
                 <h6>{{ $t('common.fundPwdTip') }}</h6>
             </header>
             <van-cell-group>
@@ -204,10 +204,10 @@ export default {
     height: 100%;
     background-color: var(--bgColor);
     .header {
-        // display: flex;
-        align-items: center;
-        justify-content: space-between;
         margin: rem(40px) rem(30px);
+        h6 {
+            font-size: rem(30px);
+        }
     }
     .pageTitle {
         margin-bottom: rem(10px);
@@ -250,7 +250,7 @@ export default {
         }
     }
     .forgot {
-        padding-top: rem(30px);
+        margin-top: rem(20px);
         padding-right: rem(30px);
         text-align: right;
         .href {

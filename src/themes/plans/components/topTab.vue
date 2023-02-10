@@ -97,29 +97,31 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/sass/mixin.scss';
-:deep(.van-tabs__wrap) {
-    height: rem(80px);
-    padding: rem(10px) 0;
-    margin-top: rem(10px);
-    overflow-y: hidden;
-    line-height: rem(60px);
-    .van-tabs__nav {
-        .van-tab {
-            flex: none;
-            margin: 0 rem(10px);
-            padding: 0 !important;
-            text-align: left;
-            &:first-child {
-                margin: 0;
-            }
-            .van-tab__text {
-                height: 100%;
-            }
-            &.van-tab--active {
-                background: v-bind(btnBg);
-                border-radius: rem(6px);
-                .text {
-                    font-weight: 700;
+.tabs {
+    :deep(.van-tabs__wrap) {
+        height: rem(80px);
+        padding: rem(10px) 0;
+        margin-top: rem(10px);
+        overflow-y: hidden;
+        line-height: rem(60px);
+        .van-tabs__nav {
+            .van-tab {
+                flex: none;
+                margin: 0 rem(10px);
+                padding: 0 !important;
+                text-align: left;
+                &:first-child {
+                    margin: 0;
+                }
+                .van-tab__text {
+                    height: 100%;
+                }
+                &.van-tab--active {
+                    background: v-bind(btnbg);
+                    border-radius: rem(6px);
+                    .text {
+                        font-weight: 700;
+                    }
                 }
             }
         }

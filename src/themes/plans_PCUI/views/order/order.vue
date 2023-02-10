@@ -1,5 +1,5 @@
 <template>
-    <div class='page-wrap'>
+    <div v-if='!$store.state._user.switchAccounting' class='page-wrap'>
         <router-view />
         <div class='content-top'>
             <div class='quote-wrap'>
@@ -101,6 +101,8 @@ export default {
         store.commit('_quote/Update_productActivedID', `${symbolId}_${tradeType}`)
         const customerInfo = computed(() => store.state._user.customerInfo)
         const product = computed(() => store.getters.productActived)
+        // 是否显示全仓玩法真实模拟净值
+        const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
         const originTitle = document.title
         const state = reactive({
             // 当前选中选项卡 offer:报价 material:资料
@@ -162,7 +164,9 @@ export default {
             document.title = originTitle
             // 取消订阅
             QuoteSocket.cancel_subscribe()
-            MsgSocket.cancelSubscribeAsset()
+            if (!showFullNetAsset.value) {
+                MsgSocket.cancelSubscribeAsset()
+            }
         })
 
         return {

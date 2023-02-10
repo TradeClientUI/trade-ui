@@ -101,6 +101,11 @@ const routes = [
             {
                 path: 'about',
                 name: 'About',
+                redirect: '/aboutus'
+            },
+            {
+                path: 'aboutus',
+                name: 'Aboutus',
                 component: () => import(/* webpackChunkName: "footerAboutUs" */ '../views/footerUrlPage/aboutUs/index.vue'),
                 meta: {
                     title: 'route.about'
@@ -397,6 +402,17 @@ const routes = [
                 }
             }
         ]
+    },
+    {
+        path: '/noAccess',
+        name: 'NoAccess',
+        component: () =>
+            import(/* webpackChunkName: "login" */ '@/themeCommon/user/noAccess.vue'),
+        meta: {
+            title: 'cRoute.register',
+            roles: ['Guest'],
+        }
+
     },
     { path: '/:pathMatch(.*)*', redirect: { name: 'Mine' } },
 ]

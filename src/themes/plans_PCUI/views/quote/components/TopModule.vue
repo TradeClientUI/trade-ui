@@ -1,13 +1,15 @@
 <template>
     <div class='header'>
         <div v-for='symbolKey in symbolKeys' :key='symbolKey' class='item' @click='gotoOrder(symbolKey)'>
-            <span class='name'>
-                {{ productMap[symbolKey]?.symbolName || '- -' }}
-            </span>
+            <div class='symbol-name'>
+                <ProductIcon :symbol-key='symbolKey' />
+                <span class='name'>
+                    {{ productMap[symbolKey]?.symbolName || '- -' }}
+                </span>
+            </div>
             <span class='price' :class='[productMap[symbolKey]?.last_color]'>
                 {{ productMap[symbolKey]?.rolling_last_price || '- -' }}
             </span>
-            <currency-icon v-if='productMap[symbolKey]' class='currency-icon' :currency='productMap[symbolKey].baseCurrency' :size='32' />
             <div class='change'>
                 <span class='upDownAmount' :class='[productMap[symbolKey]?.rolling_upDownColor]'>
                     {{ productMap[symbolKey]?.rolling_upDownAmount || '- -' }}
@@ -21,14 +23,19 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, watch } from 'vue'
+import { computed, onUnmounted, watch, unref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { QuoteSocket } from '@/plugins/socket/socket'
-import currencyIcon from '@/components/currencyIcon.vue'
+import ProductIcon from './ProductIcon.vue'
+
 const store = useStore()
 const router = useRouter()
+// 产品列表
+const productMap = computed(() => store.state._quote.productMap)
+
 const gotoOrder = (symbolKey) => {
+    if (!unref(productMap)[symbolKey]) return
     const [symbolId, tradeType] = symbolKey.split('_')
     router.push({
         name: 'Order',
@@ -38,9 +45,6 @@ const gotoOrder = (symbolKey) => {
         }
     })
 }
-// 产品列表
-const productMap = computed(() => store.state._quote.productMap)
-
 let unSubscribe = () => {}
 const symbolKeys = computed(() => {
     const isDemo = store.state._user.customerInfo?.companyType === 'demo'
@@ -80,10 +84,18 @@ onUnmounted(() => {
         color: var(--color);
         background: var(--contentColor);
         border-radius: 10px;
-        padding: 20px;
+        padding: 10px 20px 15px;
+        line-height: normal;
         cursor: pointer;
         &:hover {
             box-shadow: 0 0 0 999px rgba($color: #000, $alpha: 0.097) inset;
+        }
+        .symbol-name {
+            display: flex;
+            align-items: center;
+        }
+        .symbol-icon {
+            margin-right: 8px;
         }
         .name {
             font-size: 16px;

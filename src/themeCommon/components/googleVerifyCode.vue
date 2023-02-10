@@ -2,6 +2,7 @@
     <div class='form-item'>
         <van-field
             v-model.trim='googleCode'
+            :border='false'
             :formatter='formatter'
             label=''
             maxlength='6'
@@ -58,15 +59,11 @@ defineExpose({
     display: flex;
     flex: 1;
     align-items: center;
-    //padding: 0 rem(30px);
     margin-bottom: rem(20px);
     background: var(--contentColor);
     :deep(.van-cell) {
         padding-right: 0;
         padding-left: 0;
-        input {
-            //padding: 0 5px;
-        }
     }
     .title {
         padding: rem(20px) rem(30px);

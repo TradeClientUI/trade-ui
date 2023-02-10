@@ -6,7 +6,7 @@
             </h1>
             <div class='content_section'>
                 <p class='text'>
-                    MagnaMarkets's personal data privacy policy is in accordance with the "Personal Data (Privacy) Ordinance" to protect the rights and interests of customers. When MagnaMarkets uses customer information to provide its best services, it will also pay close attention to the arrangements for the use of its customer information. For this reason, MagnaMarkets will ensure that its employees abide by the strict standards of security and confidentiality stipulated by law.
+                    MagnaMarkets' personal data privacy policy is in accordance with the "Personal Data (Privacy) Ordinance" to protect the rights and interests of customers. When MagnaMarkets uses customer information to provide its best services, it will also pay close attention to the arrangements for the use of its customer information. For this reason, MagnaMarkets will ensure that its employees abide by the strict standards of security and confidentiality stipulated by law.
                 </p>
                 <p class='text'>
                     You may provide your personal data, including name, address and some personal financial or other information, to one or more MagnaMarkets at any time, now or in the future, or in the continuation of normal business operations between MagnaMarkets and you. Further information may be collected by MagnaMarkets when providing finance or credit services (all such information is collectively referred to as "Information" under this Policy). Our privacy policy will be updated from time to time in accordance with legal innovations and technological upgrades, changes in our operations and practices, to ensure that it continues to adapt to the changing environment, please visit this page regularly to check for any modifications.
@@ -32,7 +32,7 @@
                     5.The client agrees that MagnaMarkets will disclose all client information (and other information) to regulatory authorities and other government agencies in accordance with any laws or regulations of regulatory agencies;
                 </p>
                 <p class='li'>
-                    6.MagnaMarkets may set and access MagnaMarkets Cookies on the customer's computer to help MagnaMarkets analyze and understand the effect of relevant marketing strategies. MagnaMarkets and its employees may use Cookies in MagnaMarkets's products and services to track customers' browsing on the BT Global website. The information collected and shared is anonymous and cannot be individually identified;
+                    6.MagnaMarkets may set and access MagnaMarkets Cookies on the customer's computer to help MagnaMarkets analyze and understand the effect of relevant marketing strategies. MagnaMarkets and its employees may use Cookies in MagnaMarkets' products and services to track customers' browsing on the BT Global website. The information collected and shared is anonymous and cannot be individually identified;
                 </p>
                 <p class='li'>
                     7.Customers agree that when MagnaMarkets provides services to customers, MagnaMarkets can authorize some companies not affiliated with MagnaMarkets to use customers’ personal data, including companies that assist in providing convenient platform services to customers in the form of contracts, and perform necessary maintenance and development work. MagnaMarkets requires these companies to keep related personal data confidential.

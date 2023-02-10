@@ -10,6 +10,7 @@
             :modules='modules'
             :pagination='true'
             slides-per-view='1'
+            @swiper='onSwiper'
         >
             <SwiperSlide v-for='item in list' :key='item.id'>
                 <div class='item' @touchend='touchEnd' @touchstart='touchStart'>
@@ -30,8 +31,8 @@
                 </div>
             </SwiperSlide>
         </Swiper>
-        <img alt='' class='arrow-left' src='../../../images/home/new_version/arrow-left.png' @click='mySwipe.prev()' />
-        <img alt='' class='arrow-right' src='../../../images/home/new_version/arrow-right.png' @click='mySwipe.next()' />
+        <img alt='' class='arrow-left' src='../../../images/home/new_version/arrow-left.png' @click='slide("prev")' />
+        <img alt='' class='arrow-right' src='../../../images/home/new_version/arrow-right.png' @click='slide("next")' />
     </div>
 </template>
 
@@ -56,6 +57,18 @@ const list = [
         id: 2, img: require('../../../images/home/new_version/user3_img.png'), name: 'Tihana Cali', label: t('homeJD.voiceName3Label'), desc: t('homeJD.voiceName3Desc')
     }
 ]
+const mySwipe = ref(null)
+const onSwiper = (swiper) => {
+    mySwipe.value = swiper
+}
+const slide = (type) => {
+    if (!mySwipe.value) return
+    if (type === 'prev') {
+        mySwipe.value.slidePrev()
+    } else {
+        mySwipe.value.slideNext()
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -111,6 +124,7 @@ const list = [
         width: rem(64px);
         position: absolute;
         top: 50%;
+        z-index: 2;
     }
     .arrow-left {
         left: rem(14px);

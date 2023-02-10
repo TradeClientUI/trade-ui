@@ -31,8 +31,15 @@
                     <span>{{ $t('withdrawCoin.coinCount') }}</span>
                 </div>
                 <div class='handle'>
-                    <input v-model='coinCount' :placeholder="$t('withdrawCoin.coinCountPlaceholder')" type='number' @change='changeAmount' @input='changeAmount' />
-                    <button @click='onAllTake'>
+                    <input
+                        v-model='coinCount'
+                        class='mobile_withdraw_quantity_input_ga'
+                        :placeholder="$t('withdrawCoin.coinCountPlaceholder')"
+                        type='number'
+                        @change='changeAmount'
+                        @input='changeAmount'
+                    />
+                    <button class='mobile_withdraw_all_ga' @click='onAllTake'>
                         {{ $t('withdrawCoin.allBtn') }}
                     </button>
                 </div>
@@ -795,7 +802,7 @@ export default {
                 state.loading = false
                 if (res.check()) {
                     state.withdrawSuccess = true
-                } 
+                }
             })
         }
 

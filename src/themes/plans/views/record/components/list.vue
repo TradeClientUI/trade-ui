@@ -13,7 +13,7 @@
             @refresh='onRefresh'
         >
             <van-list
-                v-if='state.finished && state.list.length > 0'
+                v-if='state.list.length > 0'
                 v-model:loading='state.loading'
                 :finished='state.finished'
                 :finished-text='$t("historyList.noMore")'

@@ -1,5 +1,7 @@
 <template>
     <topNav :class='[$route.name]' />
+    <registerActivityNotification v-if="['Quote','Order','Assets'].includes($route.name)" />
+
     <Suspense>
         <template #default>
             <router-view v-slot='{ Component, route }'>
@@ -15,7 +17,7 @@
             Loading...
         </template>
     </Suspense>
-    <footerNav :data='footerData' />
+    <footerNav v-if='!($store.state._user.switchAccounting && $route.name==="Order")' :data='footerData' />
 </template>
 
 <script>
@@ -23,14 +25,14 @@ import { computed, reactive, toRefs, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import topNav from './topNav'
 import footerNav from '../modules/footer/footer.vue'
-
-import { localRemove } from '@/utils/util'
+import { registerActivityNotification } from '@/components/registerActivity'
 
 export default {
     name: 'Layout',
     components: {
         topNav,
-        footerNav
+        footerNav,
+        registerActivityNotification
     },
     computed: {
         footerData () {
@@ -44,7 +46,6 @@ export default {
         const state = reactive({
             noticePopShow: false
         })
-
         onUnmounted(() => {
             // localRemove('noticeParams')
         })

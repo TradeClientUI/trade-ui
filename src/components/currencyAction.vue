@@ -3,27 +3,20 @@
         v-model='modelValue'
         :input-align='inputAlign'
         :label='$t("bank.bankCurrency")'
-        :placeholder='$t("register.accountCurrency")'
+        :placeholder='$t("bank.inputBankCurrency")'
         readonly
+        required
         right-icon='arrow-down'
         type='text'
-        @click='actionSheetVisible=true'
+        @click='openDialog'
     />
-    <!-- <van-cell
-        arrow-direction='down'
-        is-link
-        title='账户币种'
-        :value='modelValue'
-        v-bind='$attrs'
-        @click='actionSheetVisible=true'
-    /> -->
-    <van-action-sheet v-model:show='actionSheetVisible' :actions='actionsList' @select='actionOnSelect' />
+    <van-action-sheet v-model:show='actionSheetVisible' :actions='list' @select='actionOnSelect' />
 </template>
 
 <script>
-import { computed, reactive, toRefs, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { getAssetsList } from '@/api/base'
+import { reactive, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { Toast } from 'vant'
 
 export default {
     props: {
@@ -31,47 +24,43 @@ export default {
         inputAlign: {
             true: String,
             default: 'right'
+        },
+        // 列表数据
+        list: {
+            type: Array,
+            default: () => []
         }
     },
     emits: ['update:modelValue'],
     setup (props, { emit }) {
-        const store = useStore()
+        const { t } = useI18n({ useScope: 'global' })
         const state = reactive({
+            // 是否显示弹窗
             actionSheetVisible: false
         })
-        const actionsList = computed(() => {
-            store.state._base.wpCompanyInfo.currencyList.forEach(el => {
-                el.name = el.code
-            })
-            return store.state._base.wpCompanyInfo.currencyList
-        })
 
+        // 打开弹窗
+        const openDialog = () => {
+            if (props.list.length === 0) {
+                return Toast(t('bank.bankCountryTip'))
+            }
+            state.actionSheetVisible = true
+        }
+
+        // 点击选择
         const actionOnSelect = (item) => {
             emit('update:modelValue', item.code)
             state.actionSheetVisible = false
         }
 
-        onMounted(() => {
-            // 获取资产列表
-            getAssetsList().then(res => {
-                if (res.check()) {
-                    res.data.map(el => {
-                        el.name = el.code
-                    })
-                }
-                state.actionsList = res.data
-            })
-        })
-
         return {
             ...toRefs(state),
-            actionsList,
-            actionOnSelect,
+            openDialog,
+            actionOnSelect
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-
 </style>

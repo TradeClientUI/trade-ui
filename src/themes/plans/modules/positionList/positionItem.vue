@@ -33,7 +33,7 @@
                                 </div>
                                 <div class='bright'>
                                     <span class='ft amount' :class="parseFloat(data.profitLoss) > 0 ? 'riseColor': 'fallColor'">
-                                        {{ data.profitLoss }} {{ customerInfo.currency }}
+                                        {{ data.profitLoss || '+0' }} {{ customerInfo.currency }}
                                     </span>
                                 </div>
                             </div>

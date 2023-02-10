@@ -82,13 +82,13 @@
 </template>
 
 <script>
-import { computed, toRefs, reactive } from 'vue'
+import { computed, toRefs, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getCookie } from '@/utils/util'
 import { withdrawCurrencyList } from '@/api/user'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 
 export default {
     setup () {

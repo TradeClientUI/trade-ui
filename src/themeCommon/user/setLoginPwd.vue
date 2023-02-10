@@ -1,13 +1,13 @@
 <template>
     <div class='pageWrap'>
-        <Top back left-icon='arrow-left' :menu='false' :right-action='false'>
+        <Top back left-icon='arrow-left' :menu='false' :right-action='false' :title="$t(isFirstSet ? 'common.settings' : 'common.modify') + $t('login.loginPwd')">
             <template #right>
             </template>
         </Top>
         <header class='header'>
-            <h1 class='pageTitle'>
-                {{ $t(isFirstSet ? "common.settings" : 'common.modify') + $t("login.loginPwd") }}
-            </h1>
+            <!-- <h1 class='pageTitle'>
+                {{ $t(isFirstSet ? 'common.settings' : 'common.modify') + $t('login.loginPwd') }}
+            </h1> -->
             <h6>{{ $t('forgot.pwdRule') }}</h6>
         </header>
         <van-cell-group>
@@ -30,6 +30,11 @@
                 />
             </div>
         </van-cell-group>
+        <div v-if='false' class='forgot'>
+            <router-link class='href' :to="{ name: 'Forgot', query: { type: 'login' } }">
+                {{ $t('login.forgot') }}
+            </router-link>
+        </div>
         <van-button class='confirmBtn' @click='handleConfirm'>
             <span>{{ $t('common.sure') }}</span>
         </van-button>
@@ -178,10 +183,10 @@ export default {
     height: 100%;
     background-color: var(--bgColor);
     .header {
-        // display: flex;
-        align-items: center;
-        justify-content: space-between;
         margin: rem(40px) rem(30px);
+        h6 {
+            font-size: rem(30px);
+        }
     }
     .pageTitle {
         margin-bottom: rem(10px);
@@ -214,8 +219,19 @@ export default {
                 font-size: rem(30px);
             }
         }
-        &.form-item-google{
+        &.form-item-google {
             margin-left: rem(30px);
+        }
+        &:deep(.form-item) {
+            margin-bottom: 0;
+        }
+    }
+    .forgot {
+        text-align: right;
+        padding-top: rem(30px);
+        padding-right: rem(30px);
+        .href {
+            color: var(--primary);
         }
     }
 }

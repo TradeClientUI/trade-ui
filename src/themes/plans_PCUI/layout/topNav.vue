@@ -87,7 +87,7 @@
             </div>
             <div class='nav-right'>
                 <!-- 未登录 -->
-                <div v-if="userAccountType==='G'" class='handle-not'>
+                <div v-if='!customerInfo' class='handle-not'>
                     <router-link class='login' to='/login'>
                         {{ $t('c.login') }}
                     </router-link>
@@ -96,7 +96,7 @@
                     </router-link>
                 </div>
                 <!-- 已登录 -->
-                <div v-else-if='customerInfo' class='handle-have'>
+                <div v-else class='handle-have'>
                     <div class='item'>
                         <el-popover
                             ref='popoverRef'
@@ -172,12 +172,32 @@
                             {{ $t('common.assets') }}
                         </span>
                     </div>
-                    <div class='line'></div>
-                    <div v-if='Number(customerInfo.associationCompanyId) > 0' class='item'>
+                    <div v-if='customerInfo.associationCompanyId' class='line'></div>
+                    <div v-if='customerInfo.associationCompanyId' class='item'>
                         <el-dropdown
                             popper-class='mock-account'
                         >
-                            <div class='link account' :class="{ 'mock': customerInfo.companyType === 'demo' }">
+                            <!-- 全仓单玩法真实模拟切换 -->
+                            <div v-if='showFullNetAsset' class='full-assets'>
+                                <div class='full-assets-row'>
+                                    <div class='name'>
+                                        <!-- <em :class="['riskLevel', 'riskLevel' + userAccount.riskStatus]"></em> -->
+                                        <span :class="[customerInfo.companyType === 'real' ? 'real' : 'demo']">
+                                            {{ customerInfo.companyType === 'real' ? $t('mockAccount.realNet') : $t('mockAccount.demoNet') }}
+                                        </span>
+                                    </div>
+                                    <div class='amount'>
+                                        <span>${{ userAccount.netWorth || '--' }}</span>
+                                    </div>
+                                </div>
+                                <i class='arrow icon_icon_arrow'></i>
+                            </div>
+                            <!-- 多玩法真实模拟切换 -->
+                            <div
+                                v-else
+                                class='link account'
+                                :class="{ 'mock': customerInfo.companyType === 'demo' }"
+                            >
                                 {{ customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') }}
                                 <div class='triangle'></div>
                             </div>
@@ -211,7 +231,7 @@
                     </div>
                     <template v-if='showTopNavDeposit'>
                         <div class='line'></div>
-                        <div class='item deposit' @click='goDeposit'>
+                        <div class='item deposit pc_top_nav_deposit_ga' @click='goDeposit'>
                             {{ $t('trade.desposit') }}
                         </div>
                     </template>
@@ -220,7 +240,7 @@
                 <!-- 操作功能 -->
                 <div class='handle-feature'>
                     <div class='item'>
-                        <a @click="$router.push('/service')">
+                        <a @click='goService'>
                             <i class='icon icon_kefu' :title="$t('newHomeFooter.customer')"></i>
                         </a>
                     </div>
@@ -237,12 +257,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- 切换账户的加载效果 -->
+        <Loading :show='$store.state._user.switchAccounting' />
+
         <el-affix :offset='0' />
     </el-affix>
 </template>
 
 <script>
-import { computed, reactive, toRefs, ref, unref } from 'vue'
+import { computed, reactive, toRefs, ref, unref, inject, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { isEmpty, localGet, localSet } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
@@ -270,6 +294,7 @@ export default {
         const state = reactive({
             chartColorActive: JSON.parse(localGet('chartConfig'))?.chartColorType || 1,
         })
+        const routerReload = inject('routerReload')
         const chartColorAction = [
             { val: '1', name: t('common.redDown') },
             { val: '2', name: t('common.redUp') },
@@ -293,10 +318,6 @@ export default {
         // 在线客服地址
         const onlineService = computed(() => store.state._base.wpCompanyInfo?.onlineService)
 
-        const formatTime = (val) => {
-            return window.dayjs(val).format('YYYY-MM-DD HH:mm:ss')
-        }
-
         // 玩法列表
         const isWallet = store.state._base.wpCompanyInfo.isWallet
         const plansList = computed(() =>
@@ -318,6 +339,15 @@ export default {
             }
             return businessConfig.value?.topNavDeposit
         })
+        // 是否显示全仓玩法真实模拟净值
+        const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
+        // 全仓账户资产
+        const userAccount = computed(() => store.state._user.accountAssets[1] || {})
+
+        // 格式化时间
+        const formatTime = (val) => {
+            return window.dayjs(val).format('YYYY-MM-DD HH:mm:ss')
+        }
 
         const changePlans = (item) => {
             // 跳转到下单页面并优先显示指定产品
@@ -360,11 +390,19 @@ export default {
 
         // 切换真实模拟账号
         const switchAccount = type => {
-            if (state.accountType === type) return
+            if (customerInfo.value.companyType === type) return
             state.loading = true
             state.accountType = type
             handleSwitchAccount({
                 type,
+                callback: () => {
+                    console.log(3)
+                    if (type === 'demo' && route.name === 'DepositChoose') {
+                        router.replace({ name: 'Home' })
+                    } else {
+                        routerReload()
+                    }
+                },
                 fail: () => {
                     state.loading = false
                     Toast('模拟账户开户中，请稍等')
@@ -396,6 +434,15 @@ export default {
             return unref(locale) === 'en-US' ? 'en' : unref(locale)
         })
 
+        onMounted(() => {
+            // 订阅资产
+            if (showFullNetAsset.value && customerInfo.value) {
+                MsgSocket.subscribedListAdd(() => {
+                    MsgSocket.subscribeAsset(1)
+                })
+            }
+        })
+
         return {
             logoUrl,
             plansList,
@@ -419,7 +466,9 @@ export default {
             isReal,
             academyLocale,
             goDeposit,
-            showTopNavDeposit
+            showTopNavDeposit,
+            showFullNetAsset,
+            userAccount
         }
     }
 }
@@ -517,6 +566,7 @@ export default {
             margin-right: 24px;
             font-size: 14px;
             .login {
+                cursor: pointer;
                 margin-right: 15px;
                 color: #FFF;
                 &:hover {
@@ -524,6 +574,7 @@ export default {
                 }
             }
             .register {
+                cursor: pointer;
                 @include hover();
                 display: inline-flex;
                 align-items: center;
@@ -544,10 +595,10 @@ export default {
             .item {
                 display: flex;
                 align-items: center;
-                margin-right: 20px;
+                margin-right: 18px;
                 .link {
                     color: #FFF;
-                    font-size: 16px;
+                    font-size: 14px;
                     cursor: pointer;
                     white-space: nowrap;
                     &:hover {
@@ -580,7 +631,7 @@ export default {
                         padding: 2px 15px;
                     }
                     &.mock {
-                        background-color: #3762FF;
+                        background-color: #3099F5;
                     }
                 }
                 :deep(.el-dropdown) {
@@ -597,8 +648,8 @@ export default {
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
-                        width: 28px;
-                        height: 28px;
+                        width: 24px;
+                        height: 24px;
                         margin-right: 8px;
                         overflow: hidden;
                         // background: #91B6EE;
@@ -617,31 +668,30 @@ export default {
                         // }
                     }
                     .no {
-                        font-size: 16px;
+                        font-size: 14px;
                         line-height: 1;
                     }
                 }
                 .icon {
                     color: #D6DAE1;
-                    font-size: 16px;
+                    font-size: 14px;
                     cursor: pointer;
                 }
             }
             .line {
                 width: 1px;
-                height: 18px;
+                height: 22px;
                 margin-right: 20px;
                 background: #515366;
             }
             .deposit {
-                min-width: 54px;
-                padding: 5px 10px;
-                height: 22px;
+                min-width: 65px;
+                padding: 4px 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 background-color: var(--primary);
-                font-size: 12px;
+                font-size: 14px;
                 border-radius: 4px;
                 cursor: pointer;
                 white-space: nowrap;
@@ -835,15 +885,64 @@ export default {
                 }
             }
             &.demo {
-                color: #3762FF;
+                color: #3099F5;
                 .radio {
-                    border: solid 1px #3762FF;
+                    border: solid 1px #3099F5;
                     &::after {
-                        background: #3762FF;
+                        background: #3099F5;
                     }
                 }
             }
         }
+    }
+}
+.full-assets {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    .full-assets-row {
+        white-space: pre;
+    }
+    .name {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        .riskLevel {
+            width: rem(12px);
+            height: rem(12px);
+            margin-right: rem(8px);
+            border-radius: 50%;
+            &.riskLevel1 {
+                background: var(--success);
+            }
+            &.riskLevel2 {
+                background: var(--focusColor);
+            }
+            &.riskLevel3 {
+                background: var(--warn);
+            }
+        }
+        span {
+            &.real {
+                color: var(--primary);
+            }
+            &.demo {
+                color: #3099F5;
+            }
+        }
+    }
+    .amount {
+        display: flex;
+        align-items: center;
+        margin-top: rem(12px);
+        min-width: 60px;
+        font-size: rem(30px);
+        color: #FFF;
+    }
+    .arrow {
+        font-size: rem(24px);
+        margin-left: rem(22px);
+        color: #FFF;
     }
 }
 </style>

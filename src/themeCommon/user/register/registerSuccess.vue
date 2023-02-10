@@ -1,52 +1,34 @@
 <template>
     <div class='page-wrap'>
+        <LayoutTop />
         <section class='registerSuccess'>
             <div class='icon'>
                 <i class='icon_success'></i>
             </div>
             <div class='container'>
                 <h2>{{ $t('register.openSuccess') }}</h2>
-                <!-- <p>
-                    {{ $t('common.customerNo') + $t('common.colon') }}<span class='accountNo'>
-                        {{ accountNo }}
-                    </span>
-                </p> -->
             </div>
+            <productList />
+            <registerSuccessBanner :to-deposit='toDeposit' />
         </section>
-        <div class='success-handle'>
-            <button class='btn state-2' @click='toQuote'>
-                {{ $t('register.tradingOpportunity') }}
-            </button>
-            <button class='btn state-1' @click='toDesposit'>
-                {{ $t('deposit.immediateRecharge') }}
-            </button>
-        </div>
     </div>
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { getDevice, setToken } from '@/utils/util'
-export default {
-    setup () {
-        const store = useStore()
-        const router = useRouter()
-        
-        // 跳转到行情页面
-        const toQuote = () => {
-            return router.replace({ name: 'Quote' })
-        }
+import { registerSuccessBanner } from '@/components/registerActivity'
+import productList from './components/productList'
+import useMethods from '@plans/hooks/useMethods'
 
-        // 跳转到充值页面
-        const toDesposit = () => {
-            return router.replace({ name: 'DepositChoose' })
-        }
+export default {
+    components: {
+        productList,
+        registerSuccessBanner
+    },
+    setup () {
+        const { toDeposit } = useMethods()
 
         return {
-            toQuote,
-            toDesposit
+            toDeposit,
         }
     }
 }
@@ -70,6 +52,7 @@ export default {
     }
     .container {
         text-align: center;
+        margin-bottom: rem(60px);
         h2 {
             margin: rem(15px) 0 rem(20px);
             font-weight: normal;

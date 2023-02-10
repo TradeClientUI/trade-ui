@@ -199,8 +199,9 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { minus } from '@/utils/calculation'
 import { resetAccount } from '@/api/user'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 import { ElMessageBox } from 'element-plus'
+import { useRegisterActivity } from '@/components/registerActivity'
 
 export default {
     components: {
@@ -219,6 +220,8 @@ export default {
         const store = useStore()
         const router = useRouter()
         const { t } = useI18n({ useScope: 'global' })
+        // 获取注册赠金活动状态
+        const { activityStatusIsOpen, activityFinishStatus, activityInfo } = useRegisterActivity(true)
         const closePosition = ref(null)
         const sltp = ref(null)
         const minWidth = 130
@@ -314,6 +317,22 @@ export default {
 
         // 跳转提现页面
         const goWithdraw = () => {
+            if (activityStatusIsOpen.value && activityFinishStatus.value === 1 && props.tradeType === 1) {
+                // 提现页面，新客户活动未截止时，并且该客户参与新客活动但未完成手数的，则弹出提示
+                Dialog.confirm({
+                    message: t('registerActivity.withdrawTips', { rechargeAmount: activityInfo.value.rechargeAmount, rewardAmount: activityInfo.value.rewardAmount }),
+                    title: t('tip'),
+                }).then(() => {
+                    router.push({
+                        path: '/assets/withdrawAccount',
+                        query: {
+                            accountId: accountInfo.value.accountId,
+                            tradeType: props.tradeType
+                        }
+                    })
+                })
+                return
+            }
             router.push({
                 path: '/assets/withdrawAccount',
                 query: {
@@ -325,7 +344,6 @@ export default {
 
         // 重置账户
         const resetUserAccount = () => {
-            state.loading = true
             ElMessageBox.confirm(
                 t('mockAccount.resetTip1'),
                 t('mockAccount.resetTip2'),
@@ -335,6 +353,7 @@ export default {
                     type: 'warning',
                 }
             ).then(() => {
+                state.loading = true
                 resetAccount().then(res => {
                     if (res.check()) {
                         Toast(t('mockAccount.resetSuccess'))

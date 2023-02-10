@@ -52,14 +52,22 @@ import startInvestment from './components/startInvestment.vue'
 import downloadVitatoken from './components/downloadVitatoken.vue'
 import meetVitatoken from './components/meetVitatoken.vue'
 import faq from './components/faq.vue'
-
 import service from './components/service.vue'
 import privacyTip from './components/privacy-tip.vue'
-import { onMounted, onBeforeUnmount, ref, vShow } from 'vue'
+
+import { useStore } from 'vuex'
+import { computed, onMounted, onBeforeUnmount, ref, vShow } from 'vue'
 import { showExplain } from '@/hooks/deposit'
+import { MsgSocket } from '@/plugins/socket/socket'
 
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+
+const store = useStore()
+// 获取账户信息
+const customerInfo = computed(() => store.state._user.customerInfo)
+// 是否显示全仓玩法真实模拟净值
+const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
 
 onMounted(() => {
     AOS.init({
@@ -67,6 +75,19 @@ onMounted(() => {
         offset: 40,
         duration: 200
     })
+    // 订阅资产
+    if (showFullNetAsset.value && customerInfo.value) {
+        MsgSocket.subscribedListAdd(() => {
+            MsgSocket.subscribeAsset(1)
+        })
+    }
+})
+
+onBeforeUnmount(() => {
+    // 取消订阅资产
+    if (!showFullNetAsset.value) {
+        MsgSocket.cancelSubscribeAsset()
+    }
 })
 
 const viewVideoHandle = () => {

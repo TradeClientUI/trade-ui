@@ -41,7 +41,7 @@ const list = ref([
     {
         q: t('faqs.faqs2'),
         a: t('faqs.faqs2Desc'),
-        link: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/71224/'
+        link: 'https://www.fincen.gov/msb-state-selector'
     },
     {
         q: t('faqs.faqs3'),

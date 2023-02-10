@@ -28,6 +28,14 @@ export default {
         // 日期时间格式化
         formatTime (val, fmt = 'YYYY-MM-DD HH:mm:ss') {
             return dayjs(val).format(fmt)
+        },
+        // 跳转到在线客服页面
+        goService () {
+            const onlineService = this.$store.state._base.wpCompanyInfo?.onlineService
+            if (onlineService) {
+                window.open(onlineService)
+            }
         }
+
     }
 }

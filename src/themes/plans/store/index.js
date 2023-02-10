@@ -8,6 +8,7 @@ import { getListByParentCode, getCountryListByParentCode, findCompanyCountry } f
 import Colors from '@plans/colorVariables'
 import { localGet, localSet, getQueryVariable } from '@/utils/util'
 import CheckAPI from '@/utils/checkAPI'
+import Activity from '@/store/modules/activity'
 
 const style = {
     ...Colors
@@ -24,7 +25,8 @@ export default createStore({
         _user: User,
         _quote: Quote,
         _trade: Trade,
-        _web3: Web3
+        _web3: Web3,
+        _activity: Activity
     },
     state: {
         style,
@@ -111,6 +113,16 @@ export default createStore({
                 result = Number(plans[0].tradeType)
             }
             return result
+        },
+        // 是否显示全仓玩法真实模拟净值
+        showFullNetAsset (state) {
+            const plans = state._base.plans
+            const item = plans.find(el => Number(el.tradeType) === 1)
+            if (plans.length === 1 && item) {
+                return true
+            } else {
+                return false
+            }
         }
     },
     mutations: {

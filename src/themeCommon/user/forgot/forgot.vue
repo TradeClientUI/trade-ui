@@ -533,7 +533,6 @@ export default {
         }
         &.field-google {
             padding: 0 0 0 rem(20px);
-            height: rem(80px);
             :deep(.form-item) {
                 border: none;
                 margin-bottom: 0;

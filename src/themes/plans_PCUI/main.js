@@ -14,7 +14,7 @@ import Loading from '@/components/loading'
 import PageComp from '@planspc/components/PageComp'
 import LayoutTop from '@planspc/layout/centerViewTop'
 import { setRootVariable } from './colorVariables'
-import { setRouter, modifybaseURL } from '@/utils/request'
+import { setRouter, setStore, modifybaseURL } from '@/utils/request'
 import { getLoginParams, getToken, isEmpty, removeLoginParams, checkUserKYC, localGet, localSet, getCookie, sessionSet, localRemove } from '@/utils/util'
 import BigNumber from 'bignumber.js'
 import preventReClick from '@/directives/preventReClick'
@@ -62,6 +62,7 @@ if (isEmpty(localGet('invertColor'))) {
 }
 
 setRouter(router)
+setStore(store)
 setRootVariable(localGet('invertColor'))
 
 if (token) store.commit('_user/Update_loginLoading', true)
@@ -70,9 +71,11 @@ else if (location.search.includes('from=officialWebsite')) loginParams = getPreD
 // 加载业务渠道自定义配置json
 requestBusinessConfig().then(res => {
     store.commit('Update_businessConfig', res)
+    store.dispatch('_base/checkGeoipCountry')
 })
 
 window.isPC = process.env.VUE_APP_theme === 'plans_PCUI'
+window.store = store
 
 // 获取到公司配置后初始化vue实例
 store.dispatch('_base/initBaseConfig').then(async () => {

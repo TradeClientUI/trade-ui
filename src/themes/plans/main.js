@@ -13,7 +13,7 @@ import Loading from '@/components/loading'
 import PageComp from '@plans/components/PageComp'
 import LayoutTop from '@plans/layout/top'
 import { setRootVariable } from './colorVariables'
-import { setRouter, modifybaseURL } from '@/utils/request'
+import { setRouter, setStore, modifybaseURL } from '@/utils/request'
 // import LuckDraw from 'vue-luck-draw/vue3'
 import { getLoginParams, getQueryVariable, getToken, setToken, isEmpty, removeLoginParams, checkUserKYC, localGet, localSet, getCookie, sessionSet, getQueryString, localRemove, localSetObj } from '@/utils/util'
 import BigNumber from 'bignumber.js'
@@ -67,6 +67,7 @@ if (isEmpty(localGet('invertColor'))) {
 }
 
 setRouter(router)
+setStore(store)
 
 if (token) store.commit('_user/Update_loginLoading', true)
 else if (location.search.includes('from=officialWebsite')) loginParams = getPreDemoAccountParams() // 从官网过来自动分配pre的Demo账号
@@ -74,6 +75,7 @@ else if (location.search.includes('from=officialWebsite')) loginParams = getPreD
 // 加载业务渠道自定义配置json
 requestBusinessConfig().then(res => {
     store.commit('Update_businessConfig', res)
+    store.dispatch('_base/checkGeoipCountry')
 })
 
 // 获取到公司配置后初始化vue实例

@@ -12,17 +12,17 @@
                 <img alt='' src='../../../images/home/new_version/apple_icon.png' />
                 <p>{{ $t('homeJD.appleAppStore') }}</p>
             </a> -->
-            <a class='btn google' :href="downloads['google']">
+            <a class='btn android' :href="downloads['android']" target='_blank'>
                 <img alt='' src='../../../images/home/new_version/apk_icon.png' />
                 <p>{{ $t('homeJD.apkDownload') }}</p>
             </a>
-            <a class='btn android' :href="downloads['android']">
+            <a class='btn google' :href="downloads['google']" target='_blank'>
                 <img alt='' src='../../../images/home/new_version/google_icon.png' />
                 <p>{{ $t('homeJD.googleAppStore') }}</p>
             </a>
         </div>
         <div class='qrcode'>
-            <img alt='qrcode' class='qrcode_img' src='/images/qrcode.png' />
+            <img alt='qrcode' class='qrcode_img' src='/images/qrcode.png?key=new' />
             <p class='qrcode_text'>
                 {{ $t('homeJD.investDownload') }}
             </p>
@@ -34,9 +34,9 @@
 import { ref } from 'vue'
 import { localGet } from '@/utils/util'
 const downloads = {
-    'ios': 'https://apps.apple.com/hk/app/vitatoken-pro/id1620283367',
+    'ios': '',
     'android': 'https://www.magnamarkets.com/site/magnamarkets.apk',
-    'google': window.location.origin
+    'google': 'https://play.google.com/store/apps/details?id=com.magnamarkets.app'
 }
 const theme = ref(localGet('invertColor'))
 </script>
@@ -83,6 +83,8 @@ const theme = ref(localGet('invertColor'))
         display: flex;
         justify-content: space-between;
         padding: rem(40px) 0;
+        width: 80%;
+        margin: 0 auto;
         .btn {
             font-size: rem(24px);
             font-weight: 600;

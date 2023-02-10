@@ -151,6 +151,7 @@ export default {
         width: 100%;
         line-height: 1;
         text-align: center;
+        color: var(--normalColor);
     }
     .entryType {
         position: absolute;
@@ -158,6 +159,14 @@ export default {
         height: rem(80px);
         color: var(--color);
         line-height: rem(80px);
+    }
+}
+.right-val {
+    color: var(--normalColor);
+}
+body.night {
+    .right-val {
+        color: #FFF;
     }
 }
 </style>

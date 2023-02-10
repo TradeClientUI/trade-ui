@@ -3,7 +3,7 @@
         back
         left-icon='arrow-left'
         :menu='false'
-        :title="$t('cRoute.authForm')"
+        :title="$t('cRoute.regKyc')"
     />
 
     <auth-condition business-code='open_account'>

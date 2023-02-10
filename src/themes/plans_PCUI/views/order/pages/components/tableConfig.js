@@ -165,13 +165,13 @@ export const getPendingColumns = tradeType => {
                 name: t('trade.stopLossPrice'),
                 align: 'right',
                 minWidth: 100,
-                prop: 'stopLoss'
+                prop: 'stopLossTarget'
             },
             {
                 name: t('trade.stopProfitPrice'),
                 align: 'right',
                 minWidth: 100,
-                prop: 'takeProfit'
+                prop: 'takeProfitTarget'
             },
             {
                 name: t('trade.expireTime'),
@@ -849,7 +849,7 @@ export const getAssetColumns = (tradeType) => {
                 align: 'right',
                 minWidth: 150,
                 formatter: row => {
-                    return <span className={[parseFloat(row.profitLoss) > 0 ? 'riseColor' : 'fallColor']}>{row.profitLoss}</span>
+                    return <span className={[parseFloat(row.profitLoss) > 0 ? 'riseColor' : 'fallColor']}>{row.profitLoss || '+0'}</span>
                 }
             },
             {
@@ -964,7 +964,7 @@ export const getAssetColumns = (tradeType) => {
                 align: 'right',
                 minWidth: 100,
                 formatter: row => <span class={parseFloat(row.profitLoss) > 0 ? 'riseColor' : 'fallColor'}>
-                    { row.profitLoss }
+                    { row.profitLoss || '+0' }
                 </span>
             },
             { name: t('trade.swap_2') + '(' + unref(assetsInfo).currency + ')', prop: 'interest', align: 'right', minWidth: 100, },

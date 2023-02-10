@@ -13,7 +13,7 @@
                                 Vitamin is vital, just like MagnaMarkets
                             </h2>
                             <span>
-                                MagnaMarkets's mission is to make crypto journey easier. We provide a crypto funds platform that allows fund managers, users and us to achieve a win-win situation.
+                                MagnaMarkets' mission is to make crypto journey easier. We provide a crypto funds platform that allows fund managers, users and us to achieve a win-win situation.
                             </span>
                         </div>
                         <img alt='' class='right-img' src='../../../../images/aboutus/media1.png' />

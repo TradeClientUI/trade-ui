@@ -11,9 +11,9 @@
                 </template>
             </Top>
             <header class='header'>
-                <h1 class='pageTitle'>
+                <!-- <h1 class='pageTitle'>
                     {{ $t(isFirstSet ? "common.settings" : "common.modify") + $t("login.loginPwd") }}
-                </h1>
+                </h1> -->
                 <h6>{{ $t('forgot.pwdRule') }}</h6>
             </header>
             <van-cell-group>
@@ -36,6 +36,11 @@
                     />
                 </div>
             </van-cell-group>
+            <div v-if='false' class='forgot'>
+                <router-link class='href' :to="{ name: 'Forgot', query: { type: 'login' } }">
+                    {{ $t('login.forgot') }}
+                </router-link>
+            </div>
             <van-button class='confirmBtn' @click='handleConfirm'>
                 <span>{{ $t('common.sure') }}</span>
             </van-button>
@@ -179,10 +184,10 @@ export default {
     height: 100%;
     background-color: var(--bgColor);
     .header {
-        // display: flex;
-        align-items: center;
-        justify-content: space-between;
         margin: rem(40px) rem(30px);
+        h6 {
+            font-size: rem(30px);
+        }
     }
     .pageTitle {
         margin-bottom: rem(10px);
@@ -222,6 +227,14 @@ export default {
         }
         .paste {
             display: none;
+        }
+    }
+    .forgot {
+        margin-top: rem(20px);
+        padding-right: rem(30px);
+        text-align: right;
+        .href {
+            color: var(--primary);
         }
     }
 }

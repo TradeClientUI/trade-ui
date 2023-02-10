@@ -108,7 +108,7 @@ export default {
         Empty_data (state) {
             state.productList = []
             state.productMap = {}
-            state.productActivedID = null
+            state.productActivedID = ''
             state.symbolBaseLoaded = 0
         },
         // 新增底层产品数据

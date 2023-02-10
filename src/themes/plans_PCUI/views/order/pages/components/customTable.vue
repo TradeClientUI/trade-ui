@@ -127,7 +127,8 @@ const getColumnAttrs = col => {
 
 const getFormatter = col => col.formatter ? (...args) => col.formatter(...args, props.rawResponse) : (row, column) => {
     const value = row[column.property]
-    return [undefined, null].includes(value) ? '- -' : value
+    const result = [undefined, null, 0, ''].includes(value) ? '- -' : value
+    return result
 }
 
 const current = computed({

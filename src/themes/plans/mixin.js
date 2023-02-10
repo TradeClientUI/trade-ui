@@ -76,6 +76,18 @@ export default {
         // 日期时间格式化
         formatTime (val, fmt = 'YYYY-MM-DD HH:mm:ss') {
             return window.dayjs(val).format(fmt)
+        },
+        // 跳转到在线客服页面
+        goService () {
+            const onlineService = this.$store.state._base.wpCompanyInfo?.onlineService
+            if (onlineService) {
+                // this.$router.push({
+                //     name: 'Otherpage',
+                //     params: { type: 'page' },
+                //     query: { title: this.$t('route.onlineService'), url: onlineService }
+                // })
+                window.open(onlineService)
+            }
         }
     },
     mounted () {

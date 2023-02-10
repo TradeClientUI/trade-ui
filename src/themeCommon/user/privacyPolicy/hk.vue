@@ -32,7 +32,7 @@
                     5、客戶同意MagnaMarkets會根據任何法例或監管機構之規定，向監管當局及其他政府機構披露客戶所有資料（及其他資料）；
                 </p>
                 <p class='li'>
-                    6、MagnaMarkets可能會在客戶的電腦設定及存取MagnaMarkets Cookies，以協助MagnaMarkets分析並了解有關之市場推廣策略的效果。 MagnaMarkets及其僱員可能會於MagnaMarkets的產品和服務使用Cookies 來追踪客戶在BT Global網站的瀏覽，收集得來和共用的資料是不具姓名及無法被個別辨識的；
+                    6、MagnaMarkets可能會在客戶的電腦設定及存取MagnaMarkets Cookies，以協助MagnaMarkets分析並了解有關之市場推廣策略的效果。 MagnaMarkets及其僱員可能會於MagnaMarkets的產品和服務使用Cookies 來追蹤客戶在BT Global網站的瀏覽，收集得來和共用的資料是不具姓名及無法被個別辨識的；
                 </p>
                 <p class='li'>
                     7、客戶同意MagnaMarkets向客戶提供服務時，MagnaMarkets可以授權一些並非隸屬MagnaMarkets的公司使用客戶個人資料，包括以合約形式協助提供便利的平台服務予客戶的公司，執行必要的維護和開發等工作。 MagnaMarkets要求這些公司對相關的個人資料進行保密

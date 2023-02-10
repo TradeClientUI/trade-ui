@@ -9,6 +9,7 @@ import { getListByParentCode, getCountryListByParentCode, findCompanyCountry } f
 import Colors from '@planspc/colorVariables'
 import { localGet, localSet } from '@/utils/util'
 import CheckAPI from '@/utils/checkAPI'
+import Activity from '@/store/modules/activity'
 
 const style = {
     ...Colors
@@ -27,6 +28,7 @@ export default createStore({
         _trade: Trade,
         _web3: Web3,
         home: Home,
+        _activity: Activity
     },
     state: {
         style,
@@ -45,7 +47,8 @@ export default createStore({
     },
     getters: {
         productActived (state) {
-            return state._quote.productMap[state._quote.productActivedID]
+            const cur = state._quote.productMap[state._quote.productActivedID]
+            return cur
         },
         customerGroupId (state) { // 用户组ID
             return state._user.customerInfo?.customerGroupId ?? state._base.wpCompanyInfo?.customerGroupId
@@ -108,6 +111,16 @@ export default createStore({
                 result = Number(plans[0].tradeType)
             }
             return result
+        },
+        // 是否显示全仓玩法真实模拟净值
+        showFullNetAsset (state) {
+            const plans = state._base.plans
+            const item = plans.find(el => Number(el.tradeType) === 1)
+            if (plans.length === 1 && item) {
+                return true
+            } else {
+                return false
+            }
         }
     },
     mutations: {

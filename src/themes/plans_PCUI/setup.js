@@ -30,7 +30,7 @@ import { getCookie } from '@/utils/util'
 
 export default function (app) {
     const langName = getI18nLang()
-    import('element-plus/es/locale/lang/' + langName).then(res => {
+    import('element-plus/es/locale/lang/' + langName + '.mjs').then(res => {
         const locale = res.default
         app.use(ElementPlus, {
             locale

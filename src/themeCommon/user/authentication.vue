@@ -1,6 +1,6 @@
 <template>
     <!-- 头部导航 -->
-    <LayoutTop :custom-back='true' :menu='false' :title='$t("cRoute.regKyc")' @back='back' />
+    <LayoutTop :custom-back='true' :menu='false' @back='back' />
     <div class='page-wrap'>
         <Loading :show='loading' />
         <div v-if='customInfo.openAccountType===1' class='business'>

@@ -300,7 +300,7 @@
                         MagnaMarkets
                     </p>
                     <p class='h3'>
-                        MagnaMarkets's quantitative engine will recommend high-quality funds, and long- term indicators suggesting buying and selling zones
+                        MagnaMarkets' quantitative engine will recommend high-quality funds, and long- term indicators suggesting buying and selling zones
                     </p>
                     <p>
                         <span class='btn btn-res' @click="handleClick( isLogin? 'deposit' : 'Register' )">

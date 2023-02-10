@@ -132,6 +132,7 @@ import { Toast, Dialog } from 'vant'
 import { useI18n } from 'vue-i18n'
 import explainPopup from './explain-popup.vue'
 import { queryAccountById, resetAccount } from '@/api/user'
+import { useRegisterActivity } from '@/components/registerActivity'
 
 export default {
     components: {
@@ -142,6 +143,8 @@ export default {
         const store = useStore()
         const userAccount = computed(() => store.state._user.accountAssets[1])
         const { t } = useI18n({ useScope: 'global' })
+        // 获取注册赠金活动状态
+        const { activityStatusIsOpen, activityFinishStatus, activityInfo } = useRegisterActivity()
         const state = reactive({
             // 是否显示说明弹窗
             isExplain: false,
@@ -202,6 +205,23 @@ export default {
         // 跳转提现页面
         const toWirhdraw = () => {
             if (!checkAssets()) return
+            if (activityStatusIsOpen.value && activityFinishStatus.value === 1 && tradeType.value === '1') {
+                // 提现页面，新客户活动未截止时，并且该客户参与新客活动但未完成手数的，则弹出提示
+                Dialog.confirm({
+                    message: t('registerActivity.withdrawTips', { rechargeAmount: activityInfo.value.rechargeAmount, rewardAmount: activityInfo.value.rewardAmount }),
+                    title: t('tip'),
+                }).then(() => {
+                    router.push({
+                        path: '/withdrawAccount',
+                        query: {
+                            accountId: accountInfo.value.accountId,
+                            currency: accountInfo.value.currency,
+                            tradeType: tradeType.value
+                        }
+                    })
+                })
+                return
+            }
             router.push({
                 path: '/withdrawAccount',
                 query: {

@@ -1,6 +1,7 @@
 <template>
     <div class='page-wrap'>
         <LayoutTop />
+        <registerActivityDepositBannerMobile />
         <div class='payment-module'>
             <div v-if='(paymentList.length > 0)' class='payment-list'>
                 <p class='title'>
@@ -45,24 +46,24 @@
 <script>
 import { computed, ref, reactive, toRefs, onMounted, provide } from 'vue'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 import { localGet, localRemove } from '@/utils/util'
 import { checkKyc, checkCustomerDeposit, getPayTypes } from '@/hooks/deposit'
 import exchangeModule from './components/exchange-module.vue'
 import directModule from './components/direct-module.vue'
 import depositRecordModule from './components/deposit-record-module.vue'
 import answerExplain from './components/answer-explain.vue'
+import { registerActivityDepositBannerMobile } from '@/components/registerActivity'
 
 export default {
     components: {
         exchangeModule,
         directModule,
         depositRecordModule,
-        answerExplain
+        answerExplain,
+        registerActivityDepositBannerMobile
     },
     setup () {
         const store = useStore()
-        const { t } = useI18n({ useScope: 'global' })
         const state = reactive({
             // 页面加载状态
             loading: true,

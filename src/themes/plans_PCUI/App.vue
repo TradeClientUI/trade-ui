@@ -1,7 +1,7 @@
 <template>
     <Suspense>
         <template #default>
-            <router-view v-slot='{ Component, route }'>
+            <router-view v-if='isRouterAlive' v-slot='{ Component, route }'>
                 <!-- <transition mode='out-in' :name="route.meta.transition || 'fade'"> -->
                 <keep-alive :include='cacheViews'>
                     <component :is='Component' :key='route.meta.usePathKey ? route.path : undefined' />
@@ -19,7 +19,7 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, provide, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Dialog } from 'vant'
 import { ElNotification } from 'element-plus'
@@ -36,10 +36,10 @@ export default {
         const googleAnalytics = computed(() => store.state._base.wpCompanyInfo.googleAnalytics)
         const tipTextCountDown = ref(t('confirm') + '(3s)')
         const noticeContent = ref(null)
-        window.store = store
         if (getQueryVariable('b_superiorAgent')) {
             sessionSet('b_superiorAgent', getQueryVariable('b_superiorAgent'))
         }
+
         // 跳转到登录页面刷新
         const handlerLogout = () => {
             return store
@@ -112,6 +112,14 @@ export default {
                 // location.href = `/upgrading.html?back=${encodeURIComponent(location.href)}`
             })
 
+        const isRouterAlive = ref(true)
+        const routerReload = () => {
+            isRouterAlive.value = false
+            nextTick(() => {
+                isRouterAlive.value = true
+            })
+        }
+
         // 插入谷歌统计代码
         onMounted(() => {
             try {
@@ -147,8 +155,11 @@ export default {
             document.body.removeEventListener('GotMsg_notice', gotMsg, false)
         })
 
+        provide('routerReload', routerReload)
         return {
-            cacheViews
+            cacheViews,
+            isRouterAlive,
+            routerReload
         }
     },
     created () {

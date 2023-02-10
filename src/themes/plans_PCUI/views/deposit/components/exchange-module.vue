@@ -26,7 +26,7 @@
                                 <van-icon v-if='amount' class='clear' name='clear' @click='clearInput' />
                             </div>
                             <div :class="['select', currencyShowMenu ? 'show' : 'hide']" @click.stop='toggleBuyMenu'>
-                                <currency-icon v-if='currency' :currency='currency' :size='24' />
+                                <currency-icon v-if='currency' :currency='currency' :size='25' />
                                 <span>{{ currency }}</span>
                                 <van-icon class='arrow' name='arrow-down' />
                             </div>
@@ -64,7 +64,7 @@
                                 <van-icon v-if='expectedAmount' class='clear' name='clear' @click='clearInput' />
                             </div>
                             <div :class="['select', paymentShowMenu ? 'show' : 'hide']" @click.stop='togglePaymentMenu'>
-                                <currency-icon v-if='paymentCurrency' :currency='paymentCurrency' :size='24' />
+                                <currency-icon v-if='paymentCurrency' :currency='paymentCurrency' :size='25' />
                                 <span>{{ paymentCurrency }}</span>
                                 <van-icon class='arrow' name='arrow-down' />
                             </div>
@@ -110,12 +110,24 @@
                         <p v-if='paymentCurrency' class='handle-conversion'>
                             {{ $t('deposit.estimatedPrice') }}: 1 {{ currency }} = {{ rateNum }} {{ paymentCurrency }}
                         </p>
-                        <button :class="['handle-next pc_deposit_continue_ga', isNext && !isSubmit ? 'default' : 'disable']" @click='handleDeposit'>
+                        <button v-if='isNext' class='handle-next pc_deposit_continue_ga default' @click='handleDeposit'>
                             <van-loading v-if='isSubmit' />
                             <span v-else>
                                 {{ $t('common.continue') }}
                             </span>
                         </button>
+                        <div v-else class='handle-relative'>
+                            <button
+                                class='handle-next pc_deposit_continue_ga disable'
+                                @mouseenter='openPopoverTip'
+                                @mouseleave='closePopoverTip'
+                            >
+                                <span>
+                                    {{ $t('common.continue') }}
+                                </span>
+                            </button>
+                            <popover-tips v-model='showPopoverTip' :text="$t('deposit.inputAmount')" />
+                        </div>
                         <!-- <p class='handle-tip'>
                             The pay with card service is provided by ARX, all funds are stored in UnionBank.
                         </p> -->
@@ -242,13 +254,15 @@ import currencyIcon from '@/components/currencyIcon'
 import dropdownMenu from '@planspc/components/dropdownMenu'
 import timeDialog from './time-dialog.vue'
 import timeTips from './time-tips.vue'
+import popoverTips from '@/components/popover-tips.vue'
 
 export default {
     components: {
         currencyIcon,
         dropdownMenu,
         timeDialog,
-        timeTips
+        timeTips,
+        popoverTips
     },
     setup () {
         const { toOrderPriority } = useMethods()
@@ -273,6 +287,18 @@ export default {
             handleAppendField,
         } = useExchange()
 
+        // 打开气泡弹窗提示
+        const openPopoverTip = () => {
+            if (isEmpty(state.amount)) {
+                state.showPopoverTip = true
+            }
+        }
+
+        // 关闭气泡弹窗提示
+        const closePopoverTip = () => {
+            state.showPopoverTip = false
+        }
+
         return {
             isEmpty,
             stopScrollFun,
@@ -295,7 +321,9 @@ export default {
             goAssets,
             onRefresh,
             handleAppendField,
-            showExplain
+            showExplain,
+            openPopoverTip,
+            closePopoverTip
         }
     }
 }
@@ -386,6 +414,8 @@ export default {
             cursor: pointer;
             .currencyIcon {
                 margin-right: 6px;
+                border: 1px solid var(--lineColor);
+                border-radius: 50%;
             }
             span {
                 flex: 1;
@@ -424,6 +454,9 @@ export default {
     .handle {
         margin-top: 60px;
     }
+    .handle-relative {
+        position: relative;
+    }
     .handle-conversion {
         margin-bottom: 6px;
         text-align: center;
@@ -439,8 +472,10 @@ export default {
         border-radius: 5px;
         transition: ease-in-out 0.15s;
         &.disable {
-            background-color: var(--primaryAssistColor);
-            color: var(--color);
+            background-color: var(--primary);
+            opacity: 0.3;
+            color: #FFF;
+            cursor: no-drop;
         }
         &.default {
             @include hover();

@@ -78,7 +78,7 @@ export default {
     height: rem(110px);
     font-size: rem(34px);
     background: var(--contentColor);
-    &.absolute{
+    &.absolute {
         position: absolute;
         left: 0;
         top: 0;
@@ -117,7 +117,7 @@ export default {
         width: 100%;
         margin: 0 auto;
         color: var(--color);
-        font-size: rem(48px);
+        font-size: rem(42px);
         font-weight: bold;
         line-height: rem(59px);
         text-align: center;

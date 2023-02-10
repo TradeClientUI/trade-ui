@@ -63,7 +63,7 @@ const h5Children = [
         component: () =>
             import(/* webpackChunkName: "addBank" */ '../views/user/authentication.vue'),
         meta: {
-            title: 'cRoute.authentication',
+            title: 'cRoute.regKyc',
             // roles: ['User']
         }
     },
@@ -72,7 +72,7 @@ const h5Children = [
         component: () =>
             import(/* webpackChunkName: "addBank" */ '../views/user/authForm.vue'),
         meta: {
-            title: 'cRoute.authForm',
+            title: 'cRoute.regKyc',
             // roles: ['User']
         }
     },
@@ -207,7 +207,7 @@ const h5Children = [
         component: () =>
             import(/* webpackChunkName: "Bank" */ '../views/wallet/walletAddress.vue'),
         meta: {
-            title: 'cRoute.walletAdd',
+            title: 'cRoute.walletAddress',
             roles: ['User']
         }
     },
@@ -638,7 +638,18 @@ const routes = [
                     roles: ['User']
                 },
                 children: h5Children
-            }
+            },
+            {
+                path: '/noAccess',
+                name: 'NoAccess',
+                component: () =>
+                    import(/* webpackChunkName: "login" */ '../views/noAccess/noAccess.vue'),
+                meta: {
+                    title: 'cRoute.register',
+                    roles: ['Guest'],
+                }
+
+            },
         ]
     }
 ]

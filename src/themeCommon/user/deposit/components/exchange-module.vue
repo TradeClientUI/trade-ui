@@ -17,7 +17,7 @@
                             <van-icon v-if='amount' class='clear' name='clear' @click='clearInput' />
                         </div>
                         <div :class="['select', currencyShowMenu ? 'show' : 'hide']" @click.stop='toggleBuyMenu'>
-                            <currency-icon v-if='currency' :currency='currency' :size='24' />
+                            <currency-icon v-if='currency' :currency='currency' :size='25' />
                             <span>{{ currency }}</span>
                             <van-icon class='arrow' name='arrow-down' />
                         </div>
@@ -38,7 +38,7 @@
                             <van-icon v-if='expectedAmount' class='clear' name='clear' @click='clearInput' />
                         </div>
                         <div :class="['select', paymentShowMenu ? 'show' : 'hide']" @click.stop='togglePaymentMenu'>
-                            <currency-icon v-if='paymentCurrency' :currency='paymentCurrency' :size='24' />
+                            <currency-icon v-if='paymentCurrency' :currency='paymentCurrency' :size='25' />
                             <span>{{ paymentCurrency }}</span>
                             <van-icon class='arrow' name='arrow-down' />
                         </div>
@@ -67,12 +67,23 @@
                     <p v-if='paymentCurrency' class='handle-conversion'>
                         {{ $t('deposit.estimatedPrice') }}: 1 {{ currency }} = {{ rateNum }} {{ paymentCurrency }}
                     </p>
-                    <button :class="['handle-next mobile_deposit_continue_ga', isNext && !isSubmit ? 'default' : 'disable']" @click='handleDeposit'>
+                    <button v-if='isNext' class='handle-next mobile_deposit_continue_ga default' @click='handleDeposit'>
                         <van-loading v-if='isSubmit' />
                         <span v-else>
                             {{ $t('common.continue') }}
                         </span>
                     </button>
+                    <div v-else class='handle-relative'>
+                        <button
+                            class='handle-next mobile_deposit_continue_ga disable'
+                            @click='openPopoverTip'
+                        >
+                            <span>
+                                {{ $t('common.continue') }}
+                            </span>
+                        </button>
+                        <popover-tips v-model='showPopoverTip' auto-close :text="$t('deposit.inputAmount')" />
+                    </div>
                     <!-- <p class='handle-tip'>
                         {{ $t('deposit.channelTip') }}
                     </p> -->
@@ -232,13 +243,15 @@ import currencyIcon from '@/components/currencyIcon'
 import assetsList from '@/themeCommon/components/assetsList/assetsList.vue'
 import timeDialog from './time-dialog.vue'
 import timeTips from './time-tips.vue'
+import popoverTips from '@/components/popover-tips.vue'
 
 export default {
     components: {
         currencyIcon,
         assetsList,
         timeDialog,
-        timeTips
+        timeTips,
+        popoverTips
     },
     setup () {
         const { toOrderPriority } = useMethods()
@@ -262,6 +275,13 @@ export default {
             handleAppendField,
             timingQueryDepositResult
         } = useExchange()
+
+        // 打开气泡弹窗提示
+        const openPopoverTip = () => {
+            if (isEmpty(state.amount)) {
+                state.showPopoverTip = true
+            }
+        }
 
         // 更新购买币种
         const updateCurrency = (item) => {
@@ -305,7 +325,8 @@ export default {
             updatePaymentCurrency,
             updateChainName,
             timingQueryDepositResult,
-            showExplain
+            showExplain,
+            openPopoverTip
         }
     }
 }
@@ -403,6 +424,8 @@ export default {
             cursor: pointer;
             &:deep(.currencyIcon) {
                 margin-right: rem(12px);
+                border: 1px solid var(--lineColor);
+                border-radius: 50%;
             }
             span {
                 flex: 1;
@@ -442,6 +465,9 @@ export default {
     .handle {
         margin-top: rem(120px);
     }
+    .handle-relative {
+        position: relative;
+    }
     .handle-conversion {
         margin-bottom: rem(24px);
         text-align: center;
@@ -457,8 +483,9 @@ export default {
         border-radius: rem(10px);
         transition: ease-in-out 0.15s;
         &.disable {
-            background-color: var(--primaryAssistColor);
-            color: var(--color);
+            background-color: var(--primary);
+            opacity: 0.3;
+            color: #FFF;
         }
         &.default {
             @include hover();

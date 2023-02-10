@@ -1,5 +1,5 @@
 <template>
-    <div class='register'>
+    <div v-if='!accessFlag' class='register'>
         <topNav class='header' />
         <div class='container'>
             <div class='pageTitle'>
@@ -229,6 +229,7 @@ export default {
         const { getCustomerGroupIdByCountry, getPlansByCountry } = hooks()
         const { openAccountType } = route.query
         const businessConfig = computed(() => store.state.businessConfig)
+        const accessFlag = computed(() => store.state._base.accessFlag)
         const state = reactive({
             options: [{ country: 'Canada', code: 'CA' }],
             zone: '',
@@ -566,6 +567,13 @@ export default {
             state.openAccountType = state.openAccountType === 0 ? 1 : 0
         }
 
+        // ip没权限。跳转受限页面
+        watch(() => accessFlag.value, val => {
+            if (val) router.replace('/noAccess')
+        }, {
+            immediate: true
+        })
+
         watch([() => state.filterValue, countryList], (newVal) => {
             const value = newVal[0]
             const currentCountryList = newVal[1]
@@ -600,6 +608,7 @@ export default {
         // }
 
         // getGeoipCountry()
+
         onMounted(() => {
             const { mobile, email } = route.query
             if (mobile) {
@@ -629,7 +638,8 @@ export default {
             customerNoIsDisabled,
             filterZone,
             businessConfig,
-            changeOpentype
+            changeOpentype,
+            accessFlag
         }
     }
 }

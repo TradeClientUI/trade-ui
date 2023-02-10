@@ -1,7 +1,7 @@
 <template>
     <Top class='topBar' />
     <LayoutTop :menu='false' :show-title='false' :title='$t("route.mine")' />
-    <div class='register'>
+    <div v-if='!accessFlag' class='register'>
         <!-- <PageComp v-if='pageui' :data='pageui' /> -->
         <div class='container'>
             <p class='pageTitle'>
@@ -163,8 +163,8 @@ import { setQuoteService } from '@/plugins/socket/socket'
 import { useI18n } from 'vue-i18n'
 import hooks from './hooks'
 import thirdLogin from '@/themeCommon/components/thirdLogin'
-
 import { activityRegister } from '../../../themes/plans/api/activity'
+
 export default {
     components: {
         Top,
@@ -186,6 +186,7 @@ export default {
         const { t, locale } = useI18n({ useScope: 'global' })
         const { getCustomerGroupIdByCountry, getPlansByCountry } = hooks()
         const { openAccountType } = route.query
+
         const businessConfig = computed(() => store.state.businessConfig)
         const state = reactive({
             options: [{ country: 'Canada', code: 'CA' }],
@@ -238,6 +239,8 @@ export default {
                 // findCountryByIP()
             }
         }, { immediate: true })
+
+        const accessFlag = computed(() => store.state._base.accessFlag)
 
         const countryList = computed(() => {
             return state.openAccountType === 0 ? store.state.countryList : store.getters.companyCountryList
@@ -522,6 +525,14 @@ export default {
         // }
 
         // getGeoipCountry()
+
+        // ip没权限。跳转受限页面
+        watch(() => accessFlag.value, val => {
+            if (val) router.replace('/noAccess')
+        }, {
+            immediate: true
+        })
+
         onMounted(() => {
             const { mobile, email } = route.query
             if (mobile) {
@@ -551,7 +562,8 @@ export default {
             customerNoIsDisabled,
             businessConfig,
             zoneSelectRef,
-            showZoneSelect
+            showZoneSelect,
+            accessFlag
         }
     }
 }

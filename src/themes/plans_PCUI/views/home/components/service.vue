@@ -5,12 +5,7 @@
 </template>
 
 <script setup>
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const goService = () => {
-    router.push('service')
-}
+
 </script>
 
 <style lang='scss' scoped>

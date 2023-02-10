@@ -1,8 +1,10 @@
 import { pageConfig, wpCompanyConfig, wpNav, wpFooter, wpSelfSymbolIndex } from '@/api/wpApi'
-import { localSet, localGet, getCookie, sessionSet, setCookie, isEmpty, localSetObj } from '@/utils/util'
+import { localSet, localGet, getCookie, sessionSet, setCookie, isEmpty, localSetObj, getQueryVariable } from '@/utils/util'
 import { formatPlans } from './storeUtil.js'
-import { getThirdLoginConfig } from '@/api/base'
+import { getThirdLoginConfig, geoipCountry } from '@/api/base'
 import { setPk } from '@/utils/request.js'
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 export default {
     namespaced: true,
@@ -16,7 +18,8 @@ export default {
         plansNames: {}, // 完成类型，从语言包里面获取
         plans: [], // [{ id: 1, name: 'CFD合约全仓' }, { id: 2, name: 'CFD逐仓合约' }, { id: 3, name: '现货杠杆全仓' }, { id: 9, name: 'ABCC现货撮合' }]
         thirdLoginConfig: [],
-        companyType: ''
+        companyType: '',
+        accessFlag: false, // 是否禁止访问,默认不可以访问，请求ip接口后更改状态
     },
     mutations: {
         UPDATE_inited (state, data) {
@@ -57,6 +60,10 @@ export default {
         },
         Update_trirdLoginConfig (state, data) {
             state.thirdLoginConfig = data
+        },
+        // 修改访问权限状态
+        Update_AccessFlag (state, data) {
+            state.accessFlag = data
         }
     },
     actions: {
@@ -72,7 +79,8 @@ export default {
                 dispatch('getCompanyInfo'),
                 dispatch('getChannelSett'),
                 dispatch('getWpSelfSymbols'),
-                dispatch('getProductCategory')
+                dispatch('getProductCategory'),
+
             ]
             if (!window.isPC) {
                 baseList.push(dispatch('getNav'))
@@ -109,8 +117,23 @@ export default {
 
                     sessionSet('utcOffset', 0 - new Date().getTimezoneOffset()) // 改成取本地时区时间，不找wp配置时间
                     // sessionSet('utcOffset', parseFloat(data.utcOffset) * 60)   改成取本地时区时间，不找wp配置时间
-                    if (isEmpty(getCookie('lang'))) {
-                        setCookie('lang', data.language.val || 'zh-CN', 'y10') // 语言都存储在cookie里面
+
+                    // 生产模式直接从wp配置取当前页面的语言
+                    // 开发模式先取url上的lang语言，然后取cookie语言，然后取wp配置的默认语言
+                    let currentLang = 'en-US' // 当前页面语言
+                    const urlLang = getQueryVariable('lang') // 当前url的语言
+                    const cookieLang = getCookie('lang') // 当前cookie语言
+                    if (isProduction) {
+                        currentLang = window.wp_apiPath.split('/')[1]
+                    } else if (urlLang) {
+                        currentLang = urlLang
+                    } else if (cookieLang) {
+                        currentLang = cookieLang
+                    } else {
+                        currentLang = data.language.val
+                    }
+                    if (isEmpty(cookieLang) || cookieLang !== currentLang) {
+                        setCookie('lang', currentLang, 'y10') // 语言都存储在cookie里面
                     }
 
                     // 在线客服补充语言参数
@@ -190,6 +213,22 @@ export default {
         },
         update_basePlans ({ state, commit, rootGetters }, data) {
             commit('Update_plans', data)
+        },
+        checkGeoipCountry ({ state, commit, rootGetters, rootState }, param) {
+            const noAccessArea = rootState.businessConfig?.noAccessArea
+            if (!noAccessArea || noAccessArea.length === 0) {
+                return
+            }
+            return geoipCountry().then(res => {
+                if (res.code === '0' && res.data?.iso_code) {
+                    if (noAccessArea.length > 0) {
+                        const arr = noAccessArea.filter(el => el.toLowerCase() === res.data?.iso_code.toLowerCase())
+                        commit('Update_AccessFlag', arr.length > 0)
+                        // arr.length > 0 && redirect ? router.replace('/noAccess') : router.push(path)
+                        return arr.length
+                    }
+                }
+            })
         }
     }
 }

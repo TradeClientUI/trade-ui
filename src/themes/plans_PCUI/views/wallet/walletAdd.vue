@@ -361,6 +361,7 @@ export default {
     .field-google :deep() {
         .van-cell {
             // padding-left: 20px;
+            font-size: rem(28px);
             background: none;
         }
         .form-item {

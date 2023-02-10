@@ -571,8 +571,6 @@ export default {
         const getGooleVerifyCode = val => {
             state.googleCode = val
         }
-        const isMobile = process.env.VUE_APP_theme === 'plans'
-        const gaClass = isMobile ? 'mobile_withdraw_kyc_ga' : 'pc_withdraw_kyc_ga'
         const checkKyc = () => {
             state.loading = true
             checkKycApply({
@@ -584,7 +582,7 @@ export default {
                     return Dialog.alert({
                         title: t('withdraw.hint'),
                         // 埋点类名
-                        className: Number(res.data) !== 1 ? gaClass : '',
+                        className: Number(res.data) !== 1 ? 'pc_withdraw_kyc_ga' : '',
                         confirmButtonText: Number(res.data) === 1 ? t('withdraw.kycBtn_1') : t('withdraw.kycBtn_2'),
                         message: Number(res.data) === 2 ? t('withdraw.kycMsg_1') : t('withdraw.kycMsg_2'),
                     }).then(() => {

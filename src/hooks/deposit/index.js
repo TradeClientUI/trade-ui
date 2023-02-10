@@ -262,7 +262,9 @@ export function useExchange () {
         // 是否显示存款时间弹窗
         timeShow: false,
         // 是否存款时间提示
-        showTimeTip: false
+        showTimeTip: false,
+        // 是否显示气泡提示
+        showPopoverTip: false
     })
 
     // 重置页面数据

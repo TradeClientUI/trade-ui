@@ -104,7 +104,7 @@ export default {
         font-size: rem(33px);
         line-height: rem(124px);
         .icon_zixuan2 {
-            color: var(--focusColor);
+            color: var(--primary);
         }
         .loading {
             position: relative;

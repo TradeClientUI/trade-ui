@@ -102,9 +102,9 @@ export default {
     .left,
     .right {
         position: absolute;
+        display: flex;
+        align-items: center;
         height: 100%;
-        padding: 0 rem(30px);
-        line-height: rem(110px);
         cursor: pointer;
     }
     .left {
@@ -112,6 +112,7 @@ export default {
         left: 0;
     }
     .right {
+        padding: 0 rem(30px);
         right: 0;
         //bottom: rem(-10px);
         i {
@@ -119,12 +120,12 @@ export default {
         }
     }
     .main {
-        max-width: 60%;
+        max-width: 70%;
         margin: 0 auto;
         color: var(--color);
         text-align: center;
-        .title{
-            font-size: rem(48px);
+        .title {
+            font-size: rem(42px);
             font-weight: bold;
         }
     }
@@ -136,10 +137,10 @@ export default {
         }
     }
     .backIcon {
-        margin-left: rem(-10px);
-        padding: rem(10px);
+        width: 1.6rem;
+        padding: 0 0.4rem;
         color: var(--color);
-        font-size: rem(30px)
+        font-size: rem(34px);
     }
 }
 </style>

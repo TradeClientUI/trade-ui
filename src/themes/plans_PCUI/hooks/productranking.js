@@ -49,7 +49,6 @@ export default (params) => {
                     })
                 }
             })
-
             symbolKeyByPlans.value.forEach(el => {
                 // 标签分类
                 productByLabel(el, productMap, symbolLabelMap)
@@ -67,12 +66,12 @@ export default (params) => {
                         proByCurrency[profitCurrency] = [pro]
                     }
                 })
-
                 const proListByCurrency = Object.entries(proByCurrency).sort((a,b)=>{
-                            if(a[0]<b[0]){
-                                return -1;
-                            }else if(a[0]>b[0]){
-                                return 1
+                            const arr = ['USDT', 'USD']  // 排序默认usd优先
+                            if(arr.indexOf(a[0]) < arr.indexOf(b[0])){
+                                return 1;
+                            }else if(arr.indexOf(a[0])>arr.indexOf(b[0])){
+                                return -1
                             }else{
                                 return 0
                             }

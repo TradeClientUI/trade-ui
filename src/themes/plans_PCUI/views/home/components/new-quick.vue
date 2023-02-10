@@ -23,7 +23,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import bannerRegister from './bannerRegister'
-import bannerWifi from './bannerWifi'
+import bannerWifi from '@/themeCommon/components/signalWifi.vue'
 
 export default {
     components: {

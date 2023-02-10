@@ -5,12 +5,19 @@ import { localGetJSON, localSetObj, sessionSet, setToken } from '@/utils/util'
 import { switchUserAccount } from '@/api/user'
 import { Dialog } from 'vant'
 import { useI18n } from 'vue-i18n'
+import { MsgSocket, connectMsgWS } from '@/plugins/socket/socket'
+import { geoipCountry } from '@/api/base'
 
 export default function () {
     const store = useStore()
     const route = useRoute()
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
+    const businessConfig = computed(() => store.state.businessConfig)
+    // 用户信息
+    const customerInfo = computed(() => store.state._user.customerInfo)
+    // 是否显示全仓玩法真实模拟净值
+    const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
 
     // 根据tradeType获取默认品种
     const getDefaultProduct = (tradeType) => {
@@ -100,7 +107,9 @@ export default function () {
             }).then(() => {
                 handleSwitchAccount({
                     type: 'real',
-                    url: 'depositChoose' + search
+                    callback: async () => {
+                        router.push('/depositChoose' + search)
+                    }
                 })
             })
         }
@@ -113,13 +122,21 @@ export default function () {
         fail,
         url
     }) => {
+        store.commit('_user/Update_switchAccounting', true)
         store.dispatch('_user/findCustomerInfo', false).then(res => {
             if (res.check()) {
                 if (Number(res.data.relationCustomerId) > 0) {
+                    MsgSocket.ws.close()
                     switchUserAccount().then(res => {
                         if (res.check()) {
                             setToken(res.data.token)
                             sessionSet('companyId', res.data.associationCompanyId)
+
+                            // 清空之前的账户数据和产品数据
+                            store.commit('_user/Empty_selfSymbolList')
+                            store.commit('_trade/Empty_data')
+                            store.commit('_quote/Empty_data')
+
                             localSetObj('mockAccount', 'accountType', type)
                             localSetObj('mockAccount', 'lastAccountType', type)
                             localSetObj('mockAccount', 'demo_domain', store.state._base.wpCompanyInfo.demo_domain)
@@ -127,30 +144,51 @@ export default function () {
                     }).then(() => {
                         return store.dispatch('_base/initBaseConfig')
                     }).then(() => {
-                        return store.dispatch('_user/findCustomerInfo', false)
+                        return store.dispatch('_user/findCustomerInfo')
                     }).then(() => {
+                        store.commit('_user/Update_emptyAccountAssets')
                         store.commit('_quote/Update_symbolBaseLoaded', 0)
                         return store.dispatch('_quote/querySymbolBaseInfoList')
-                    }).then((r) => {
+                    }).then(async () => {
                         const { tradeType } = store.getters.productActived
                         const defaultProduct = getDefaultProduct(tradeType)
                         if (route.name === 'Order' && defaultProduct?.symbolName && defaultProduct?.symbolId) {
-                            router.replace(`/order?name=${defaultProduct.symbolName}&symbolId=${defaultProduct.symbolId}&tradeType=${tradeType}`)
+                            await router.replace(`/order?name=${defaultProduct.symbolName}&symbolId=${defaultProduct.symbolId}&tradeType=${tradeType}`)
                         }
+
+                        // 重新连接切换后的账户的消息 websocket
+                        connectMsgWS()
+                        // 订阅资产
+                        if (showFullNetAsset.value && customerInfo.value) {
+                            MsgSocket.subscribedListAdd(() => {
+                                MsgSocket.subscribeAsset(1)
+                            })
+                        }
+
+                        store.commit('_user/Update_switchAccounting', false)
                         callback && callback()
 
-                        setTimeout(() => {
-                            if (url) {
-                                location.href = url
-                            } else {
-                                location.reload()
-                            }
-                        }, 0)
+                        const detail = { accountType: type }
+                        document.body.dispatchEvent(new CustomEvent('Event_switchAccountEnd', { detail }))
+
+                        // setTimeout(() => {
+                        //     if (url) {
+                        //         location.href = url
+                        //     } else {
+                        //         // location.reload()
+                        //     }
+                        // }, 0)
                     }).catch(() => {
+                        store.commit('_user/Update_switchAccounting', false)
                         fail && fail()
                     })
                 }
+            } else {
+                store.commit('_user/Update_switchAccounting', false)
             }
+        }).catch(() => {
+            store.commit('_user/Update_switchAccounting', false)
+            fail && fail()
         })
     }
 

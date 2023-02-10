@@ -44,7 +44,7 @@ const store = useStore()
 const productMap = computed(() => store.state._quote.productMap)
 const productActived = computed(() => store.getters.productActived)
 // 玩法类型
-const tradeType = computed(() => props.tradeType || String(unref(productActived).tradeType))
+const tradeType = computed(() => props.tradeType || String(unref(productActived)?.tradeType))
 // 板块类型
 const categoryType = ref('1')
 // 获取板块列表和所选板块的产品列表
@@ -83,6 +83,18 @@ const subscribeProducts = () => {
     unSubscribe = QuoteSocket.add_subscribe24H({ moduleId: 'productSearch', symbolKeys })
 }
 
+// 根据当前页面的产品设置当前产品分类
+const setCurCategoryType = () => {
+    const { tradeType, symbolId } = store.getters.productActived
+    const categoryList = store.getters.userProductCategory[tradeType] || []
+    categoryList.forEach((el, i) => {
+        const id = el.listByUser.find(id => parseInt(id) === symbolId)
+        if (id) {
+            categoryType.value = String(i + 1)
+        }
+    })
+}
+
 provide('isReLoadProductSearch', (value, productId) => {
     if (value === true) {
         const tempCur = categoryType.value
@@ -95,6 +107,7 @@ watch(
     tradeType,
     (newval) => {
         categoryType.value = '1'
+        setCurCategoryType()
         subscribeProducts()
     },
     {

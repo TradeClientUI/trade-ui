@@ -6,11 +6,11 @@
                 <SortIcon name='symbolName' :sort-field='sortField' :sort-type='sortType' />
             </span>
             <span class='price' @click='sortHandler("rolling_last_price")'>
-                {{ $t('trade.newPrice') }}
+                {{ $t('trade.newCustomValue') }}
                 <SortIcon name='rolling_last_price' :sort-field='sortField' :sort-type='sortType' />
             </span>
             <span class='change' @click='sortHandler("rolling_upDownWidth")'>
-                {{ $t('trade.changePercent') }}
+                {{ $t('trade.changeCustomValue') }}
                 <SortIcon name='rolling_upDownWidth' :sort-field='sortField' :sort-type='sortType' />
             </span>
         </div>

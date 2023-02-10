@@ -17,12 +17,13 @@
                 <div class='field-wrap'>
                     <input
                         v-model='amount'
+                        class='pc_withdraw_quantity_input_ga'
                         :placeholder='amountPlaceholder'
                         type='number'
                         @change='changeAmount'
                         @input='changeAmount'
                     />
-                    <button class='get-btn' plain round size='small' @click='getAll'>
+                    <button class='get-btn pc_withdraw_all_ga' plain round size='small' @click='getAll'>
                         {{ $t('withdrawMoney.allBtn') }}
                     </button>
                 </div>
@@ -510,6 +511,7 @@ export default {
                 if (Number(res.data) !== 2) {
                     return Dialog.alert({
                         title: t('withdraw.hint'),
+                        className: Number(res.data) !== 1 ? 'pc_withdraw_kyc_ga' : '',
                         confirmButtonText: Number(res.data) === 1 ? t('withdraw.kycBtn_1') : t('withdraw.kycBtn_2'),
                         message: Number(res.data) === 2 ? t('withdraw.kycMsg_1') : t('withdraw.kycMsg_2'),
                     }).then(() => {

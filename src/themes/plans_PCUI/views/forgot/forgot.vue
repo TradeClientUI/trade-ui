@@ -496,6 +496,7 @@ export default {
     .field {
         position: relative;
         display: flex;
+        height: 48px;
         align-items: center;
         :deep {
             .inputWrapper {
@@ -633,6 +634,16 @@ export default {
                 padding-left: 18px;
             }
         }
+    }
+}
+.field-google {
+    border: solid 1px var(--lineColor);
+    border-radius: 4px;
+    &:hover {
+        border: solid 1px var(--primary);
+    }
+    :deep(.form-item) {
+        margin-bottom: 0;
     }
 }
 body.night {

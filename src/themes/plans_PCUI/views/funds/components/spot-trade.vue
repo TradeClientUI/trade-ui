@@ -10,11 +10,14 @@
                 <div class='trade-block' v-if="product?.symbolName">
                     <div class='form-item disable'>
                         <label for=''>
-                            {{ $t('trade.buyPrice') }}  &nbsp;&nbsp;
-                            <span class='minor'>
-                                {{ $t('trade.bestPriceBuy') }}
-                            </span>
+                            {{ $t('trade.buyPrice') }}
                         </label>
+                        <span class='minor'>
+                            {{ $t('trade.bestPriceBuy') }}
+                        </span>
+                        <div class='right-val'>
+                            {{ product?.profitCurrency || '&nbsp;' }}
+                        </div>
                     </div>
                     <div class='form-item'>
                         <OrderVolume
@@ -63,12 +66,15 @@
             <el-tab-pane :label="$t('trade.sell')" name='sell'>
                 <div class='trade-block' v-if='product?.symbolName'>
                     <div class='form-item disable'>
-                        <label for=''>
-                            {{ $t('trade.sellPrice') }} &nbsp;&nbsp;
-                            <span class='minor'>
-                                {{ $t('trade.bestPriceSell') }}
-                            </span>
+                        <label>
+                            {{ $t('trade.sellPrice') }}
                         </label>
+                        <span class='minor'>
+                            {{ $t('trade.bestPriceSell') }}
+                        </span>
+                        <div class='right-val'>
+                            {{ product?.profitCurrency || '&nbsp;' }}
+                        </div>
                     </div>
                     <div class='form-item'>
                         <OrderVolume
@@ -344,7 +350,7 @@ const orderParams = (ype) => {
 .trade-block {
     padding-top: 20px;
 }
-.form-item{
+.form-item {
     color: var(--minorColor);
     height: 50px;
     background: var(--assistColor);
@@ -354,14 +360,21 @@ const orderParams = (ype) => {
     align-items: center;
     padding: 0 14px;
     margin-bottom: 16px;
-    label{
+    label {
         margin-right: 9px;
         color: var(--normalColor);
-        .minor{
-            color: var(--minorColor);
-        }
     }
-    &.disable{
+    .minor {
+        color: var(--minorColor);
+    }
+    .right-val {
+        color: var(--normalColor);
+    }
+    :deep(.trade-type) {
+        color: var(--normalColor);
+        cursor: default;
+    }
+    &.disable {
         background-color: var(--lineColor);
     }
 }
@@ -371,7 +384,7 @@ const orderParams = (ype) => {
     border-radius: 4px;
     font-weight: bold;
     margin-top: 30px;
-    &:hover{
+    &:hover {
         opacity: 0.7;
     }
     &.buy {
@@ -406,7 +419,7 @@ const orderParams = (ype) => {
         border-radius: 5px;
         cursor: pointer;
         &.register-btn {
-            color: #fff;
+            color: #FFF;
             background: var(--primary);
         }
         &.login-btn {
@@ -414,7 +427,7 @@ const orderParams = (ype) => {
             background: var(--lineColor);
         }
         &:hover {
-            opacity: .7;
+            opacity: 0.7;
         }
     }
 }
@@ -441,6 +454,5 @@ const orderParams = (ype) => {
             cursor: pointer;
         }
     }
-   
 }
 </style>

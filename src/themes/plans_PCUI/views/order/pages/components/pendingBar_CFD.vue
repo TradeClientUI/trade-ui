@@ -124,6 +124,9 @@ export default {
             vertical-align: -3px;
         }
     }
+    label {
+        color: var(--normalColor);
+    }
     .pendingRang {
         color: var(--minorColor);
         font-size: rem(20px);
@@ -139,5 +142,11 @@ export default {
         width: rem(240px);
     }
 }
-
+html.dark {
+    .wrapper {
+        label {
+            color: #FFF;
+        }
+    }
+}
 </style>

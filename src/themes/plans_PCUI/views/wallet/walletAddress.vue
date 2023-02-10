@@ -146,8 +146,7 @@ export default {
 }
 .address-list {
     .item {
-        width: rem(690px);
-        margin: rem(30px) auto rem(30px);
+        margin: rem(30px);
         padding: 0 rem(32px);
         background-color: var(--contentColor);
         border: 1px solid var(--lineColor);

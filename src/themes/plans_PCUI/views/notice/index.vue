@@ -96,25 +96,14 @@
                         </div>
                     </div>
                     <div class='list-page-box'>
-                        <van-pagination
-                            v-if='msgList.length > 0 && total>10'
-                            v-model='current'
-                            class='list-page'
-                            force-ellipses
-                            :items-per-page='10'
-                            :total-items='total'
-                            @change='changePage'
-                        >
-                            <template #prev-text>
-                                <van-icon name='arrow-left' />
-                            </template>
-                            <template #next-text>
-                                <van-icon name='arrow' />
-                            </template>
-                            <template #page='{ text }'>
-                                {{ text }}
-                            </template>
-                        </van-pagination>
+                        <div class='buttons'>
+                            <span :class="['item', disablePrev ? 'disable' : 'default']" @click="changePage('prev')">
+                                {{ $t('common.prevPage') }}
+                            </span>
+                            <span :class="['item', disableNext ? 'disable' : 'default']" @click="changePage('next')">
+                                {{ $t('common.nextPage') }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </van-tab>
@@ -258,6 +247,32 @@ export default {
         const inviteVis = computed(() => {
             return (location.href.includes('uat') && companyId.value === 1) || (location.href.includes('pre') && companyId.value === 360) || (companyId.value === 11)
         })
+        // 是否禁用系统消息上一页按钮
+        const disablePrev = computed(() => state.current === 1)
+        // 是否禁用系统消息下一页按钮
+        const disableNext = computed(() => state.total <= state.current * 10)
+
+        const changePage = (val) => {
+            if (val === 'prev') {
+                if (disablePrev.value) return
+                state.current -= 1
+            }
+            if (val === 'next') {
+                if (disableNext.value) return
+                state.current += 1
+            }
+            getMsgList()
+        }
+
+        const changePageNt = (val) => {
+            state.currentNt = val
+            getNoticeData()
+        }
+
+        const changePagePs = (val) => {
+            state.currentPs = val
+            getCustomerMsgListData()
+        }
 
         // 获取消息列表
         const getMsgList = () => {
@@ -271,14 +286,7 @@ export default {
             }).then(res => {
                 state.loading = false
                 if (res.check()) {
-                    if (res.data.records && res.data.records.length > 0) {
-                        // state.msgList = state.msgList.concat(res.data.records)
-                        state.msgList = res.data.records
-                        state.total = res.data.total
-                    } else {
-                        state.msgList = []
-                        state.total = 0
-                    }
+                    state.msgList = res.data.records || []
 
                     // 数据全部加载完成
                     if (res.data.size * res.data.current >= res.data.total) {
@@ -289,21 +297,20 @@ export default {
                 state.errorTip = t('c.loadError')
                 state.loading = false
             })
+            // 获取消息列表数量
+            getMsgListCount()
         }
 
-        const changePage = (val) => {
-            state.current = val
-            getMsgList()
-        }
-
-        const changePageNt = (val) => {
-            state.currentNt = val
-            getNoticeData()
-        }
-
-        const changePagePs = (val) => {
-            state.currentPs = val
-            getCustomerMsgListData()
+        // 获取消息列表数量
+        const getMsgListCount = () => {
+            queryPlatFormMessageLogList({
+                current: state.current + 1,
+                lang: state.lang,
+                size: 10,
+                parentType: state.type
+            }).then(res => {
+                state.total = res.data.total
+            })
         }
 
         // 获取公告列表
@@ -550,6 +557,8 @@ export default {
             setMsgReadedFn,
             setAllMsgReaded,
             changeType,
+            disablePrev,
+            disableNext,
             ...toRefs(state)
         }
     }
@@ -686,12 +695,12 @@ export default {
         }
     }
     .list-page-box {
+        margin: 30px 0;
         text-align: center;
         .list-page {
             display: inline-block;
             width: auto;
             max-width: 400px;
-            margin: 30px 0;
             button {
                 cursor: pointer;
             }
@@ -703,6 +712,33 @@ export default {
             &.van-pagination__item--active {
                 background: var(--primary);
                 color: #FFF;
+            }
+            button {
+                cursor: pointer;
+            }
+        }
+        .buttons {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            .item {
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                width: 70px;
+                height: 40px;
+                margin: 0 10px;
+                color: #FFF;
+                background: var(--primary);
+                border-radius: 4px;
+                &.default {
+                    @include hover();
+                    cursor: pointer;
+                }
+                &.disable {
+                    opacity: 0.3;
+                    cursor: no-drop;
+                }
             }
         }
     }

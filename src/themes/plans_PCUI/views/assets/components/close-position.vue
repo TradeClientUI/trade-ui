@@ -48,6 +48,7 @@
                         class='stepper'
                         :placeholder="$t('trade.positionNum')"
                         :step='product.volumeStep'
+                        @change='change'
                     />
                 </div>
                 <div class='tabs'>
@@ -69,7 +70,7 @@
 import { reactive, toRefs, computed, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { pow, minus, divide, getDecimalNum, mul, div, eq } from '@/utils/calculation'
+import { pow, minus, getDecimalNum, mul, lte, toFixed } from '@/utils/calculation'
 import { Toast } from 'vant'
 import { addMarketOrder } from '@/api/trade'
 import stepper from '@planspc/components/stepper'
@@ -98,7 +99,7 @@ export default {
                 { title: '1/4', value: 4, divValue: 4 }
             ],
             // 当前选项卡
-            currentValue: 1
+            currentValue: ''
         })
         // 产品数据
         const product = computed(() => store.state._quote.productMap[state.data.symbolId + '_' + state.data.tradeType] || {})
@@ -112,13 +113,13 @@ export default {
         const account = computed(() => accountList.value.find(item => Number(item.tradeType) === Number(state.data.tradeType)))
 
         // 根据输入的手数高亮快速平仓手数
-        watchEffect(() => {
-            const item = state.tabs.find(el => {
-                const elVolume = div(positionVolume.value, el.divValue)
-                if (eq(elVolume, state.count)) return true
-            })
-            state.currentValue = item ? item.value : -1
-        })
+        // watchEffect(() => {
+        //     const item = state.tabs.find(el => {
+        //         const elVolume = div(positionVolume.value, el.divValue)
+        //         if (eq(elVolume, state.count)) return true
+        //     })
+        //     state.currentValue = item ? item.value : -1
+        // })
 
         // 打开弹窗
         const open = (row) => {
@@ -127,7 +128,7 @@ export default {
                 tradeType: row.tradeType
             })
             state.data = row
-            state.currentValue = 1
+            state.currentValue = ''
             state.count = Number(positionVolume.value)
             state.isSubmit = false
             state.show = true
@@ -138,13 +139,21 @@ export default {
             state.show = false
         }
 
+        const change = () => {
+            state.currentValue = ''
+        }
+
         // 快速设置平仓手数
         const volumeHandler = (item) => {
-            const num = divide(positionVolume.value, item.divValue)
-            if (num < product.value.minVolume) return
-            if (getDecimalNum(num) !== 20) {
-                state.currentValue = item.value
-                state.count = Number(num)
+            const minVolume = product.value.minVolume
+            const volumeStep = product.value.volumeStep
+            const volumeDigit = getDecimalNum(product.value.minVolume)
+            state.currentValue = item.value
+            if (lte(positionVolume.value, minVolume)) {
+                state.count = minVolume
+            } else {
+                const newVolume = toFixed(volumeStep * Math.round((positionVolume.value / volumeStep) / parseFloat(item.divValue)), volumeDigit)
+                state.count = newVolume
             }
         }
 
@@ -218,7 +227,8 @@ export default {
             positionVolume,
             volumeDigit,
             volumeHandler,
-            submitCloseHandler
+            submitCloseHandler,
+            change
         }
     }
 }
@@ -277,7 +287,7 @@ export default {
         }
         .item-active {
             background: var(--primary);
-            color: #fff;
+            color: #FFF;
         }
     }
 }
@@ -289,7 +299,7 @@ export default {
     width: 100%;
     height: 48px;
     font-size: 16px;
-    color: #fff;
+    color: #FFF;
     border-radius: 4px;
     cursor: pointer;
 }

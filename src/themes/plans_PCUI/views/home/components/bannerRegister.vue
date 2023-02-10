@@ -1,32 +1,44 @@
 <template>
     <div v-if='isLogin' class='register-box'>
-        <div class='register-btns'>
-            <button class='btn' @click='toDeposit'>
-                {{ $t('homeJD.deposit') }}
+        <div v-if='!countdownAvailable' class='register-btns'>
+            <button class='btn pc_home_deposit_ga' @click='toDeposit'>
+                {{ $t("homeJD.deposit") }}
             </button>
             <button class='detail-btn btn' @click='toQuote'>
-                {{ $t('homeJD.checkSignals') }}
+                {{ $t("homeJD.checkSignals") }}
             </button>
+        </div>
+        <div v-else>
+            <button class='btn pc_home_deposit_ga' @click='toDeposit'>
+                {{
+                    $t("registerActivity.depositToGet", {
+                        rechargeAmount: activityInfo.rechargeAmount,
+                        rewardAmount: activityInfo.rewardAmount,
+                    })
+                }}
+            </button>
+            <registerActivityCountdown dense show-rule-icon />
         </div>
     </div>
     <div v-else class='register-box'>
+        <registerActivityBanner v-if='!isLogin' />
         <button class='btn' @click='goRegister'>
             <i class='icon-register'></i>
             <div class='btn-text'>
                 <span> {{ $t("homeJD.createAccountFree") }} </span>
                 <b :class="{ split: locale === 'en-US' }">
-                    {{ $t('homeJD.real') }}
+                    {{ $t("homeJD.real") }}
                 </b>
                 <span> {{ $t("homeJD.and") }} </span>
                 <b :class="{ split: locale === 'en-US' }">
-                    {{ $t('homeJD.demo') }}
+                    {{ $t("homeJD.demo") }}
                 </b>
                 <span> {{ $t("homeJD.account") }} </span>
             </div>
         </button>
-        <div class='third-login'>
+        <div v-if='!accessFlag' class='third-login'>
             <div class='title'>
-                <span>{{ $t('homeJD.useThirdLogin') }}</span>
+                <span>{{ $t("homeJD.useThirdLogin") }}</span>
             </div>
             <div class='option'>
                 <LoginByGoogle>
@@ -35,6 +47,7 @@
                         <span>Google</span>
                     </button>
                 </LoginByGoogle>
+
                 <LoginByTelegram>
                     <button class='gray'>
                         <i class='icon-telegram'></i>
@@ -47,18 +60,28 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import LoginByGoogle from '@/themeCommon/user/login/components/loginByGoogle.vue'
 import LoginByTelegram from '@/themeCommon/user/login/components/loginByTelegram'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import useMethods from '@planspc/hooks/useMethods'
+import {
+    useRegisterActivity,
+    registerActivityBanner,
+    registerActivityCountdown,
+} from '@/components/registerActivity'
 
+const { countdownAvailable, activityInfo } = useRegisterActivity(true)
 const { locale } = useI18n({ useScope: 'global' })
 const { toDeposit } = useMethods()
+
 const store = useStore()
 const router = useRouter()
+const canAccess = ref(false)
+
+const accessFlag = computed(() => store.state._base.accessFlag)
 
 onMounted(() => {
     // 初始化三方登录配置、国家代号
@@ -75,7 +98,6 @@ const goRegister = () => {
 const toQuote = () => {
     router.push('/quote')
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -208,6 +230,14 @@ body.night {
                 }
             }
         }
+    }
+}
+:deep(.count-down-box) {
+    justify-content: center;
+    margin-top: 16px;
+    height: 28px;
+    .count-down {
+        font-size: 28px;
     }
 }
 </style>

@@ -1,77 +1,92 @@
 <template>
-    <div class='nav-wrap'>
-        <div class='logo' @click="$router.push('/')">
-            <img v-if='logoUrl' alt='' :src='logoUrl' srcset='' />
-        </div>
-        <div class='right'>
-            <van-button v-if='!customerInfo' class='registerBtn mobile_top_nav_signup_ga' type='primary' @click="$router.push({ name:'Register' })">
-                <span>{{ $t('register.registerBtn') }}</span>
-            </van-button>
-            <!-- <van-button
-                v-else-if='$route.name==="Order"'
-                class='accountTypeText'
-                :class="{ 'mock': customerInfo.companyType === 'demo' }"
-                type='primary'
-            >
-                <span>{{ customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') }}</span>
-            </van-button> -->
-            <van-dropdown-menu
-                v-else-if='Number(customerInfo.associationCompanyId) > 0'
-                class='account-dropdown'
-                :class="{ 'mock': customerInfo.companyType === 'demo' }"
-            >
-                <van-dropdown-item
-                    ref='dropdownAccount'
-                    :title="customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') "
-                    title-class='account-dropdown-title'
-                >
-                    <div class='account-sheet'>
-                        <div
-                            class='account-type'
-                            :class="{ 'active': customerInfo.companyType==='real' }"
-                            @click='switchAccount("real")'
-                        >
-                            <div class='radio'></div>
-                            <span>{{ $t('mockAccount.realAccount') }}</span>
-                        </div>
-                        <div
-                            class='account-type demo'
-                            :class="{ 'active': customerInfo.companyType==='demo' }"
-                            @click='switchAccount("demo")'
-                        >
-                            <div class='radio'></div>
-                            <span>{{ $t('mockAccount.demoAccount') }}</span>
-                        </div>
-                        <div v-if='topNavDeposit' class='recharge-button'>
-                            <van-button type='primary' @click='goDeposit'>
-                                {{ $t('homeJD.deposit') }}
-                            </van-button>
-                        </div>
-                    </div>
-                </van-dropdown-item>
-            </van-dropdown-menu>
-            <div class='menu' @click='menuVis=true'>
+    <div id='nav-wrap' :class="['nav-wrap', 'nav-wrap-' + $route.name]">
+        <div class='block'>
+            <div class='menu' @click='onMenu'>
                 <van-icon class='icon-svg' name='wap-nav' />
             </div>
+            <van-button v-if='!customerInfo' class='btn' @click="$router.push({ name:'Register' })">
+                <span>{{ $t('register.registerBtn') }}</span>
+            </van-button>
+            <template v-if='customerInfo.associationCompanyId'>
+                <!-- 全仓单玩法真实模拟切换 -->
+                <div v-if='showFullNetAsset' class='full-assets' @click='onToggle'>
+                    <div class='name'>
+                        <!-- <em :class="['riskLevel', 'riskLevel' + userAccount.riskStatus]"></em> -->
+                        <span :class="[customerInfo.companyType === 'real' ? 'real' : 'demo']">
+                            {{ customerInfo.companyType === 'real' ? $t('mockAccount.realNet') : $t('mockAccount.demoNet') }}
+                        </span>
+                    </div>
+                    <div class='amount'>
+                        <span>${{ userAccount.netWorth || '--' }}</span>
+                        <i class='arrow icon_icon_arrow'></i>
+                    </div>
+                </div>
+                <!-- 多玩法真实模拟切换 -->
+                <van-button
+                    v-else
+                    class='btn'
+                    :class="{ 'demo': customerInfo.companyType === 'demo' }"
+                    @click='onToggle'
+                >
+                    <span>{{ customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') }}</span>
+                    <i class='arrow icon_icon_arrow'></i>
+                </van-button>
+            </template>
+        </div>
+        <div class='logo' @click='onLogo'>
+            <img v-if='logoUrl' alt='' :src='logoUrl' srcset='' />
         </div>
     </div>
 
+    <!-- 切换真实模拟弹窗 -->
+    <van-popup
+        v-model:show='isAccountEnv'
+        class='account-switch-popup'
+        :overlay-style='{ zIndex: 998 }'
+        position='top'
+        teleport='body'
+    >
+        <div class='account-sheet'>
+            <div
+                class='account-type'
+                :class="{ 'active': customerInfo.companyType==='real' }"
+                @click='switchAccount("real")'
+            >
+                <div class='radio'></div>
+                <span>{{ $t('mockAccount.realAccount') }}</span>
+            </div>
+            <div
+                class='account-type demo'
+                :class="{ 'active': customerInfo.companyType==='demo' }"
+                @click='switchAccount("demo")'
+            >
+                <div class='radio'></div>
+                <span>{{ $t('mockAccount.demoAccount') }}</span>
+            </div>
+            <div v-if='topNavDeposit' class='recharge-button mobile_top_nav_deposit_ga'>
+                <van-button class='mobile_top_nav_deposit_ga' type='primary' @click='goDeposit'>
+                    {{ $t('homeJD.deposit') }}
+                </van-button>
+            </div>
+        </div>
+    </van-popup>
+    <!-- 菜单弹窗 -->
     <van-popup
         v-model:show='menuVis'
         class='menu-wrap'
         close-on-popstate
         closeable
-        position='right'
+        position='left'
         :style="{ height: '100%',width: '100%',paddingTop: '50px' }"
         teleport='body'
     >
         <div v-if='!customerInfo' class='menu-list'>
-            <router-link class='btn' to='/login'>
+            <span class='btn' @click='goPage("login")'>
                 {{ $t('login.loginBtn') }}
-            </router-link>
-            <router-link class='reg-btn' to='register'>
+            </span>
+            <span class='reg-btn' @click='goPage("register")'>
                 {{ $t('register.registerBtn') }}
-            </router-link>
+            </span>
         </div>
         <div v-else>
             <minePerson :data='minePersonData' />
@@ -234,7 +249,7 @@
             </van-cell>
         </van-cell-group>
     </van-popup>
-
+    <!-- 切换语言弹窗 -->
     <van-popup
         v-model:show='langShow'
         class='custom-popup lang-popup'
@@ -268,12 +283,13 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref, getCurrentInstance } from 'vue'
+import { onMounted, computed, reactive, ref, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { changeLang } from '@/api/base'
 import i18n, { loadLocaleMessages } from '@/themeCommon/i18n/i18n.js'
 import { setCookie, getCookie, isEmpty, localGet, setToken, sessionSet, localSet, getDevice, localGetObj, localSetObj } from '@/utils/util'
+import { MsgSocket } from '@/plugins/socket/socket'
 import Colors, { setRootVariable } from '@plans/colorVariables'
 import minePerson from '@plans/modules/minePerson/minePerson.vue'
 import { isIOS } from 'vant/lib/utils'
@@ -299,7 +315,6 @@ const themeVal = ref(localGet('invertColor') === 'night')
 const lang = ref(getCookie('lang') || store.state._base.wpCompanyInfo.language)
 const accountType = ref(localGetObj('mockAccount', 'accountType'))
 const loading = ref(false)
-const accountVis = ref(false)
 
 const { t, locale } = useI18n({ useScope: 'global' })
 
@@ -310,6 +325,12 @@ const supportLanguages = computed(() => store.state.supportLanguages)
 const logoUrl = computed(() => store.state.businessConfig?.pcuiLogo || '')
 const topNavDeposit = computed(() => store.state.businessConfig?.topNavDeposit)
 const isReal = computed(() => customerInfo.value.companyType === 'real')
+// 是否显示切换环境下拉菜单
+const isAccountEnv = ref(false)
+// 是否显示全仓玩法真实模拟净值
+const showFullNetAsset = computed(() => store.getters.showFullNetAsset)
+// 全仓账户资产
+const userAccount = computed(() => store.state._user.accountAssets[1] || {})
 
 const routerTo = path => {
     if (path === 'order') {
@@ -331,6 +352,20 @@ store.dispatch('_base/getPageConfig', 'Mine').then(res => {
     menuListData.value = res.find(el => el.tag === 'menulist')?.data
     minePersonData.value = res.find(el => el.tag === 'minePerson')?.data
 })
+
+// 点击logo
+const onLogo = () => {
+    isAccountEnv.value = false
+    menuVis.value = false
+    langShow.value = false
+    router.push('/')
+}
+
+// 点击菜单图标
+const onMenu = () => {
+    isAccountEnv.value = false
+    menuVis.value = !menuVis.value
+}
 
 // 选择语言
 const langSelect = (action) => {
@@ -384,11 +419,22 @@ const colorSelect = (action) => {
     }
 }
 
-const dropdownAccount = ref(null)
+const goPage = async (path) => {
+    menuVis.value = false
+    router.push(path)
+}
 
 const goDeposit = () => {
-    dropdownAccount.value.toggle()
+    isAccountEnv.value = false
     toDeposit()
+}
+
+// 控制切换真实模拟下拉菜单
+const onToggle = () => {
+    // 有模拟公司才显示切换功能
+    if (customerInfo.value.associationCompanyId) {
+        isAccountEnv.value = !isAccountEnv.value
+    }
 }
 
 // 切换真实模拟账号
@@ -396,8 +442,7 @@ const switchAccount = type => {
     if (accountType.value === type) return
     loading.value = true
     accountType.value = type
-    accountVis.value = false
-    dropdownAccount.value.toggle()
+    isAccountEnv.value = false
 
     handleSwitchAccount({
         type,
@@ -429,210 +474,175 @@ const handleLogout = () => {
         // on cancel
     })
 }
+
+onMounted(() => {
+    // 订阅资产
+    if (showFullNetAsset.value) {
+        MsgSocket.subscribedListAdd(() => {
+            MsgSocket.subscribeAsset(1)
+        })
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-.download-app {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    height: 60px;
-    padding: rem(26px) 0;
-    background: #FFF;
-    .brand {
-        font-size: 12px;
-        color: var(--color);
-        .logo {
-            display: inline-block;
-            width: 34px;
-            height: 34px;
-            margin-right: 12px;
-            margin-left: 16px;
-            vertical-align: middle;
-        }
-        .text {
-            display: inline-block;
-            vertical-align: middle;
-            >p {
-                color: var(--contentColor);
-            }
-        }
-    }
-    .icons {
-        display: flex;
-        align-items: center;
-        .dowonload {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            margin-right: 12px;
-            margin-left: 12px;
-            padding: 8px rem(10px);
-            text-align: center;
-            background-color: var(--primary);
-            border-radius: 50%;
-            .dowonload-img {
-                //width: 20px;
-                //height: 20px;
-                margin-top: -3px;
-                color: #FFF;
-            }
-        }
-        .close {
-            margin-top: -5px;
-            margin-right: rem(30px);
-        }
-    }
-}
 .nav-wrap {
     width: 100%;
-    z-index: 999;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    height: rem(128px);
+    height: rem(116px);
+    padding: 0 rem(40px);
     background: #181A20;
+    position: relative;
+    z-index: 999;
     .logo {
         display: inline-block;
         display: flex;
         align-items: center;
         height: 64px;
-        padding-left: rem(30px);
         img {
             height: rem(68px);
         }
     }
-    .right {
+    .block {
         display: flex;
         align-items: center;
-        >div {
-            display: inline-block;
-            margin-right: rem(30px);
-        }
-        .registerBtn {
-            height: rem(60px);
-            line-height: 1.2;
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: rem(120px);
+            line-height: 1;
+            padding: 0;
             border-radius: rem(8px);
-            margin-right: rem(30px);
-            padding: 0 8px;
-        }
-        .accountTypeText {
-            height: rem(40px);
-            line-height: 1.2;
-            border-radius: rem(8px);
-            margin-right: rem(30px);
-            background: none;
             color: #FFF;
-            border: 0;
-            padding: rem(10px) rem(16px);
-            background: var(--primary);
             font-size: rem(24px);
-            &.mock {
-                background-color: #3762FF;
+            height: rem(50px);
+            border: none;
+            background-color: var(--primary);
+            span {
+                margin-right: rem(6px);
+            }
+            &.demo {
+                background-color: #3099F5;
+            }
+            .arrow {
+                font-size: rem(20px);
             }
         }
         .icon-svg {
             width: 24px;
             height: 24px;
+            margin-right: rem(24px);
             line-height: 1;
             color: #FFF;
-            font-size: 24px;
-            vertical-align: 5px;
+            font-size: rem(42px);
+            vertical-align: 4px;
         }
-        .account-dropdown-title {
-            .van-ellipsis {
-                color: var(--contentColor);
+    }
+    .full-assets {
+        .name {
+            display: flex;
+            align-items: center;
+            font-size: rem(24px);
+            .riskLevel {
+                width: rem(12px);
+                height: rem(12px);
+                margin-right: rem(8px);
+                border-radius: 50%;
+                &.riskLevel1 {
+                    background: var(--success);
+                }
+                &.riskLevel2 {
+                    background: var(--focusColor);
+                }
+                &.riskLevel3 {
+                    background: var(--warn);
+                }
+            }
+            span {
+                &.real {
+                    color: var(--primary);
+                }
+                &.demo {
+                    color: #3099F5;
+                }
             }
         }
-
-        --van-dropdown-menu-title-text-color: var(--color);
-        --van-dropdown-menu-title-active-text-color: var(--color);
-        .account-dropdown {
-            color: var(--contentColor);
-            background: var(--primary);
+        .amount {
+            display: flex;
+            align-items: center;
+            margin-top: rem(2px);
+            font-size: rem(28px);
+            color: #FFF;
+            .arrow {
+                font-size: rem(20px);
+                margin-left: rem(6px);
+            }
+        }
+    }
+}
+.account-sheet {
+    .recharge-button {
+        padding: 0 rem(20px);
+        margin-bottom: rem(20px);
+        width: 100%;
+        .van-button {
+            width: 100%;
             border-radius: rem(8px);
-            //padding: 0 rem(10px);
-            &.mock {
-                background: #3762FF;
-            }
-            :deep(.van-dropdown-menu__bar) {
-                height: rem(40px);
-                padding-right: rem(20px);
-                .van-ellipsis {
-                    font-size: rem(20px);
-                    color: #FFF;
+        }
+    }
+    .account-type {
+        color: var(--normalColor);
+        background: var(--assistColor);
+        display: flex;
+        align-items: center;
+        margin: rem(20px);
+        padding: rem(40px);
+        border-radius: rem(10px);
+        .radio {
+            margin-right: rem(20px);
+            width: rem(40px);
+            height: rem(40px);
+            border-radius: 50%;
+            border: solid 1px var(--minorColor);
+            &.active {
+                border: solid 1px var(--primary);
+                &::after {
+                    position: absolute;
+                    left: rem(8px);
+                    top: rem(8px);
+                    content: '';
+                    width: rem(20px);
+                    height: rem(20px);
+                    border-radius: 50%;
+                    background: var(--primary);
                 }
-
-                //border-radius: rem(16px);
             }
-            :deep(.van-dropdown-item) {
-                top: rem(120px) !important;
-            }
-            .account-sheet {
-                .recharge-button {
-                    padding: 0 rem(20px);
-                    margin-bottom: rem(20px);
-                    width: 100%;
-                    .van-button {
-                        width: 100%;
-                        border-radius: rem(8px);
-                    }
+        }
+        &.active {
+            color: var(--primary);
+            .radio {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: solid 1px var(--primary);
+                &::after {
+                    content: '';
+                    width: rem(20px);
+                    height: rem(20px);
+                    border-radius: 50%;
+                    background: var(--primary);
                 }
-                .account-type {
-                    color: var(--normalColor);
-                    background: var(--assistColor);
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: rem(20px);
-                    margin: rem(20px);
-                    padding: rem(40px);
-                    border-radius: rem(10px);
-                    .radio {
-                        margin-right: rem(20px);
-                        width: rem(40px);
-                        height: rem(40px);
-                        border-radius: 50%;
-                        border: solid 1px var(--minorColor);
-                        &.active {
-                            border: solid 1px var(--primary);
-                            &::after {
-                                position: absolute;
-                                left: rem(8px);
-                                top: rem(8px);
-                                content: '';
-                                width: rem(20px);
-                                height: rem(20px);
-                                border-radius: 50%;
-                                background: var(--primary);
-                            }
-                        }
-                    }
-                    &.active {
-                        color: var(--primary);
-                        .radio {
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border: solid 1px var(--primary);
-                            &::after {
-                                content: '';
-                                width: rem(20px);
-                                height: rem(20px);
-                                border-radius: 50%;
-                                background: var(--primary);
-                            }
-                        }
-                        &.demo {
-                            color: #3762FF;
-                            .radio {
-                                border: solid 1px #3762FF;
-                                &::after {
-                                    background: #3762FF;
-                                }
-                            }
-                        }
+            }
+            &.demo {
+                color: #3099F5;
+                .radio {
+                    border: solid 1px #3099F5;
+                    &::after {
+                        background: #3099F5;
                     }
                 }
             }
@@ -813,5 +823,64 @@ const handleLogout = () => {
         }
     }
 }
+.download-app {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: 60px;
+    padding: rem(26px) 0;
+    background: #FFF;
+    .brand {
+        font-size: 12px;
+        color: var(--color);
+        .logo {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            margin-right: 12px;
+            margin-left: 16px;
+            vertical-align: middle;
+        }
+        .text {
+            display: inline-block;
+            vertical-align: middle;
+            >p {
+                color: var(--contentColor);
+            }
+        }
+    }
+    .icons {
+        display: flex;
+        align-items: center;
+        .dowonload {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            margin-right: 12px;
+            margin-left: 12px;
+            padding: 8px rem(10px);
+            text-align: center;
+            background-color: var(--primary);
+            border-radius: 50%;
+            .dowonload-img {
+                //width: 20px;
+                //height: 20px;
+                margin-top: -3px;
+                color: #FFF;
+            }
+        }
+        .close {
+            margin-top: -5px;
+            margin-right: rem(30px);
+        }
+    }
+}
+</style>
 
+<style lang="scss">
+.account-switch-popup {
+    top: rem(116px);
+    z-index: 998 !important;
+}
 </style>

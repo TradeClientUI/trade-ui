@@ -24,6 +24,7 @@ npm run build_wp
 - 颜色换肤使用css变量实现，所以页面内所有元素都不能写死颜色值，须使用css颜色变量赋值；(如 color: var(--bdColor))
 - 获取用户信息统一使用 `FindCustomerInfo()`方法，导入文件：`import FindCustomerInfo from '@m/compositionApi/findCustomerInfo'`
 - 除了密码之外所有的呼输入框需做`trim`处理
+- `app.vue`里面使用`provide`提供了`routerReload`方法，可以刷新当前路由，可按照业务场景通过`inject`调用
 
 ## 关于时区
 
@@ -42,6 +43,8 @@ js里面需要用到的颜色可以使用`store.state.style`，也可以使用�
 - `store.getters.customerGroupId` // 当前客户组(包括游客账户组)
 - `store.getters.productActived` // 当前操作的产品信息
 - `store.getters.userSelfSymbolList` // 当前用户的自选产品列表
+
+
 
 
 ## Changelog

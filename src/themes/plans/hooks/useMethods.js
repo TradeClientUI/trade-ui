@@ -1,16 +1,18 @@
 import { useStore } from 'vuex'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { localGetJSON, localSetObj, sessionSet, setToken } from '@/utils/util'
 import { switchUserAccount } from '@/api/user'
 import { Dialog } from 'vant'
 import { useI18n } from 'vue-i18n'
+import { geoipCountry } from '@/api/base'
 
 export default function () {
     const store = useStore()
     const route = useRoute()
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
-
+    const businessConfig = computed(() => store.state.businessConfig)
     // 根据tradeType获取默认品种
     const getDefaultProduct = (tradeType) => {
         tradeType = Number(tradeType)
@@ -114,6 +116,7 @@ export default function () {
                     }).then(() => {
                         return store.dispatch('_user/findCustomerInfo', false)
                     }).then(() => {
+                        store.commit('_user/Update_emptyAccountAssets')
                         store.commit('_quote/Update_symbolBaseLoaded', 0)
                         return store.dispatch('_quote/querySymbolBaseInfoList')
                     }).then((r) => {

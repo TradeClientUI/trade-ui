@@ -19,8 +19,8 @@ const EmptyPendingPriceRang = {
     sellStopRange: [], // 卖出止损范围
 }
 
-const positionsConfig = {} // 持仓列表排序
-const pendingsConfig = {} // 挂单列表排序
+let positionsConfig = {} // 持仓列表排序
+let pendingsConfig = {} // 挂单列表排序
 
 export default {
     namespaced: true,
@@ -126,6 +126,8 @@ export default {
             state.pendingList = {}
             state.pendingMap = {}
             state.positionProfitLossList = []
+            positionsConfig = {}
+            pendingsConfig = {}
         },
         Update_modifyPositionId (state, data) {
             state.modifyPositionId = data

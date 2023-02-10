@@ -151,6 +151,9 @@ i {
 .relative {
     position: relative;
 }
+.cursor-pointer {
+    cursor: pointer;
+}
 .fullPageWrapper {
     flex: 1;
     margin-top: rem(90px);
@@ -597,19 +600,18 @@ body {
             background-color: var(--contentColor);
         }
     }
-    .van-checkbox__icon{
+    .van-checkbox__icon {
         .van-icon {
             border-radius: rem(8px);
             color: transparent;
         }
-    }   
-    .van-checkbox__icon--checked{
+    }
+    .van-checkbox__icon--checked {
         .van-icon {
             border-radius: rem(8px);
-            color: #fff;
+            color: #FFF;
         }
     }
-
     .van-picker__mask {
         background-image: none;
     }
@@ -623,6 +625,12 @@ body {
         border-color: var(--placeholdColor);
     }
     ::-webkit-input-placeholder {
+        color: var(--placeholdColor);
+    }
+    ::-moz-placeholder {
+        color: var(--placeholdColor);
+    }
+    ::-ms-input-placeholder {
         color: var(--placeholdColor);
     }
 
@@ -644,6 +652,7 @@ body {
     --van-popover-action-width: rem(80px);
     --van-popover-action-height: 30px;
     --van-cell-active-color: none;
+    --van-button-border-radius: 4px;
     .van-calendar__footer {
         .van-button {
             height: rem(74px);
@@ -672,7 +681,7 @@ body {
     &.van-overflow-hidden {
         overflow: visible !important;
     }
-    .van-toast{
+    .van-toast {
         word-break: break-word;
     }
 
@@ -723,7 +732,7 @@ body {
         --el-border-color-lighter: var(--lineColor);
         --el-dropdown-menuItem-hover-color: var(--primary);
     }
-    
+
     // .el-popper {
     //     color: var(--color) !important;
     //     font-size: 14px;
@@ -760,8 +769,8 @@ body {
             }
         }
     }
-    .van-pagination__item{
-        background: var(--contentColor)
+    .van-pagination__item {
+        background: var(--contentColor);
     }
     .el-input {
         --el-input-focus-border: var(--primary);
@@ -780,7 +789,7 @@ body {
             border-color: var(--primary) !important;
         }
     }
-    .van-checkbox__icon--checked .van-icon{
+    .van-checkbox__icon--checked .van-icon {
         --van-checkbox-checked-icon-color: var(--primary);
         --van-checkbox-checked-icon-color: var(--primary);
     }
@@ -818,25 +827,26 @@ body {
             background: var(--lineColor);
         }
     }
-    .el-button{
+    .el-button {
         --el-button-active-border-color: var(--normalColor);
         --el-button-active-bg-color: var(--normalColor);
     }
-    .el-button--primary{
+    .el-button--primary {
         --el-button-bg-color: var(--primary);
-        --el-button-border-color:var(--primary);
+        --el-button-border-color: var(--primary);
         --el-button-active-color: var(--primary);
         --el-button-active-bg-color: var(--primary);
-        --el-button-active-border-color:var(--primary);
+        --el-button-active-border-color: var(--primary);
         --el-button-hover-border-color: var(--primary);
         --el-button-hover-bg-color: var(--primary);
-
     }
-    .el-button:focus, .el-button:hover{
-        --el-button-hover-text-color: #fff;
-        
+    .el-button:focus,
+    .el-button:hover {
+        --el-button-hover-text-color: #FFF;
     }
-    
+    &.el-popup-parent--hidden {
+        overflow: auto;
+    }
     .web3modal-modal-lightbox {
         z-index: 102;
     }
@@ -903,7 +913,7 @@ body {
 }
 .icon_zixuan2,
 .icon_hangqingliebiaoyijiazixuan {
-    color: var(--focusColor);
+    color: var(--primary);
 }
 .icon_hangqingliebiaoweijiazixuan {
     color: var(--minorColor);
@@ -920,5 +930,16 @@ body {
 @media only screen and (min-width: 768px) {
     .walletconnect-connect__buttons__wrapper__wrap {
         //margin-top: 0 !important;
+    }
+}
+.el-notification {
+    background-color: var(--contentColor) !important;
+    .w-el-notificationnotification__title,
+    .w-el-notificationnotification__content {
+        color: var(--color) !important;
+        text-align: left !important;
+    }
+    .el-notification__content {
+        text-align: left;
     }
 }

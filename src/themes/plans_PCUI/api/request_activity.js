@@ -1,10 +1,10 @@
 import axios from 'axios'
 import CheckAPI from '../../../utils/checkAPI'
-import uuid from 'uuid'
+import { v4 } from 'uuid'
 import { guid, removeLoginParams, getCookie } from '@/utils/util'
 let router = null
 export const setRouter = r => (router = r)
-export const token = uuid.v4()
+export const token = v4()
 
 const companyId = sessionStorage.getItem('companyId')
 const development = process.env.NODE_ENV === 'development'

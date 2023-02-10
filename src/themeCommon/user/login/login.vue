@@ -1,6 +1,6 @@
 <template>
     <LayoutTop :menu='false' :show-title='false' />
-    <div class='pageWrap'>
+    <div v-if='!accessFlag' class='pageWrap'>
         <div class='page-title'>
             <span v-if='tabActive === 0' class='openType1'>
                 {{ $t('login.welcomeLogin') }}MagnaMarkets
@@ -169,6 +169,7 @@ export default {
         const { t } = useI18n({ useScope: 'global' })
         const instance = getCurrentInstance()
         const businessConfig = computed(() => store.state.businessConfig)
+        const accessFlag = computed(() => store.state._base.accessFlag)
         const state = reactive({
             loading: false,
             pwdVisible: false,
@@ -362,7 +363,9 @@ export default {
                 const resData = res.data
                 const lastAccountType = localGetObj('mockAccount', 'lastAccountType')
                 const isReal = !lastAccountType || lastAccountType === 'real'
-                if (isReal && Number(resData.companyKycStatus) === 1) {
+                if (!isReal) {
+                    noticeSetPwd(resData.loginPassStatus)
+                } else if (Number(resData.companyKycStatus) === 1) {
                     if (Number(resData.kycAuditStatus === 0)) {
                         return Dialog.alert({
                             title: t('common.tip'),
@@ -493,6 +496,13 @@ export default {
         // 获取三方登录配置
         store.dispatch('_base/getLoginConfig')
 
+        // ip没权限。跳转受限页面
+        watch(() => accessFlag.value, val => {
+            if (val) router.replace('/noAccess')
+        }, {
+            immediate: true
+        })
+
         onMounted(() => {
             if (route.query.loginType) {
                 state.loginType = route.query.loginType
@@ -515,7 +525,8 @@ export default {
             checkUserMfa,
             getGooleVerifyCode,
             thirdLoginArr,
-            businessConfig
+            businessConfig,
+            accessFlag
         }
     }
 }

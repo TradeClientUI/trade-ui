@@ -11,8 +11,8 @@
                     right-icon='arrow-down'
                     @click='countryShow = true'
                 />
-                <van-field v-model.trim='firstName' :label='$t("bank.bankPersonFirstName")' :placeholder='$t("bank.bankPersonFirstName")' required />
-                <van-field v-model.trim='lastName' :label='$t("bank.bankPersonLastName")' :placeholder='$t("bank.bankPersonLastName")' required />
+                <van-field v-model.trim='firstName' :label='$t("bank.bankPersonFirstName")' :placeholder='$t("common.input") + $t("bank.bankPersonFirstName")' required />
+                <van-field v-model.trim='lastName' :label='$t("bank.bankPersonLastName")' :placeholder='$t("common.input") + $t("bank.bankPersonLastName")' required />
                 <!-- <van-field v-model.trim='bankNo' :label='$t("bank.bankNo")' :placeholder='$t("bank.inputBankNo")' type='number' /> -->
                 <van-field v-model.trim='bankAccount' :label='$t("bank.bankAccount")' :placeholder='$t("bank.inputBankAccount")' required />
                 <van-field
@@ -24,7 +24,7 @@
                     right-icon='arrow-down'
                     @click='openBankDialog'
                 />
-                <CurrencyAction v-model='currency' v-model:show='currencyShow' class='cellRow' input-align='left' />
+                <CurrencyAction v-model='currency' v-model:show='currencyShow' class='cellRow' input-align='left' :list='currencyList' />
 
                 <!-- <van-field
                     v-model.trim='area'
@@ -105,7 +105,7 @@ import { useStore } from 'vuex'
 import Schema from 'async-validator'
 import { Toast } from 'vant'
 import { addInternationalBank } from '@/api/user'
-import { getCountryListByParentCode, getListByParentId } from '@/api/base'
+import { getCountryListByParentCode, getListByParentCode, getListByParentId } from '@/api/base'
 import CurrencyAction from '@/components/currencyAction'
 import { useI18n } from 'vue-i18n'
 
@@ -141,6 +141,8 @@ export default {
             lastName: '',
             bankNo: '',
             bankName: '',
+            allCurrencyList: [], // 所有国家银行卡币种列表
+            currencyList: [], // 当前选择国家的银行卡币种列表
             currency: '',
             area: '',
             bankArea: '',
@@ -175,6 +177,36 @@ export default {
                 state.bankName = ''
                 state.checkedBankCode = ''
                 state.bankList = []
+            }
+        }
+
+        // 获取所有国家银行卡币种数据
+        const getCountryCurrencys = () => {
+            getListByParentCode({ parentCode: 'common_currency' }).then(res => {
+                if (res.check()) {
+                    const { data } = res
+                    if (data && data.length > 0) {
+                        state.allCurrencyList = data
+                    }
+                }
+            })
+        }
+
+        // 获取当前选择的国家银行卡币种数据
+        const getCurrencyList = () => {
+            const item = state.allCurrencyList.find(el => el.code === (state.countryCode + '_currency'))
+            if (item) {
+                getListByParentId({
+                    parentId: item.id
+                }).then(res => {
+                    state.currencyList = res.data || []
+                    if (res.data.length === 1) {
+                        state.currency = res.data[0].code
+                    }
+                })
+            } else {
+                state.currencyList = []
+                state.currency = ''
             }
         }
 
@@ -309,9 +341,15 @@ export default {
 
         // 监听countryCode
         watchEffect(() => {
-            if (state.countryCode && countryBanks.value.length > 0) {
+            if (state.countryCode) {
                 // 获取银行卡列表数据
-                getBankList()
+                if (countryBanks.value.length > 0) {
+                    getBankList()
+                }
+                // 获取当前选择的国家银行卡币种数据
+                if (state.allCurrencyList.length > 0) {
+                    getCurrencyList()
+                }
             }
         })
 
@@ -320,6 +358,8 @@ export default {
             store.dispatch('getCountryListByParentCode')
             // 获取国家银行卡列表
             store.dispatch('getBankDictList')
+            // 获取所有国家银行卡币种数据
+            getCountryCurrencys()
         })
 
         return {

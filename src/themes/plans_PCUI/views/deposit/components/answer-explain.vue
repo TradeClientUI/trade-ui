@@ -23,23 +23,15 @@
 </template>
 
 <script setup>
-import { ref, unref, computed } from 'vue'
-import { useStore } from 'vuex'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const store = useStore()
 const { tm } = useI18n()
-// 在线客服地址
-const onlineService = unref(computed(() => store.state._base.wpCompanyInfo?.onlineService))
 // 当前显示的模块
 const activeNames = ref(-1)
 // 问答内容
 const answerArr = tm('deposit.answers')
 
-// 打开客服页面
-const goService = () => {
-    if (onlineService) window.open(onlineService)
-}
 </script>
 
 <style lang="scss" scoped>

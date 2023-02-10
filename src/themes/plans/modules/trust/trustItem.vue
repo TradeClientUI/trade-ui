@@ -93,7 +93,7 @@
                         {{ $t('trade.stopLossPrice') }}
                     </div>
                     <span class='val'>
-                        {{ shiftedBy(product.stopLoss,-1*product.digits ) || '--' }}
+                        {{ product.stopLossTarget || '--' }}
                     </span>
                 </div>
 
@@ -103,7 +103,7 @@
                     </div>
 
                     <span class='val'>
-                        {{ shiftedBy(product.takeProfit,-1*product.digits ) || '--' }}
+                        {{ product.takeProfitTarget || '--' }}
                     </span>
                 </div>
             </div>

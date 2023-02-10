@@ -2,6 +2,7 @@
     <div class='trade-header'>
         <!-- 订单类型 -->
         <OrderTypeTab
+            v-if='product'
             v-model='orderType'
             :trade-mode='product.dealMode'
             :trade-type='product.tradeType'
@@ -90,11 +91,14 @@
             </div>
             <div v-else class='form-item disable'>
                 <label for=''>
-                    {{ $t('trade.buyPrice') }}  &nbsp;&nbsp;
-                    <span class='minor'>
-                        {{ $t('trade.bestPriceBuy') }}
-                    </span>
+                    {{ $t('trade.buyPrice') }}
                 </label>
+                <span class='minor'>
+                    {{ $t('trade.bestPriceBuy') }}
+                </span>
+                <div class='right-val'>
+                    {{ product?.profitCurrency || '&nbsp;' }}
+                </div>
             </div>
 
             <div class='form-item'>
@@ -177,12 +181,15 @@
                 />
             </div>
             <div v-else class='form-item disable'>
-                <label for=''>
-                    {{ $t('trade.sellPrice') }} &nbsp;&nbsp;
-                    <span class='minor'>
-                        {{ $t('trade.bestPriceSell') }}
-                    </span>
+                <label>
+                    {{ $t('trade.sellPrice') }}
                 </label>
+                <span class='minor'>
+                    {{ $t('trade.bestPriceSell') }}
+                </span>
+                <div class='right-val'>
+                    {{ product?.profitCurrency || '&nbsp;' }}
+                </div>
             </div>
 
             <div class='form-item'>
@@ -344,7 +351,7 @@ export default {
         // 业务配置
         const businessConfig = computed(() => store.state.businessConfig)
 
-        const showLeverage = computed(() => [1, 2].includes(Number(product.value.tradeType)) && product.value.marginInfo?.type !== '1')
+        const showLeverage = computed(() => [1, 2].includes(Number(product.value?.tradeType)) && product.value?.marginInfo?.type !== '1')
 
         // 现货产品的基础货币是【基金代币】的，显示【申/赎】按钮
         const fundtoken = computed(() => {
@@ -552,6 +559,7 @@ export default {
 
         // 初始化设置
         const init = () => {
+            if (store.state._user.switchAccounting) return false
             resetForm()
             state.orderType = 1
             // 获取产品详情
@@ -801,9 +809,12 @@ export default {
         label {
             margin-right: 9px;
             color: var(--normalColor);
-            .minor {
-                color: var(--minorColor);
-            }
+        }
+        .minor {
+            color: var(--minorColor);
+        }
+        .right-val {
+            color: var(--normalColor);
         }
         :deep(.trade-type) {
             color: var(--normalColor);
@@ -847,6 +858,9 @@ body.night {
                 color: #FFF;
             }
             :deep(.trade-type) {
+                color: #FFF;
+            }
+            .right-val {
                 color: #FFF;
             }
         }

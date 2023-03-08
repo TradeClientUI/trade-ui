@@ -46,22 +46,22 @@ const list = [
     {
         id: 2,
         headerText: 'Tess Vinson',
-        descText: 'Great app in general, speaking as a new user. Registration and kyc are easy, no problems encountered. I just wish there will be more functions coming up, but if you are new to crypto, you’ve got everything you need on MagnaMarkets.'
+        descText: 'Great app in general, speaking as a new user. Registration and kyc are easy, no problems encountered. I just wish there will be more functions coming up, but if you are new to crypto, you’ve got everything you need on CATS.'
     },
     {
         id: 3,
         headerText: 'Leah Cooper',
-        descText: 'Very user-friendly platform, I just got into crypto recently and MagnaMarkets has been my favourite. The fees are good and I can buy crypto funds instead of just individual cryptos.'
+        descText: 'Very user-friendly platform, I just got into crypto recently and CATS has been my favourite. The fees are good and I can buy crypto funds instead of just individual cryptos.'
     },
     {
         id: 4,
         headerText: 'Lavinia Cain',
-        descText: 'I have been looking for a platform to purchase crypto funds, finally there is one! Looking forward to more crypto funds and functions on MagnaMarkets.'
+        descText: 'I have been looking for a platform to purchase crypto funds, finally there is one! Looking forward to more crypto funds and functions on CATS.'
     },
     {
         id: 5,
         headerText: 'Johanna Arbana',
-        descText: 'MagnaMarkets surely surprises me considering that it is a new platform. The UI is very user friendly and the crypto funds actually look pretty promising. High hopes for this company!'
+        descText: 'CATS surely surprises me considering that it is a new platform. The UI is very user friendly and the crypto funds actually look pretty promising. High hopes for this company!'
     },
     {
         id: 6,
@@ -76,17 +76,17 @@ const list = [
     {
         id: 8,
         headerText: 'Tihana Cali',
-        descText: 'MagnaMarkets is safe and reliable, licensed by CEZA & FinCEN, I didn’t come across any bugs and I really like the idea of a crypto funds trading platform. I have high hopes for MagnaMarkets.'
+        descText: 'CATS is safe and reliable, licensed by __placeholder & FinCEN, I didn’t come across any bugs and I really like the idea of a crypto funds trading platform. I have high hopes for CATS.'
     },
     {
         id: 9,
         headerText: 'Clifford Walters',
-        descText: 'MagnaMarkets is exactly what I have been looking for, a nice and simple crypto funds platform. Really easy to navigate around the website and the purchasing process is easy to follow as well. No complaints for such a new platform.'
+        descText: 'CATS is exactly what I have been looking for, a nice and simple crypto funds platform. Really easy to navigate around the website and the purchasing process is easy to follow as well. No complaints for such a new platform.'
     },
     {
         id: 10,
         headerText: 'Maxine Higgins',
-        descText: 'If you are new to crypto and you want to start investing in crypto, MagnaMarkets is for you. It has all the features that you need and what makes this platform stand out is the easy purchasing of crypto funds. Especially if you are not familiar with cryptos, just buy crypto funds.'
+        descText: 'If you are new to crypto and you want to start investing in crypto, CATS is for you. It has all the features that you need and what makes this platform stand out is the easy purchasing of crypto funds. Especially if you are not familiar with cryptos, just buy crypto funds.'
     }
 ]
 </script>

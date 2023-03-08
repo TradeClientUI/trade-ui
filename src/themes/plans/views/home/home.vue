@@ -20,13 +20,13 @@
         <!--现在是分批买入加密基金的好时机-->
         <!-- <buy-now /> -->
         <!--选择vitatoken-->
-        <choose-vitatoken />
+        <choose-Cats />
         <!--评价vitatoken-->
-        <said-about-vitatoken />
+        <said-about-Cats />
         <!--3分钟开启投资-->
         <start-investment />
         <!--下载vitatoken-->
-        <download-vitatoken />
+        <download-Cats />
 
         <!--faq-->
         <faq />

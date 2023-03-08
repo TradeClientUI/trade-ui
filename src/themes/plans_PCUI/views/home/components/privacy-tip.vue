@@ -38,7 +38,7 @@ const onClose = () => {
 }
 // 打开隐私协议页面
 const openPrivacy = () => {
-    window.open('https://www.vitatoken.io/site/privacy-policy')
+    window.open('https://www.Cats.io/site/privacy-policy')
 }
 </script>
 

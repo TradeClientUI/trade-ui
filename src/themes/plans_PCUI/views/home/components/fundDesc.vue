@@ -17,7 +17,7 @@
                     </li>
                 </ul> -->
                 <div class='btnBox'>
-                    <button class='btn' @click="openPDF('https://www.vitatoken.io/site/v10-whitepaper.pdf')">
+                    <button class='btn' @click="openPDF('https://www.Cats.io/site/v10-whitepaper.pdf')">
                         {{ $t('home.fundDesc.text3') }}
                     </button>
                 </div>
@@ -29,7 +29,7 @@
                 <p class='desc' v-html="$t('home.fundDesc.text5')"></p>
                 <!-- <img alt='' class='jingzhiImg' src='../../../images/home/jingzhi.png' /> -->
                 <div class='btnBox'>
-                    <button class='btn' @click="openPDF('https://www.vitatoken.io/site/v10-fund-whitepaper.pdf')">
+                    <button class='btn' @click="openPDF('https://www.Cats.io/site/v10-fund-whitepaper.pdf')">
                         {{ $t('home.fundDesc.text6') }}
                     </button>
                 </div>

@@ -1,7 +1,6 @@
 <template>
     <div class='referralCode'>
         <p class='header'>
-            <img alt='' class='header_img' src='../../../../images/business/openAccount/video_index.png' />
             <van-icon class='cross' color='#FFFFFF' name='cross' size='24' @click='cross' />
         </p>
         <p class='title'>

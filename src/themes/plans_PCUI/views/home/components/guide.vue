@@ -17,19 +17,19 @@ const lang = getCookie('lang')
 const list = [
     {
         url: require('@planspc/images/' + lang + '/guide-1.png'),
-        link: 'https://www.vitatoken.io/site/about-us'
+        link: 'https://www.Cats.io/site/about-us'
     },
     {
         url: require('@planspc/images/' + lang + '/guide-2.png'),
-        link: 'https://www.vitatoken.io/site/v10'
+        link: 'https://www.Cats.io/site/v10'
     },
     {
         url: require('@planspc/images/' + lang + '/guide-3.png'),
-        link: 'https://www.vitatoken.io/site/tutorial'
+        link: 'https://www.Cats.io/site/tutorial'
     },
     {
         url: require('@planspc/images/' + lang + '/guide-4.png'),
-        link: 'https://cs.vitatoken.io/im/text/1cayxu.html?lang=en'
+        link: 'https://cs.Cats.io/im/text/1cayxu.html?lang=en'
     }
 ]
 // 点击列表项

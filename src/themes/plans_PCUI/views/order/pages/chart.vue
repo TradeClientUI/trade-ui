@@ -292,9 +292,9 @@ import { Dialog, Toast } from 'vant'
 import tv from '@/components/tradingview/tv'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { QuoteSocket } from '@/plugins/socket/socket'
-import { isEmpty, localSet, localGet, getCookie } from '@/utils/util'
+import { isEmpty, localSet, localGet, getCookie, sessionSet, sessionGet } from '@/utils/util'
 import { formatAmount } from '@/utils/calculation'
 import EtfIcon from '@planspc/components/etfIcon.vue'
 import KIcon from './components/icons/kIcon.vue'
@@ -984,6 +984,7 @@ export default {
             QuoteSocket.add_subscribe({ moduleId: 'order_productActivited', symbolKeys: [`${product.value.symbolId}_${product.value.tradeType}`] })
             // const invertColor = localGet('invertColor')
             initChartData()
+
             chartRef.value && chartRef.value.reset({
                 initialValue: initialValue.value,
                 options: unref(state.initConfig)
@@ -1004,15 +1005,6 @@ export default {
         const onChartReady = () => {
             state.onChartReadyFlag = true
         }
-
-        // 监听路由变化
-        watch(
-            () => route.query, (val, oval) => {
-                changeRoute()
-            }, {
-                immediate: true
-            }
-        )
 
         // QuoteSocket.send_subscribe([`${product.value.symbolId}_${product.value.tradeType}`])
 
@@ -1041,6 +1033,16 @@ export default {
         document.body.addEventListener('Launch_theme', changeTheme, false)
         // 监听设置图表颜色
         document.body.addEventListener('Launch_chartColor', changeChartColor, false)
+
+        // 监听路由变化
+        onBeforeRouteUpdate(async (to, from) => {
+            console.log(to, from)
+            sessionSet('cacheToURL', to.path)
+            if (from.path === sessionGet('cacheToURL')) {
+                changeRoute()
+            }
+        })
+        changeRoute()
 
         onMounted(() => {
             // 全屏触发事件

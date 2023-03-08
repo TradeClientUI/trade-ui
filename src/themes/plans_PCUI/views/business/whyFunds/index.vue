@@ -29,7 +29,7 @@
                 </div>
                 <div class='item center'>
                     <p class='boxText'>
-                        Investors buy funds via <br /> MagnaMarkets
+                        Investors buy funds via <br /> CATS
                     </p>
                     <p class='boxText'>
                         Manage and invest in <br /> different cryptocurrencies
@@ -295,12 +295,12 @@
                     </p>
                 </div>
                 <div class='right'>
-                    <img alt='' src='../../../images/business/whyFunds/Vitatoken.png' />
+                    <img alt='' src='../../../images/business/whyFunds/Vita.png' />
                     <p class='h2'>
-                        MagnaMarkets
+                        CATS
                     </p>
                     <p class='h3'>
-                        MagnaMarkets' quantitative engine will recommend high-quality funds, and long- term indicators suggesting buying and selling zones
+                        CATS' quantitative engine will recommend high-quality funds, and long- term indicators suggesting buying and selling zones
                     </p>
                     <p>
                         <span class='btn btn-res' @click="handleClick( isLogin? 'deposit' : 'Register' )">

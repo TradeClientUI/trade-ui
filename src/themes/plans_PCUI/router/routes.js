@@ -394,7 +394,7 @@ const routes = [
                 path: 'home',
                 name: 'Home',
                 component: () =>
-                    import(/* webpackChunkName: "Home" */ '../views/home/home_new.vue'),
+                    import(/* webpackChunkName: "Home" */ '../views/home/home_vita.vue'),
                 meta: {
                     title: 'route.home',
                     // keepAlive: true,

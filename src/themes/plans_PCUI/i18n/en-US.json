@@ -1056,7 +1056,7 @@
         "why": {
             "text1": "Safety is the priority",
             "text2": "Secure Asset Fund for Users (SAFU)",
-            "text3": "MagnaMarkets stores 10% of all trading fees in a secure asset fund to protect a share of user funds.",
+            "text3": "CATS stores 10% of all trading fees in a secure asset fund to protect a share of user funds.",
             "text4": "Personalised Access Control",
             "text5": "Advanced access control allows you to restrict devices and addresses that can access your account, for greater ease of mind.",
             "text6": "Advanced Data Encryption",
@@ -1075,7 +1075,7 @@
         },
         "portfolio": {
             "text1": "Create your cryptocurrency portfolio today",
-            "text2": "MagnaMarkets has a variety of features that make it the best place to start trading",
+            "text2": "CATS has a variety of features that make it the best place to start trading",
             "text3": "High efficient",
             "text4": "Buy and sell cryptocurrencies and track them all in one place.",
             "text5": "Clear and easy",
@@ -1090,7 +1090,7 @@
             "text4": "Fund your account",
             "text5": "Add funds to your crypto account to start trading crypto.",
             "text6": "Start trading",
-            "text7": "Ready to go! Trading V10 or cryptocurrencies and discover what MagnaMarkets has to offer."
+            "text7": "Ready to go! Trading V10 or cryptocurrencies and discover what CATS has to offer."
         },
         "privacy": {
             "agree": "Agree",
@@ -1108,7 +1108,7 @@
         "downloadTip": "iOS & Android Scan Code To Download APP",
         "moreDownload": "More download options",
         "title": "Trade Anywhere",
-        "subTitle": "All the power of MagnaMarkets' cryptocurrency exchange, in the palm of your hand. Download the MagnaMarkets mobile crypto trading app today.",
+        "subTitle": "All the power of CATS' cryptocurrency exchange, in the palm of your hand. Download the CATS mobile crypto trading app today.",
         "android": "Download for Android",
         "ios": "Download for iphone"
     },
@@ -1167,7 +1167,7 @@
     },
     "homeJD": {
         "quotationList": "Quotation list",
-        "quotationListDesc": "Real-Time Quote Service supplied by MagnaMarkets",
+        "quotationListDesc": "Real-Time Quote Service supplied by CATS",
         "sell": "Sell",
         "buy": "Buy",
         "change": "Change",
@@ -1189,7 +1189,7 @@
         "24hoursDesc": "The CFDs market is usually available to trade 24 hours a day, seven days a week because there is all kinds of products in the global markets.",
         "liquidity": "Improved liquidity",
         "liquidityDesc": "When you trade CFDs, you can get improved liquidity because the market source prices from multiple venues on your behalf.",
-        "whyJD": "Why MagnaMarkets",
+        "whyJD": "Why CATS",
         "whyJDDesc": "A intelligence CFDs investment platform build for everyone.",
         "indicator": "Trading indicators",
         "indicatorDesc": "According to the award-winning expert technical analysis method, through each chart, get the trading direction information.",
@@ -1206,10 +1206,10 @@
         "voiceName1Desc": "This is an amazing platform for those who want to invest in the CFDs. Super easy to use. If you don't know which product  to invest in, they have many available products to choose from. I'm extremely excited for the new updates and features!",
         "voiceName2": "Maxine Higgins",
         "voiceName2Label": "Professional fund manager",
-        "voiceName2Desc": "MagnaMarkets is a phenomenal resource that offers a safe and reliable CFDs investing platform with rich products and professional trading system. I have extremely high hopes for  this platform.",
+        "voiceName2Desc": "CATS is a phenomenal resource that offers a safe and reliable CFDs investing platform with rich products and professional trading system. I have extremely high hopes for  this platform.",
         "voiceName3": "Tihana Cali",
         "voiceName3Label": "Professional Swing Trader",
-        "voiceName3Desc": "MagnaMarkets is a very good team. Judging from the fact that they have carried out a lot of exploration and innovation in the field of CFD trading, it fully reflects the excellent level of their operations and development teams. I look forward to more and better services and products from MagnaMarkets.",
+        "voiceName3Desc": "CATS is a very good team. Judging from the fact that they have carried out a lot of exploration and innovation in the field of CFD trading, it fully reflects the excellent level of their operations and development teams. I look forward to more and better services and products from CATS.",
         "tradeSteps": "Launch your trade in 3 steps",
         "tradeStep1": "Register for a new account",
         "tradeStep2": "Deposit into your account",
@@ -1232,9 +1232,9 @@
         "faqs5": "How to calculate profit and loss?",
         "faqs5Desc": "Floating profit and loss = (selling price - buying price) * contract unit * number of lots For example: the customer opens a position and buys 1 lot of euros and dollars at 1.12000, and sells and closes the position when the price rises to 1.12100. Profit and loss at this time = (1.12100-1.12000) * 100000 * 1 = $100",
         "signalsTrade":	"See signals \n Then trade!",
-        "signalsTradeDesc":	"Make a wise trade by MagnaMarkets quantitative signals.",
+        "signalsTradeDesc":	"Make a wise trade by CATS quantitative signals.",
         "tradingIdeas":	"Trading signals",
-        "tradingIdeasDesc": "Powered by MagnaMarkets quantitative trading system",
+        "tradingIdeasDesc": "Powered by CATS quantitative trading system",
         "priceTips": "*Product pricing in this list is for reference only. Please click on each individual product to view details.",
         "createAccountFree": "Create",
         "real": "REAL",

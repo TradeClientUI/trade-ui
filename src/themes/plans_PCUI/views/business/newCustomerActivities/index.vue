@@ -24,34 +24,34 @@
                         <p class='welcome_text pointer'>
                             Step 1: Register a
                             <router-link class='link' to='/register'>
-                                MagnaMarkets Account
+                                CATS Account
                                 <i class='el-icon-arrow-right'></i>
                             </router-link>
                         </p>
                         <p class='welcome_text pointer'>
                             Step 2: Follow
-                            <a class='link' href='https://www.facebook.com/MagnaMarkets/' target='_blank'>
-                                MagnaMarkets Facebook account
+                            <a class='link' href='https://www.facebook.com/CATS/' target='_blank'>
+                                CATS Facebook account
                                 <i class='el-icon-arrow-right'></i>
                             </a>
                         </p>
                         <p class='welcome_text pointer'>
                             Step 3: Follow
                             <a class='link' href='https://www.youtube.com/channel/UCWrIoUETskxOU9zIVpba6Hg' target='_blank'>
-                                MagnaMarkets YouTube account
+                                CATS YouTube account
                                 <i class='el-icon-arrow-right'></i>
                             </a>
                         </p>
                         <p class='welcome_text pointer'>
                             Step 4: Follow
-                            <a class='link' href='https://twitter.com/MagnaMarkets_' target='_blank'>
-                                MagnaMarkets Twitter account
+                            <a class='link' href='https://twitter.com/CATS_' target='_blank'>
+                                CATS Twitter account
                                 <i class='el-icon-arrow-right'></i>
                             </a>
                         </p>
                         <p class='welcome_text pointer'>
                             Step 5:
-                            <a class='link' href='https://twitter.com/MagnaMarkets_/status/1552551420070469632?s=20&t=vN-kLx3P6RfpFOeekgvFgA' target='_blank'>
+                            <a class='link' href='https://twitter.com/CATS_/status/1552551420070469632?s=20&t=vN-kLx3P6RfpFOeekgvFgA' target='_blank'>
                                 Retweet and tag 3 of your best friends
                                 <i class='el-icon-arrow-right'></i>
                             </a>
@@ -75,7 +75,7 @@
                             Rule: The first 100 people to complete each day receive 0.01 V10 (About 5 USDT)
                         </p>
                         <p class='welcome_text'>
-                            Step 1: Register a MagnaMarkets Account
+                            Step 1: Register a CATS Account
                         </p>
                         <p class='welcome_text'>
                             Step 2: Fund more than 50 USDT in 24H
@@ -123,7 +123,7 @@
                     * Each customer can only get V10 for free once
                 </p>
                 <p class='desc'>
-                    1. If MagnaMarkets finds that the customer is trading irregularly during the campaign period, it has the right to stop the customer's trading and cancel the reward qualification.
+                    1. If CATS finds that the customer is trading irregularly during the campaign period, it has the right to stop the customer's trading and cancel the reward qualification.
                 </p>
                 <p class='desc'>
                     2. Clients are responsible for any fees incurred in the process.
@@ -132,13 +132,13 @@
                     3. Contact our online customer service if you have questions about the campaign.
                 </p>
                 <p class='desc'>
-                    4. MagnaMarkets reserves the right, at its sole discretion, to modify, change or cancel this posting at any time and for any reason without prior notice.
+                    4. CATS reserves the right, at its sole discretion, to modify, change or cancel this posting at any time and for any reason without prior notice.
                 </p>
                 <p class='desc'>
-                    5. Warning: Cryptocurrency trading is risky, so please be cautious and aware of the risks involved. MagnaMarkets is not responsible for any guarantee, compensation, etc. for any of your transactions.
+                    5. Warning: Cryptocurrency trading is risky, so please be cautious and aware of the risks involved. CATS is not responsible for any guarantee, compensation, etc. for any of your transactions.
                 </p>
                 <p class='desc'>
-                    6. MagnaMarkets reserves the right to modify or cancel this campaign at any point. If any part of the terms and conditions is unclear, we reserve the right to interpret it when deemed appropriate. Participating in the event means you agree to the terms and conditions.
+                    6. CATS reserves the right to modify or cancel this campaign at any point. If any part of the terms and conditions is unclear, we reserve the right to interpret it when deemed appropriate. Participating in the event means you agree to the terms and conditions.
                 </p>
             </div>
         </el-dialog>

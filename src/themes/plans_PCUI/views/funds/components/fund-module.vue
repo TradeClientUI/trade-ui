@@ -4,7 +4,7 @@
             {{ $t('funds.title') }}
         </h2>
         <p class='by'>
-            By <span>MagnaMarkets</span> Crypto Exchange
+            By <span>CATS</span> Crypto Exchange
         </p>
         <p class='subTitle'>
             {{ $t('funds.subTitle') }}

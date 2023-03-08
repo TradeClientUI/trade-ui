@@ -4,16 +4,16 @@
             <van-swipe-item>
                 <div class='step'>
                     <img alt='' class='top-logo' src='../../../../images/home/logo/11.png' />
-                    <a class='more' href='https://finance.yahoo.com/news/vitatoken-launched-worlds-first-cryptocurrency-052300053.html'>
+                    <a class='more' href='https://finance.yahoo.com/news/Cats-launched-worlds-first-cryptocurrency-052300053.html'>
                         Know more >
                     </a>
                     <div class='flex'>
                         <div class='left'>
                             <h2 class='title'>
-                                Vitamin is vital, just like MagnaMarkets
+                                Cats is vital, just like CATS
                             </h2>
                             <span>
-                                MagnaMarkets' mission is to make crypto journey easier. We provide a crypto funds platform that allows fund managers, users and us to achieve a win-win situation.
+                                CATS' mission is to make crypto journey easier. We provide a crypto funds platform that allows fund managers, users and us to achieve a win-win situation.
                             </span>
                         </div>
                         <img alt='' class='right-img' src='../../../../images/aboutus/media1.png' />
@@ -57,7 +57,7 @@
             <van-swipe-item>
                 <div class='step'>
                     <img alt='' class='top-logo' src='../../../../images/home/logo/13.png' />
-                    <a class='more' href='https://www.bloomberg.com/press-releases/2022-10-14/vitatoken-launched-the-world-s-first-cryptocurrency-fund-trading-platform'>
+                    <a class='more' href='https://www.bloomberg.com/press-releases/2022-10-14/Cats-launched-the-world-s-first-cryptocurrency-fund-trading-platform'>
                         Know more >
                     </a>
                     <div class='flex'>
@@ -76,7 +76,7 @@
             <van-swipe-item>
                 <div class='step'>
                     <img alt='' class='top-logo' src='../../../../images/home/logo/14.png' />
-                    <a class='more' href='https://www.coinspeaker.com/vitatoken-launched-worlds-first-cryptocurrency-fund-trading-platform/'>
+                    <a class='more' href='https://www.coinspeaker.com/Cats-launched-worlds-first-cryptocurrency-fund-trading-platform/'>
                         Know more >
                     </a>
                     <div class='flex'>
@@ -95,7 +95,7 @@
             <van-swipe-item>
                 <div class='step'>
                     <img alt='' class='top-logo' src='../../../../images/home/logo/16.png' />
-                    <a class='more' href='https://www.benzinga.com/pressreleases/22/10/g29264360/vitatoken-launched-the-worlds-first-cryptocurrency-fund-trading-platform'>
+                    <a class='more' href='https://www.benzinga.com/pressreleases/22/10/g29264360/Cats-launched-the-worlds-first-cryptocurrency-fund-trading-platform'>
                         Know more >
                     </a>
                     <div class='flex'>
@@ -104,7 +104,7 @@
                                 Asset safety, UnionBank escrow money
                             </h2>
                             <span>
-                                Total market capitalization of the Fund reached 2.85B, more and more people are choosing MagnaMarkets.
+                                Total market capitalization of the Fund reached 2.85B, more and more people are choosing CATS.
                             </span>
                         </div>
                         <img alt='' class='right-img' src='../../../../images/aboutus/media5.png' />

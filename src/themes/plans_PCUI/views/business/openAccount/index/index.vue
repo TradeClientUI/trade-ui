@@ -81,7 +81,6 @@
             @close='showCode = false'
         >
             <template #title>
-                <img alt='' class='dialogCode_header' src='../../../../images/business/openAccount/video_index.png' />
                 <!-- 立即注册 一起赚币 -->
                 <p class='dialogCode_title'>
                     {{ $t('JG_referral.referralTitle') }}

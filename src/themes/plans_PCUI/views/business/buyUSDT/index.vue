@@ -59,12 +59,12 @@
                 <p class='top fcc'>
                     <img alt='' src='../../../images/business/buyUSDT/triangle.png' />
                     <span class='black'>
-                        MagnaMarkets
+                        CATS
                     </span>
                 </p>
                 <div class='center fcc'>
                     <p class='grey'>
-                        UnionBank stores <br /> MagnaMarkets users' money
+                        UnionBank stores <br /> CATS users' money
                     </p>
                     <img alt='' class='leftImg' src='../../../images/business/buyUSDT/triangle2-1.png' />
                     <img alt='' class='rightImg' src='../../../images/business/buyUSDT/triangle2-2.png' />
@@ -96,7 +96,7 @@
         </div>
         <div class='why bgc-whit'>
             <p class='cont_titel'>
-                Why buy USDT on MagnaMarkets
+                Why buy USDT on CATS
             </p>
             <div class='step fcc'>
                 <div v-for='item in whyList' :key='item.id' class='item'>
@@ -188,7 +188,7 @@ export default ({
         }
         const whyList = [
             { id: 1, img: require('../../../images/business/buyUSDT/why1.png'), label: 'Financial security', desc: 'Direct cooperation with UnionBank, funds are held in a separate account' },
-            { id: 2, img: require('../../../images/business/buyUSDT/why2.png'), label: 'Strictly regulated', desc: 'Audited by Certik, licensed by CEZA & FinCEN' },
+            { id: 2, img: require('../../../images/business/buyUSDT/why2.png'), label: 'Strictly regulated', desc: 'Audited by __placeholder, licensed by __placeholder & FinCEN' },
             { id: 3, img: require('../../../images/business/buyUSDT/why3.png'), label: 'Comprehensive risk control', desc: 'KYC , AML, delayed withdrawal and more to avoid illicit funds' },
             { id: 4, img: require('../../../images/business/buyUSDT/why4.png'), label: 'Simple and convenient', desc: 'Easy to buy crypto with a user-friendly interface' }
         ]

@@ -60,26 +60,6 @@
                                 </a>
                             </p>
                         </li>
-                        <li>
-                            <h4 class='title'>
-                                {{ $t('newHomeFooter.help') }}
-                            </h4>
-                            <p class='name'>
-                                <a href='javascript:;' @click='jumpUrl("faqs")'>
-                                    {{ $t('newHomeFooter.faqs') }}
-                                </a>
-                            </p>
-                            <p class='name'>
-                                <a href='javascript:;' @click='jumpUrl("terms")'>
-                                    {{ $t('newHomeFooter.terms') }}
-                                </a>
-                            </p>
-                            <p class='name'>
-                                <a href='javascript:;' @click='jumpUrl("policy")'>
-                                    {{ $t('newHomeFooter.policy') }}
-                                </a>
-                            </p>
-                        </li>
                     </ul>
                 </div>
                 <div class='nav-right'>
@@ -171,41 +151,14 @@ export default {
         // 底部nav跳转
         const jumpUrl = (index) => {
             const lang = getCookie('lang') || 'zh-CN'
-            let linkList = {}
-            if (lang === 'zh-CN') {
-                linkList = {
-                    trading: 'https://www.vitatoken.io/zh-CN/order?symbolId=692&tradeType=1',
-                    fund: 'https://www.vitatoken.io/zh-CN/fund',
-                    program: 'https://www.vitatoken.io/zh-CN/new1',
-                    vip: 'https://www.vitatoken.io/zh-CN/vip',
-                    customer: store.state._base.wpCompanyInfo.onlineService,
-                    // faqs: 'https://www.vitatoken.io/site/faqs',
-                    // terms: 'https://www.vitatoken.io/site/terms-conditions',
-                    // policy: 'https://www.vitatoken.io/site/privacy-policy',
-                    // about: 'https://www.vitatoken.io/site/about-us'
-                    // fees: 'https://vitatoken.io/site/Fees.pdf'
-                }
-            } else {
-                linkList = {
-                    trading: 'https://www.vitatoken.io/en-US/order?symbolId=692&tradeType=1',
-                    fund: 'https://www.vitatoken.io/en-US/fund',
-                    program: 'https://www.vitatoken.io/en-US/new1',
-                    vip: 'https://www.vitatoken.io/en-US/vip',
-                    customer: store.state._base.wpCompanyInfo.onlineService,
-                    // faqs: 'https://www.vitatoken.io/site/faqs',
-                    // terms: 'https://www.vitatoken.io/site/terms-conditions',
-                    // policy: 'https://www.vitatoken.io/site/privacy-policy',
-                    // about: 'https://www.vitatoken.io/site/about-us'
-                    // fees: 'https://vitatoken.io/site/Fees.pdf'
-                }
-            }
+            const linkList = {}
             const community = {
-                fb: 'https://www.facebook.com/profile.php?id=100088996032867',
-                twitter: 'https://twitter.com/MagnaMarkets',
-                telegram: 'https://t.me/magnamarket',
-                yt: 'https://www.youtube.com/channel/UC8Stt_tYcUqHZKdPrLQuGhw',
-                tiktok: 'https://tiktok.com/@officialMagnaMarkets',
-                ins: 'https://www.instagram.com/magnamarkets_/'
+                fb: '',
+                twitter: '',
+                telegram: '',
+                yt: '',
+                tiktok: '',
+                ins: ''
             }
             switch (index) {
                 case 'trading':

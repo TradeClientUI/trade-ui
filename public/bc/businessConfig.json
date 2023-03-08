@@ -1,7 +1,7 @@
 {
     "//": "pcuiLogo 请配置https://开头的图片地址，如果不配置则显示公版默认Logo",
-    "pcuiLogo": "https://prewppc-3.cmfbl.com/wp-content/uploads/2022/12/logo-2.png",
-    "pcuiLogoLight": "https://prewppc-3.cmfbl.com/wp-content/uploads/2022/12/logo-2.png",
+    "pcuiLogo": "https://pre-web.pidcex.com/wp-content/uploads/2023/02/cats-logo.png",
+    "pcuiLogoLight": "https://pre-web.pidcex.com/wp-content/uploads/2023/02/cats-logo.png",
     "v10Link//": "V10基金介绍页地址，如果配置了此地址，则点击行情列表页面的申购和图表页面的申购按钮跳转到此地址，如：/fundV10/index",
     "v10Link": "/api",
     "fundDEX//": "是否显示去中心化基金功能",

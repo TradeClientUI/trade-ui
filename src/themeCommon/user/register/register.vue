@@ -9,7 +9,7 @@
                     {{ $t('register.businessOpen') }}
                 </span>
                 <span v-else class='openType1'>
-                    {{ $t("register.welcomeRegister") }}MagnaMarkets
+                    {{ $t("register.welcomeRegister") }}CATS
                 </span>
             </p>
             <div class='banner'>

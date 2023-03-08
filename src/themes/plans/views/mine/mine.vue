@@ -1,9 +1,6 @@
 <template>
     <div class='page-wrap'>
         <PageComp class='minePageComp' :data='pageModules' />
-        <!-- <div class='support'>
-            <img alt='' src='/images/support.png' />
-        </div> -->
     </div>
 </template>
 
@@ -34,15 +31,6 @@ export default {
     .minePageComp {
         min-height: 100%;
         padding-bottom: rem(110px);
-    }
-    .support {
-        width: rem(300px);
-        margin: rem(-70px) auto rem(10px);
-        line-height: rem(32px);
-        text-align: center;
-        img {
-            width: 100%;
-        }
     }
 }
 

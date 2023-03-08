@@ -18,13 +18,13 @@
         <div class='centerBox'>
             <!--现在是分批买入加密基金的好时机-->
             <!-- <buy-now /> -->
-            <choose-vitatoken />
+            <choose-Cats />
         </div>
-        <said-about-vitatoken />
+        <said-about-Cats />
         <div class='centerBox'>
             <!--3分钟开启投资-->
             <start-investment />
-            <download-vitatoken />
+            <download-Cats />
         </div>
 
         <div class='centerBox'>

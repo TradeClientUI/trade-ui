@@ -3,7 +3,7 @@
     <div v-if='!accessFlag' class='pageWrap'>
         <div class='page-title'>
             <span v-if='tabActive === 0' class='openType1'>
-                {{ $t('login.welcomeLogin') }}MagnaMarkets
+                {{ $t('login.welcomeLogin') }}CATS
             </span>
             <span v-else class='openType2'>
                 {{ $t('login.loginByCorporate') }}
@@ -95,9 +95,6 @@
                 在线客服
             </a>
         </footer> -->
-        <!-- <div class='support'>
-            <img alt='' src='/images/support.png' />
-        </div> -->
     </div>
 
     <!-- 设置登录密码 -->
@@ -565,20 +562,6 @@ export default {
         margin-bottom: rem(10px);
         font-weight: normal;
         font-size: rem(50px);
-    }
-    .support {
-        position: absolute;
-        bottom: rem(30px);
-        width: rem(300px);
-        left: 50%;
-        margin-left: rem(-150px);
-        color: var(--placeholdColor);
-        font-size: rem(20px);
-        line-height: rem(32px);
-        text-align: center;
-        img {
-            width: 100%;
-        }
     }
     .account-type {
         display: flex;

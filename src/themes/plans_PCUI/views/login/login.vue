@@ -5,7 +5,7 @@
         <div class='login-wrap'>
             <div class='pageTitle'>
                 <h5 v-if='accountType === 1' class='opentype1'>
-                    {{ $t('login.welcomeLogin') }}MagnaMarkets
+                    {{ $t('login.welcomeLogin') }}CATS
                 </h5>
                 <h5 v-if='accountType === 2' class='opentype2'>
                     {{ $t('login.loginByCorporate') }}
@@ -15,10 +15,6 @@
                 </h5>
             </div>
             <div class='main' :class="inAnimation?'anim':''" @animationend='inAnimation=false'>
-                <!-- <div class='logo'>
-                <img alt='' src='/images/logo_vitamin.png' srcset='' />
-            </div> -->
-
                 <loginNameTypeBar v-model='loginNameType' />
                 <form class='loginForm'>
                     <!-- <h2 class='loginTitle'>
@@ -517,12 +513,6 @@ export default {
             100% {
                 transform: rotateY(0deg);
                 opacity: 1;
-            }
-        }
-        .logo {
-            width: 100px;
-            img {
-                width: 100%;
             }
         }
     }

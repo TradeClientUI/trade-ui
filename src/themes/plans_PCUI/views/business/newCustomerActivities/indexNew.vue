@@ -85,7 +85,7 @@
         </div>
         <div class='why cont'>
             <p class='h1'>
-                Why choose MagnaMarkets
+                Why choose CATS
             </p>
             <div class='icons'>
                 <div class='item'>
@@ -98,11 +98,11 @@
                 </div>
                 <div class='item'>
                     <img alt='' src='../../../images/business/newCustomerActivities/3.png' />
-                    <p>Licensed by CEZA & FinCEN</p>
+                    <p>Licensed by __placeholder & FinCEN</p>
                 </div>
                 <div class='item'>
                     <img alt='' src='../../../images/business/newCustomerActivities/4.png' />
-                    <p>Audited by Certik</p>
+                    <p>Audited by __placeholder</p>
                 </div>
             </div>
         </div>
@@ -136,13 +136,13 @@
                     5. To withdraw rewards for new user tasks, you need to complete KYC.
                 </p>
                 <p class='desc'>
-                    6. During the campaign, if any cheating behaviors are found, MagnaMarkets will consider canceling your qualification and may freeze your account according to the situation.
+                    6. During the campaign, if any cheating behaviors are found, CATS will consider canceling your qualification and may freeze your account according to the situation.
                 </p>
                 <p class='desc'>
-                    7. MagnaMarkets reserves all rights to the campaign, including but not limited to adjusting, interpreting, and terminating the campaign at any time without prior notice.
+                    7. CATS reserves all rights to the campaign, including but not limited to adjusting, interpreting, and terminating the campaign at any time without prior notice.
                 </p>
                 <p class='desc'>
-                    Warning: Cryptocurrency trading is risky, so please be cautious and aware of the risks involved. MagnaMarkets is not responsible for any guarantee, compensation, etc. for any of your transactions.
+                    Warning: Cryptocurrency trading is risky, so please be cautious and aware of the risks involved. CATS is not responsible for any guarantee, compensation, etc. for any of your transactions.
                 </p>
             </div>
         </el-dialog>

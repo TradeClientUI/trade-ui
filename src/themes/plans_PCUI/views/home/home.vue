@@ -146,29 +146,29 @@ export default {
             let linkList = {}
             if (lang === 'zh-CN') {
                 linkList = {
-                    trading: 'https://www.vitatoken.com/zh-CN/order?symbolId=364&tradeType=5',
-                    fund: 'https://www.vitatoken.com/zh-CN/fund',
-                    program: 'https://www.vitatoken.com/zh-CN/new1',
-                    vip: 'https://www.vitatoken.com/zh-CN/vip',
-                    customer: 'https://cs.vitatoken.io:443/im/text/1cayxu.html?lang=en',
-                    faqs: 'https://www.vitatoken.io/site/faqs',
-                    terms: 'https://www.vitatoken.io/site/terms-conditions',
-                    policy: 'https://www.vitatoken.io/site/privacy-policy'
+                    trading: 'https://www.Cats.com/zh-CN/order?symbolId=364&tradeType=5',
+                    fund: 'https://www.Cats.com/zh-CN/fund',
+                    program: 'https://www.Cats.com/zh-CN/new1',
+                    vip: 'https://www.Cats.com/zh-CN/vip',
+                    customer: 'https://cs.Cats.io:443/im/text/1cayxu.html?lang=en',
+                    faqs: 'https://www.Cats.io/site/faqs',
+                    terms: 'https://www.Cats.io/site/terms-conditions',
+                    policy: 'https://www.Cats.io/site/privacy-policy'
                 }
             } else {
                 linkList = {
-                    trading: 'https://www.vitatoken.com/en-US/order?symbolId=364&tradeType=5',
-                    fund: 'https://www.vitatoken.com/en-US/fund',
-                    program: 'https://www.vitatoken.com/en-US/new1',
-                    vip: 'https://www.vitatoken.com/en-US/vip',
-                    customer: 'https://cs.vitatoken.io:443/im/text/1cayxu.html?lang=en',
-                    faqs: 'https://www.vitatoken.io/site/faqs',
-                    terms: 'https://www.vitatoken.io/site/terms-conditions',
-                    policy: 'https://www.vitatoken.io/site/privacy-policy'
+                    trading: 'https://www.Cats.com/en-US/order?symbolId=364&tradeType=5',
+                    fund: 'https://www.Cats.com/en-US/fund',
+                    program: 'https://www.Cats.com/en-US/new1',
+                    vip: 'https://www.Cats.com/en-US/vip',
+                    customer: 'https://cs.Cats.io:443/im/text/1cayxu.html?lang=en',
+                    faqs: 'https://www.Cats.io/site/faqs',
+                    terms: 'https://www.Cats.io/site/terms-conditions',
+                    policy: 'https://www.Cats.io/site/privacy-policy'
                 }
             }
             const community = {
-                fb: 'https://www.facebook.com/Vitatoken-100578379186941',
+                fb: 'https://www.facebook.com/Cats-100578379186941',
                 ig: 'https://www.instagram.com/vitatoken_official/',
                 twitter: 'https://twitter.com/Vitatoken_',
                 telegram: 'https://t.me/vitatoke',

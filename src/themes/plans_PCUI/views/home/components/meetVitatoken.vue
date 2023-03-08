@@ -2,19 +2,11 @@
     <div class='meetVitatoken-module'>
         <div class='module-cont'>
             <div class='left'>
-                <video
-                    class='video'
-                    controls
-                    poster='../../../images/home/new_version/video_index.png'
-                    preload
-                >
-                    <source src='https://www.vitatoken.io/site/about-us.mp4' type='video/mp4' />
-                </video>
             </div>
 
             <div class='right'>
                 <h2 class='title'>
-                    Meet MagnaMarkets
+                    Meet CATS
                 </h2>
                 <p class='title-label'>
                     One-stop fund investment marketplace, a platform trusted by millions of investors

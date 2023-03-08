@@ -15,7 +15,7 @@ if (companyId === '360') {
 } else if (companyId === '368') {
     baseURL = 'https://activity.aatest.online/prod-apis' // 368公司的接口地址
 } else if (companyId === '14') {
-    baseURL = 'https://ac.vitatoken.io/prod-apis' // 14公司的接口地址 生产环境
+    baseURL = 'https://ac.Cats.io/prod-apis' // 14公司的接口地址 生产环境
 } else if (companyId === '11') {
     baseURL = 'https://act.jswlr.com' // 常用测试的公司
 }

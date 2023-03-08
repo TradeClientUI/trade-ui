@@ -384,9 +384,6 @@ export function useExchange () {
             accountCurrency: state.accountInfo.currency,
             paymentCurrency: state.paymentCurrency
         }
-        if (state.paymentInfo.paymentCode === 'opspay') {
-            param.channelCode = state.paymentInfo.paymentCode
-        }
         queryDepositExchangeRate(param).then(res => {
             if (res.check()) {
                 Toast.clear()

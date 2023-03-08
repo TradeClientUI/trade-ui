@@ -22,25 +22,25 @@ const list = [
         id: 1,
         srcLeft: require('../../../../images/aboutus/lunbo1-1.png'),
         srcRight: require('../../../../images/aboutus/lunbo1-2.png'),
-        desc: "It's a pleasure to work with MagnaMarkets, we assist with fiat deposit and withdrawal issues and look forward to getting better and better in the future. "
+        desc: "It's a pleasure to work with CATS, we assist with fiat deposit and withdrawal issues and look forward to getting better and better in the future. "
     },
     {
         id: 2,
         srcLeft: require('../../../../images/aboutus/lunbo2-1.png'),
         srcRight: require('../../../../images/aboutus/lunbo2-2.png'),
-        desc: 'We are happy to work with MagnaMarkets to coordinate business processes for vetted individuals and entities within the ecosystem. '
+        desc: 'We are happy to work with CATS to coordinate business processes for vetted individuals and entities within the ecosystem. '
     },
     {
         id: 3,
         srcLeft: require('../../../../images/aboutus/lunbo3-1.png'),
         srcRight: require('../../../../images/aboutus/lunbo3-2.png'),
-        desc: 'The whole team at Metaverse is proud to work with MagnaMarkets to further our common mission of bringing digital assets to the world.'
+        desc: 'The whole team at Metaverse is proud to work with CATS to further our common mission of bringing digital assets to the world.'
     },
     {
         id: 4,
         srcLeft: require('../../../../images/aboutus/lunbo4-1.png'),
         srcRight: require('../../../../images/aboutus/lunbo4-2.png'),
-        desc: 'Trade Switcher is excited to be part of MagnaMarkets, provide digital asset trading system and each module is iterated independently.'
+        desc: 'Trade Switcher is excited to be part of CATS, provide digital asset trading system and each module is iterated independently.'
     }
 ]
 </script>

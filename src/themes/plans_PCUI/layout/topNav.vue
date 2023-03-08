@@ -9,13 +9,6 @@
                 </router-link>
             </div>
             <div class='menus'>
-                <!-- <div v-if='businessConfig?.fundDEX' :class="['item', { 'active': $route.path === '/earning' }]">
-                        <router-link to='/earning'>
-                            <span class='link'>
-                                Funds
-                            </span>
-                        </router-link>
-                    </div> -->
                 <div :class="['item', { 'active': $route.path === '/quote' }]">
                     <router-link to='/quote'>
                         <span class='link'>
@@ -47,21 +40,6 @@
                         {{ $t('route.trade') }}
                     </span>
                 </div>
-                <!-- <div :class="['item', { 'active': $route.path === '/fund' }]">
-                        <router-link to='/fund'>
-                            <span class='link'>
-                                {{ $t('header.fund') }}
-                            </span>
-                            <span class='symbolUp'></span>
-                        </router-link>
-                    </div> -->
-                <!-- <div v-if='customerInfo.isFund === 1' :class="['item', { 'active': $route.path === '/fundManager' }]">
-                        <router-link to='/fundManager'>
-                            <span class='link'>
-                                {{ $t('header.fundManager') }}
-                            </span>
-                        </router-link>
-                    </div> -->
                 <!-- <div :class="['item', { 'active': $route.path === '/notice' }]">
                     <router-link to='/notice'>
                         <span class='link'>
@@ -69,13 +47,6 @@
                         </span>
                     </router-link>
                 </div> -->
-                <div :class="['item']">
-                    <a :href='`https://academy.MagnaMarkets.com/${academyLocale}/`' target='_blank'>
-                        <span class='link'>
-                            {{ $t('route.academy') }}
-                        </span>
-                    </a>
-                </div>
                 <!-- craig--新增aboutnew页面 -->
                 <div :class="['item', { 'active': $route.path === '/aboutus' }]">
                     <router-link to='/aboutus'>
@@ -87,7 +58,7 @@
             </div>
             <div class='nav-right'>
                 <!-- 未登录 -->
-                <div v-if='!customerInfo' class='handle-not'>
+                <div v-if="userAccountType==='G'" class='handle-not'>
                     <router-link class='login' to='/login'>
                         {{ $t('c.login') }}
                     </router-link>
@@ -96,7 +67,7 @@
                     </router-link>
                 </div>
                 <!-- 已登录 -->
-                <div v-else class='handle-have'>
+                <div v-else-if='customerInfo' class='handle-have'>
                     <div class='item'>
                         <el-popover
                             ref='popoverRef'
@@ -172,13 +143,22 @@
                             {{ $t('common.assets') }}
                         </span>
                     </div>
-                    <div v-if='customerInfo.associationCompanyId' class='line'></div>
-                    <div v-if='customerInfo.associationCompanyId' class='item'>
+                    <div class='line'></div>
+                    <div class='item'>
                         <el-dropdown
                             popper-class='mock-account'
                         >
+                            <!-- 多玩法真实模拟切换 -->
+                            <div
+                                v-if='(customerInfo.associationCompanyId && !showFullNetAsset)'
+                                class='link account'
+                                :class="{ 'mock': customerInfo.companyType === 'demo' }"
+                            >
+                                {{ customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') }}
+                                <div v-if='customerInfo.associationCompanyId' class='triangle'></div>
+                            </div>
                             <!-- 全仓单玩法真实模拟切换 -->
-                            <div v-if='showFullNetAsset' class='full-assets'>
+                            <div v-else class='full-assets'>
                                 <div class='full-assets-row'>
                                     <div class='name'>
                                         <!-- <em :class="['riskLevel', 'riskLevel' + userAccount.riskStatus]"></em> -->
@@ -190,18 +170,9 @@
                                         <span>${{ userAccount.netWorth || '--' }}</span>
                                     </div>
                                 </div>
-                                <i class='arrow icon_icon_arrow'></i>
+                                <i v-if='customerInfo.associationCompanyId' class='arrow icon_icon_arrow'></i>
                             </div>
-                            <!-- 多玩法真实模拟切换 -->
-                            <div
-                                v-else
-                                class='link account'
-                                :class="{ 'mock': customerInfo.companyType === 'demo' }"
-                            >
-                                {{ customerInfo.companyType === 'real' ? $t('mockAccount.real') : $t('mockAccount.demo') }}
-                                <div class='triangle'></div>
-                            </div>
-                            <template #dropdown>
+                            <template v-if='customerInfo.associationCompanyId' #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item>
                                         <div
@@ -240,7 +211,7 @@
                 <!-- 操作功能 -->
                 <div class='handle-feature'>
                     <div class='item'>
-                        <a @click='goService'>
+                        <a @click="$router.push('/service')">
                             <i class='icon icon_kefu' :title="$t('newHomeFooter.customer')"></i>
                         </a>
                     </div>

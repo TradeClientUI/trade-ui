@@ -5,7 +5,7 @@
             <van-col class='balance'>
                 <template v-if='Number(product.tradeType) === 1'>
                     {{ accountTradeType1?.availableMargin }}
-                    {{ account[direction].currency }}
+                    {{ account[direction]?.currency }}
                 </template>
                 <template v-else-if='Number(product.tradeType) === 2'>
                     {{ accountTradeType2?.availableMargin }}
@@ -42,7 +42,7 @@
             <van-col>{{ $t('common.previewMargin') }}</van-col>
             <van-col class='balance'>
                 <span v-if='previewMargin'>
-                    {{ previewMargin + ' '+ account[direction].currency }}
+                    {{ previewMargin + ' '+ account[direction]?.currency }}
                 </span>
                 <span v-else class='muted'>
                     --
@@ -54,7 +54,7 @@
             <van-col>{{ $t('common.previewFee') }}</van-col>
             <van-col class='balance'>
                 <span v-if='previewFee'>
-                    {{ previewFee + ' '+ account[direction].currency }}
+                    {{ previewFee + ' '+ account[direction]?.currency }}
                 </span>
                 <span v-else class='muted'>
                     --

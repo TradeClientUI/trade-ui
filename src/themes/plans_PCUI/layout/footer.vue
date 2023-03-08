@@ -167,38 +167,14 @@ export default {
         // 底部nav跳转
         const jumpUrl = (index) => {
             const lang = getCookie('lang') || 'zh-CN'
-            let linkList = {}
-            if (lang === 'zh-CN') {
-                linkList = {
-                    trading: 'https://www.vitatoken.io/zh-CN/order?symbolId=364&tradeType=5',
-                    fund: 'https://www.vitatoken.io/zh-CN/fund',
-                    program: 'https://www.vitatoken.io/zh-CN/new1',
-                    vip: 'https://www.vitatoken.io/zh-CN/vip',
-                    customer: 'https://cs.vitatoken.io:443/im/text/1cayxu.html?lang=en',
-                    faqs: 'https://www.vitatoken.io/site/faqs',
-                    terms: 'https://www.vitatoken.io/site/terms-conditions',
-                    policy: 'https://www.vitatoken.io/site/privacy-policy',
-                    // about: 'https://www.vitatoken.io/site/about-us'
-                }
-            } else {
-                linkList = {
-                    trading: 'https://www.vitatoken.io/en-US/order?symbolId=364&tradeType=5',
-                    fund: 'https://www.vitatoken.io/en-US/fund',
-                    program: 'https://www.vitatoken.io/en-US/new1',
-                    vip: 'https://www.vitatoken.io/en-US/vip',
-                    customer: 'https://cs.vitatoken.io:443/im/text/1cayxu.html?lang=en',
-                    faqs: 'https://www.vitatoken.io/site/faqs',
-                    terms: 'https://www.vitatoken.io/site/terms-conditions',
-                    policy: 'https://www.vitatoken.io/site/privacy-policy',
-                    // about: 'https://www.vitatoken.io/site/about-us'
-                }
-            }
+            const linkList = {}
+
             const community = {
-                fb: 'https://www.facebook.com/Vitatoken-100578379186941',
-                ig: 'https://www.instagram.com/vitatoken_official/',
-                twitter: 'https://twitter.com/Vitatoken_',
-                telegram: 'https://t.me/VitatokenEnglish',
-                yt: 'https://www.youtube.com/channel/UCWrIoUETskxOU9zIVpba6Hg'
+                fb: '',
+                ig: '',
+                twitter: '',
+                telegram: '',
+                yt: ''
             }
             switch (index) {
                 case 'trading':

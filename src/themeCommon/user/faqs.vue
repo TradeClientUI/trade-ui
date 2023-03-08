@@ -2,7 +2,7 @@
     <div class='faqs'>
         <div class='content'>
             <h1 class='content-title'>
-                MagnaMarkets {{ $t('faqs.faqs') }}
+                CATS {{ $t('faqs.faqs') }}
             </h1>
             <template v-for='(item, index) in list' :key='index'>
                 <div class='title'>
@@ -39,11 +39,6 @@ const list = ref([
         a: t('faqs.faqs1Desc')
     },
     {
-        q: t('faqs.faqs2'),
-        a: t('faqs.faqs2Desc'),
-        link: 'https://www.fincen.gov/msb-state-selector'
-    },
-    {
         q: t('faqs.faqs3'),
         a: t('faqs.faqs3Desc')
     },
@@ -70,10 +65,6 @@ const list = ref([
             t('faqs.faqs8Desc2'),
             t('faqs.faqs8Desc3')
         ]
-    },
-    {
-        q: t('faqs.faqs9'),
-        a: t('faqs.faqs9Desc')
     },
     {
         q: t('faqs.faqs10'),

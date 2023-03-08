@@ -1,7 +1,6 @@
 <template>
     <topNav :class='[$route.name]' />
-    <registerActivityNotification v-if="['Quote','Order','Assets'].includes($route.name)" />
-
+    <registerActivityNotification v-if="['Quote','Order'].includes($route.name)" />
     <Suspense>
         <template #default>
             <router-view v-slot='{ Component, route }'>
@@ -46,6 +45,7 @@ export default {
         const state = reactive({
             noticePopShow: false
         })
+
         onUnmounted(() => {
             // localRemove('noticeParams')
         })

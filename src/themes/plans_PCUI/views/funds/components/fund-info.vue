@@ -10,7 +10,7 @@
                     {{ fund.fundName }}
                 </span>
                 <span class='by'>
-                    By <span>MagnaMarkets</span> Crypto Exchange
+                    By <span>CATS</span> Crypto Exchange
                 </span>
             </div>
         </div>

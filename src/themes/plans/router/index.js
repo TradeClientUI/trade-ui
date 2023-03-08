@@ -16,7 +16,7 @@ const routes = [
             {
                 path: 'home',
                 name: 'Home',
-                component: () => import(/* webpackChunkName: "Home" */ '../views/home/home.vue'),
+                component: () => import(/* webpackChunkName: "Home" */ '../views/home/home_vita.vue'),
                 meta: {
                     title: 'route.home',
                     keepAlive: true,
@@ -354,54 +354,6 @@ const routes = [
             title: 'route.fundRules',
             roles: ['User'],
         }
-    },
-    {
-        path: '/fundDEX',
-        name: 'fundDEX',
-        redirect: '/dashboard',
-        component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/components/layout.vue'),
-        children: [
-            {
-                path: '/dashboard',
-                name: 'Dashboard',
-                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/dashboard/index.vue'),
-                meta: {
-                    title: ''
-                }
-            },
-            {
-                path: '/earning',
-                name: 'Earning',
-                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/staking/index.vue'),
-                meta: {
-                    title: ''
-                }
-            },
-            {
-                path: '/earning/detail',
-                name: 'Earning-Detail',
-                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/staking/detail.vue'),
-                meta: {
-                    title: ''
-                }
-            },
-            {
-                path: '/indexFunds',
-                name: 'IndexFunds',
-                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/indexFunds/index.vue'),
-                meta: {
-                    title: ''
-                }
-            },
-            {
-                path: '/indexFunds/detail',
-                name: 'IndexFunds-Detail',
-                component: () => import(/* webpackChunkName: "fundDEX" */ '@/themeCommon/user/fundDEX/indexFunds/detail.vue'),
-                meta: {
-                    title: ''
-                }
-            }
-        ]
     },
     {
         path: '/noAccess',

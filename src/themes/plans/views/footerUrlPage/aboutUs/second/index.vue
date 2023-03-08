@@ -22,7 +22,7 @@
         <!-- Audit -->
         <div class='module'>
             <h2 class='module-title'>
-                Audit by Certik
+                Audit by __placeholder
             </h2>
             <div class='row bgGrey'>
                 <span class='col'>
@@ -37,7 +37,7 @@
                     September, 2022
                 </span>
                 <span class='col'>
-                    Certik
+                    __placeholder
                 </span>
             </div>
             <div class='row bgGrey'>
@@ -50,26 +50,25 @@
             </div>
             <div class='row bgWhite'>
                 <span class='col'>
-                    <a class='link' href='https://www.vitatoken.io/site/REP-Vitatoken-Pentest__final-20221003T170329Z.pdf'>
-                        MagnaMarkets Pentest
+                    <a class='link' href='https://www.Cats.io/site/REP-Cats-Pentest__final-20221003T170329Z.pdf'>
+                        CATS Pentest
                     </a>
                 </span>
                 <span class='col'>
-                    <a class='link' href='https://www.certik.com/projects/vitatoken#audit'>
-                        Find it in Certik
+                    <a class='link' href='https://www.__placeholder.com/projects/Cats#audit'>
+                        Find it in __placeholder
                     </a>
                 </span>
             </div>
         </div>
-        <!-- CEZA -->
-        <div class='module CEZA'>
+        <!-- __placeholder -->
+        <div class='module __placeholder'>
             <h2 class='module-title'>
-                CEZA virtual currency exchange license
+                __placeholder virtual currency exchange license
             </h2>
-            <img alt='' class='CEZA-img' src='../../../../images/aboutus/photo.png' />
             <span class='more'>
-                <a class='link' href='https://ceza.gov.ph/article/ceza-welcomes-vitatoken-under-dragon-empire-developments-limited'>
-                    Find it in CEZA >
+                <a class='link' href='https://__placeholder.gov.ph/article/__placeholder-welcomes-Cats-under-dragon-empire-developments-limited'>
+                    Find it in __placeholder >
                 </a>
             </span>
         </div>
@@ -104,7 +103,7 @@
             </div>
             <div class='row bgWhite'>
                 <span class='col'>
-                    <a class='link' href='https://www.vitatoken.io/site/msb_registration.pdf'>
+                    <a class='link' href='https://www.Cats.io/site/msb_registration.pdf'>
                         MSB_registration
                     </a>
                 </span>
@@ -118,7 +117,7 @@
         <!-- Registered -->
         <div class='module'>
             <h2 class='module-title'>
-                Registered MagnaMarkets as a trademark
+                Registered CATS as a trademark
             </h2>
             <div class='row bgGrey'>
                 <span class='col'>
@@ -145,9 +144,6 @@
                 </span>
             </div>
             <div class='row bgWhite'>
-                <span class='col'>
-                    <img alt='' class='logo_vitamin' src='/images/logo_vitamin.png' />
-                </span>
                 <span class='col'>
                     <a class='link' href='https://branddb.wipo.int/branddb/ph/en/'>
                         Find it in Datebase
@@ -273,12 +269,9 @@ import Media from './media.vue'
         .link {
             color: #0062FF;
         }
-        .logo_vitamin {
-            width: rem(200px);
-        }
     }
 }
-.CEZA {
+.__placeholder {
     background: #F4F5F9;
     margin-top: rem(40px);
     padding: rem(40px) rem(30px);

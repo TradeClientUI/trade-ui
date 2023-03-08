@@ -5,10 +5,10 @@
         </h1>
         <div class='content'>
             <p>
-                This Cookie Policy explains how MagnaMarkets ("MagnaMarkets", "we", "us" and "our") use cookies and similar technologies when you visit our websites located at www.MagnaMarkets.com, or any other websites, pages, features, or content we own or operate (collectively, the "Site(s)"), when you use the MagnaMarkets mobile app, and/or when you interact with MagnaMarkets online advertisements or marketing emails (collectively the "Services"). It explains what these technologies are and why we use them, as well as your rights to control our use of them.
+                This Cookie Policy explains how CATS ("CATS", "we", "us" and "our") use cookies and similar technologies when you visit our websites located at www.CATS.com, or any other websites, pages, features, or content we own or operate (collectively, the "Site(s)"), when you use the CATS mobile app, and/or when you interact with CATS online advertisements or marketing emails (collectively the "Services"). It explains what these technologies are and why we use them, as well as your rights to control our use of them.
             </p>
             <p>
-                In some cases, we may use cookies and similar technologies to collect personal information, or information that becomes personal information if we combine it with other information. In such cases the MagnaMarkets Privacy Policy will apply in addition to this Cookie Policy.
+                In some cases, we may use cookies and similar technologies to collect personal information, or information that becomes personal information if we combine it with other information. In such cases the CATS Privacy Policy will apply in addition to this Cookie Policy.
             </p>
             <p class='paragraph-title'>
                 WHAT ARE COOKIES?
@@ -17,7 +17,7 @@
                 Cookies are small files, typically of letters and numbers, downloaded onto your computer or mobile device when you visit certain websites. When you return to these websites, or visit other websites that use the same cookies, the websites recognize these cookies and your browsing device. A cookie cannot read data off your hard drive or read cookie files created by other websites.
             </p>
             <p>
-                Cookies set by the website operator are called "first party cookies". Cookies set by parties other than the website operator are called "third party cookies". The parties that set third party cookies can recognize your web browser both when it visits the MagnaMarkets website and when it visits certain other websites where the third party’s cookies are also present.
+                Cookies set by the website operator are called "first party cookies". Cookies set by parties other than the website operator are called "third party cookies". The parties that set third party cookies can recognize your web browser both when it visits the CATS website and when it visits certain other websites where the third party’s cookies are also present.
             </p>
             <p>
                 More information on cookies and their use can be found at www.aboutcookies.org or www.allaboutcookies.org.
@@ -29,10 +29,10 @@
                 When you access our Sites and Services, we or companies we work with may place cookies on your computer or other device. These technologies help us better understand user behavior, and inform us about which parts of our websites people have visited.
             </p>
             <p>
-                We use first party and third party cookies to recognize you as a MagnaMarkets customer, customize MagnaMarkets Services, content, and advertising, to measure promotional effectiveness, and to collect information about your computer or other access device to mitigate risk, help prevent fraud, and promote trust and safety.
+                We use first party and third party cookies to recognize you as a CATS customer, customize CATS Services, content, and advertising, to measure promotional effectiveness, and to collect information about your computer or other access device to mitigate risk, help prevent fraud, and promote trust and safety.
             </p>
             <p>
-                We may place cookies from third-party service providers who may use information about your visits to other websites to target advertisements for products and services available from MagnaMarkets. We do not control the types of information collected and stored by these third-party cookies. You should check the third-party's website for more information on how they use cookies.
+                We may place cookies from third-party service providers who may use information about your visits to other websites to target advertisements for products and services available from CATS. We do not control the types of information collected and stored by these third-party cookies. You should check the third-party's website for more information on how they use cookies.
             </p>
             <p>
                 The following are some examples of information that we collect and how we may use it:
@@ -74,7 +74,7 @@
                 Targeting/Advertising Cookies
             </p>
             <p>
-                MagnaMarkets uses third party service providers to display advertising on our Services and serve advertising on other third party sites that may be relevant to you or your interests. These cookies are also used to help measure the effectiveness of the advertising campaign. They remember that you have visited a website and this information may be shared with other organizations, such as advertisers. This means that after you have been to our websites, you may see some advertisements about our Services elsewhere on the Internet. The information collected through this process by the third party service providers does not enable us or them to identify your name, contact details or other personal information that directly identifies you unless you choose to provide these. Such advertising will only be delivered where permitted by applicable law. If you do not allow these cookies, you will experience less advertising tailored to your inferred interests on our Sites and will not receive targeted MagnaMarkets advertisements on third party websites.
+                CATS uses third party service providers to display advertising on our Services and serve advertising on other third party sites that may be relevant to you or your interests. These cookies are also used to help measure the effectiveness of the advertising campaign. They remember that you have visited a website and this information may be shared with other organizations, such as advertisers. This means that after you have been to our websites, you may see some advertisements about our Services elsewhere on the Internet. The information collected through this process by the third party service providers does not enable us or them to identify your name, contact details or other personal information that directly identifies you unless you choose to provide these. Such advertising will only be delivered where permitted by applicable law. If you do not allow these cookies, you will experience less advertising tailored to your inferred interests on our Sites and will not receive targeted CATS advertisements on third party websites.
             </p>
             <p class='paragraph-title'>
                 HOW LONG WILL COOKIES STAY ON MY BROWSING DEVICE?
@@ -83,7 +83,7 @@
                 The length of time a cookie will stay on your browsing device depends on whether it is a "persistent" or "session" cookie. Session cookies will only stay on your device until you close your browser. Persistent cookies stay on your browsing device until they expire or are deleted.
             </p>
             <p class='paragraph-title'>
-                WHAT OTHER SIMILAR TECHNOLOGIES DOES MagnaMarkets USE?
+                WHAT OTHER SIMILAR TECHNOLOGIES DOES CATS USE?
             </p>
             <p>
                 In addition to cookies, we may use other similar technologies, like web beacons to track users of our Sites and Services. Web beacons, or "clear gifs," are tiny graphics with a unique identifier, similar in function to cookies. They are used to track the online movements of web users.

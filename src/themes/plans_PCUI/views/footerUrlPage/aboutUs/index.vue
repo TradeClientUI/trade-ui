@@ -5,15 +5,11 @@
             {{ $t('aboutUs.title') }}
         </h1>
         <div class='introduce'>
-            <img class='left_img' src='../../../images/aboutus/photo.png' />
             <div class='right'>
                 <h3 class='text'>
                     {{ $t('aboutUs.introduce') }}
                 </h3>
                 <div class='video'>
-                    <video controls :height='videoHeight' poster='../../../images/aboutus/video_index.png' preload width='755'>
-                        <source src='https://www.vitatoken.io/site/V10.mp4' type='video/mp4' />
-                    </video>
                     <!-- <iframe
                         allowfullscreen='true'
                         border='0'
@@ -21,7 +17,7 @@
                         framespacing='0'
                         height='390'
                         scrolling='no'
-                        src='https://www.vitatoken.io/site/V10.mp4'
+                        src='https://www.Cats.io/site/V10.mp4'
                         width='754'
                     >
                     </iframe> -->
@@ -31,9 +27,6 @@
         <h3 class='title'>
             {{ $t('aboutUs.servicesTitle') }}
         </h3>
-        <div class='service'>
-            <img class='left_img' :src='serviceImg' />
-        </div>
         <h1 class='title'>
             {{ $t('aboutUs.visionsTitle') }}
         </h1>
@@ -70,11 +63,6 @@ export default {
     setup () {
         const lang = getCookie('lang') || 'zh-CN'
 
-        const serviceImg = computed(() => {
-            if (lang === 'zh-CN') return require('../../../images/aboutus/services_zh.png')
-            else return require('../../../images/aboutus/services_en.png')
-        })
-
         const videoHeight = computed(() => {
             if (lang === 'zh-CN') return 360
             else return 350
@@ -82,7 +70,6 @@ export default {
 
         return {
             videoHeight,
-            serviceImg
         }
     }
 }

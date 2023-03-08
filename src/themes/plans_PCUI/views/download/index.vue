@@ -37,8 +37,8 @@
 <script setup>
 // 下载地址
 const downloads = {
-    'ios': 'https://www.vitatoken.io/site/v10-trade.app',
-    'android': 'https://www.vitatoken.io/site/v10-trade.apk'
+    'ios': 'https://www.Cats.io/site/v10-trade.app',
+    'android': 'https://www.Cats.io/site/v10-trade.apk'
 }
 </script>
 

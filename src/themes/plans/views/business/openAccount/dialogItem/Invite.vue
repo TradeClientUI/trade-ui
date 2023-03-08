@@ -11,7 +11,6 @@
                     <img class='img' src='../../../../images/business/openAccount/InviteFriends2.png' />
                 </div>
                 <div class='nodeFooter'>
-                    <img alt='' class='logo' src='../../../../images/business/openAccount/video_index.png' />
                     <!-- <QrcodeVue class='code' level='H' :size='ratioValue == 1?108:64' :value='resLink' @click='showCode = true' /> -->
                     <p id='inviteCode' ref='inviteCodeRef' class='code'></p>
                 </div>
@@ -71,7 +70,7 @@ export default {
                     const imgUrl = canvas.toDataURL('image/jpeg', 1)
                     const eleLink = document.createElement('a')
                     eleLink.href = imgUrl // 转换后的图片地址
-                    eleLink.download = 'MagnaMarkets Referral'
+                    eleLink.download = 'CATS Referral'
                     // 触发点击
                     document.body.appendChild(eleLink)
                     eleLink.click()

@@ -46,14 +46,13 @@
                 The process of buying <br /> USDT via card
             </p>
             <div class='top'>
-                <img alt='' class='buying_logo' src='../../../images/business/buyUSDT/buying1.png' />
                 <p class='desc'>
-                    MagnaMarkets
+                    CATS
                 </p>
             </div>
             <div class='center'>
                 <span class='gary'>
-                    UnionBank stores <br /> MagnaMarkets users' <br /> money
+                    UnionBank stores <br /> CATS users' <br /> money
                 </span>
                 <div class='edge edge_left'></div>
                 <div class='edge edge_right'></div>
@@ -87,7 +86,7 @@
         </div>
         <div class='why'>
             <p class='cont-title'>
-                Why buy USDT on Vitatoken
+                Why buy USDT on Cats
             </p>
             <div v-for='item in whyList' :key='item.id' class='item'>
                 <img alt='' class='why_img' :src='item.img' />
@@ -210,7 +209,7 @@ export default ({
         }
         const whyList = [
             { id: 1, img: require('../../../images/business/buyUSDT/why1.png'), label: 'Financial security', desc: 'Direct cooperation with UnionBank, funds are <br/> held in a separate account' },
-            { id: 2, img: require('../../../images/business/buyUSDT/why2.png'), label: 'Strictly regulated', desc: 'Audited by Certik, licensed by CEZA & FinCEN' },
+            { id: 2, img: require('../../../images/business/buyUSDT/why2.png'), label: 'Strictly regulated', desc: 'Audited by __placeholder, licensed by __placeholder & FinCEN' },
             { id: 3, img: require('../../../images/business/buyUSDT/why3.png'), label: 'Comprehensive risk control', desc: 'KYC , AML, delayed withdrawal and more to avoid  <br/> illicit funds' },
             { id: 4, img: require('../../../images/business/buyUSDT/why4.png'), label: 'Simple and convenient', desc: 'Easy to buy crypto with a user-friendly interface' }
         ]

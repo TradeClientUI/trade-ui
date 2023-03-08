@@ -408,7 +408,7 @@
     "answers": [
       {
         "title": "What is the difference between deposit with a bank card and with cryptocurrency?",
-        "text": "1. When you do not have corresponding cryptop currency assets in other platforms, you can quickly deposit the crypto in MagnaMarkets through bank card; <br />2. When you hold crypto assets in other platforms, you The corresponding cryptoc can be transfer from it to your MagnaMarkets account."
+        "text": "1. When you do not have corresponding cryptop currency assets in other platforms, you can quickly deposit the crypto in CATS through bank card; <br />2. When you hold crypto assets in other platforms, you The corresponding cryptoc can be transfer from it to your CATS account."
       },
       {
         "title": "Is there a limit to the top-up amount?",
@@ -952,7 +952,7 @@
     "invite": "Invite ",
     "inviteFriend": "Invite friends",
     "rule": "View Referral Rules",
-    "ruleContent": "Activity rules: Every time the recommender successfully recommends a new user to MagnaMarkets, he can receive a commission from the transaction fee when the new recommended user trades in any spot or fund. This means that you are free to invite users instantly through the referral link, and both offer commissions. Friends can also enjoy the transaction fee discount you set when registering using your referral link.",
+    "ruleContent": "Activity rules: Every time the recommender successfully recommends a new user to CATS, he can receive a commission from the transaction fee when the new recommended user trades in any spot or fund. This means that you are free to invite users instantly through the referral link, and both offer commissions. Friends can also enjoy the transaction fee discount you set when registering using your referral link.",
     "spot": "Spot",
     "netDeposit": "Inviter's net deposit",
     "rate": "Inviter's rebate rate",
@@ -970,7 +970,7 @@
     "c8": "1. If customers are found to be trading irregularly during the event, vitoken has the right to stop customer transactions and disqualify the reward",
     "c9": "2. The cost of ETF Redeem, bonus withdrawal process, the difference caused by bank charges or exchange rate shall be borne by the customer",
     "c10": "3. If you have any questions about the event, you can contact the online customer service at any time",
-    "c11": "4. MagnaMarkets reserves the right to modify, change or cancel this announcement for any reason at its sole discretion at any time without prior notice.",
+    "c11": "4. CATS reserves the right to modify, change or cancel this announcement for any reason at its sole discretion at any time without prior notice.",
     "c12": "5. Risk warning: There are risks in cryptocurrency transactions, please purchase with caution and pay attention to transaction risks. Please note that vitaken is not responsible for any guarantee, compensation, etc. for any of your transactions"
   },
   "businessKYC": {
@@ -1034,10 +1034,10 @@
     "tip13": "Before Identity verification, make sure you are the Account holder",
     "information": "Confirm information",
     "tip14": "When submitting the above information and documents, I fully understand and confirm on behalf of the company:",
-    "tip15": " 1、I/We have full authority to open a MagnaMarkets business account and sign relevant terms and agreements on behalf of the applicant company",
-    "tip16": " 2、I/We have read, understood and agree to be bound by the applicable terms and conditions published by MagnaMarkets, including but not limited to contractual service agreement terms and conditions and privacy policy",
+    "tip15": " 1、I/We have full authority to open a CATS business account and sign relevant terms and agreements on behalf of the applicant company",
+    "tip16": " 2、I/We have read, understood and agree to be bound by the applicable terms and conditions published by CATS, including but not limited to contractual service agreement terms and conditions and privacy policy",
     "tip17": " 3、I/We understand that the application company account information provided is truthful and complete",
-    "tip18": " 4、I/We will notify MagnaMarkets or its affiliates (if applicable) of any changes in the information provided within a minimum of 7 working days",
+    "tip18": " 4、I/We will notify CATS or its affiliates (if applicable) of any changes in the information provided within a minimum of 7 working days",
     "tip19": "I/We understand and agree to this statement",
     "draftSaved": "Draft Saved",
     "accountInfo": "Account Info",
@@ -1079,7 +1079,7 @@
     "V10": "V10",
     "riskWarning": "Risk Warning",
     "risk": "The use of leverage to trade financial products such as foreign exchange and CFDs has high risks and may not be suitable for all investors. Before trading, you need to fully understand the potential risks, and carefully consider your experience level and investment goals. If necessary, please seek independent financial advice. In addition, the content provided on this website is for informational purposes only and does not constitute any recommendation or suggestion",
-    "copyRight": "MagnaMarkets © 2022 &#65372; MagnaMarkets provides safe, reliable and high-quality services for you",
+    "copyRight": "CATS © 2022 &#65372; CATS provides safe, reliable and high-quality services for you",
     "forex": "Forex",
     "gold": "Metals",
     "crude": "Energies",
@@ -1183,24 +1183,24 @@
     "text34": "When the account has position, pay attention to the [margin level], if the account status is not safe, withdrawal may result in forced liquidation due to insufficient funds"
   },
   "aboutJD": {
-    "aboutJD": "About MagnaMarkets",
-    "aboutJDDesc": "MagnaMarkets is the world's leading online trading broker platform, dedicated to providing investors with easy and simple online trading services for CFDs such as foreign exchange, precious metals, and cryptocurrencies. It is strictly regulated by the Money Services Businesses (MSB Registration Number: 31000235006070). The platform focuses on improving the convenience and security of investors' transactions, and will continue to innovate technology and services, always providing users with top liquidity, a powerful and stable trading platform, advanced trading experience and all-round investment education. Accompany users to grow and realize wealth appreciation.",
+    "aboutJD": "About CATS",
+    "aboutJDDesc": "CATS is the world's leading online trading broker platform, dedicated to providing investors with easy and simple online trading services for CFDs such as foreign exchange, precious metals, and cryptocurrencies. It is strictly regulated by the Money Services Businesses (MSB Registration Number: 31000235006070). The platform focuses on improving the convenience and security of investors' transactions, and will continue to innovate technology and services, always providing users with top liquidity, a powerful and stable trading platform, advanced trading experience and all-round investment education. Accompany users to grow and realize wealth appreciation.",
     "objectives": "Our objectives",
     "vision": "Our visions",
-    "visionDesc": "MagnaMarkets fully understands and cares about the needs of traders at the moment of decision-making. We provide customers with real-time market trading opportunities and operating strategies, and reduce the trading threshold for customers through various technical means and operating policies. In the future, we will allow all customers to easily participate in multiple transactions. Platform investment becomes possible.",
+    "visionDesc": "CATS fully understands and cares about the needs of traders at the moment of decision-making. We provide customers with real-time market trading opportunities and operating strategies, and reduce the trading threshold for customers through various technical means and operating policies. In the future, we will allow all customers to easily participate in multiple transactions. Platform investment becomes possible.",
     "target": "Our objectives",
-    "targetDesc": "MagnaMarkets will be committed to solving the pain points of customer transactions and decision-making, and provide investors and customers with a new easy, simple and intelligent trading experience with advanced technical means, innovative products and sincere services.",
+    "targetDesc": "CATS will be committed to solving the pain points of customer transactions and decision-making, and provide investors and customers with a new easy, simple and intelligent trading experience with advanced technical means, innovative products and sincere services.",
     "perspective": "Our perspective",
-    "perspectiveDesc1": "Easy trading —— MagnaMarkets provides various trading products and services that are easy to understand, learn, and use",
-    "perspectiveDesc2": "Safe and reliable —— Safety is always MagnaMarkets' top priority. Your financial information, transaction records and any private information will never be disclosed to anyone other than you",
-    "perspectiveDesc3": "Intelligent innovation —— Through industry-leading technology and innovation capabilities, you can get the best trading experience at MagnaMarkets"
+    "perspectiveDesc1": "Easy trading —— CATS provides various trading products and services that are easy to understand, learn, and use",
+    "perspectiveDesc2": "Safe and reliable —— Safety is always CATS' top priority. Your financial information, transaction records and any private information will never be disclosed to anyone other than you",
+    "perspectiveDesc3": "Intelligent innovation —— Through industry-leading technology and innovation capabilities, you can get the best trading experience at CATS"
   },
   "faqs": {
     "faqs": "FAQs",
-    "faqs1": "Why is it called MagnaMarkets?",
-    "faqs1Desc": "MagnaMarkets lowers the threshold for user participation by integrating third-party technical indicators, trading insights, and daily operating strategies. Please be aware that there are risks in trading CFDs, please ensure you fully understand the risks and make your own trading decisions.",
-    "faqs2": "Where is MagnaMarkets regulated?",
-    "faqs2Desc": "MagnaMarkets is the brand name we use, and Magnasale Trading Ltd is the main body of the company, which is supervised by the Financial Crimes Enforcement Network(MSB Registration Number: 31000235006070).",
+    "faqs1": "Why is it called CATS?",
+    "faqs1Desc": "CATS lowers the threshold for user participation by integrating third-party technical indicators, trading insights, and daily operating strategies. Please be aware that there are risks in trading CFDs, please ensure you fully understand the risks and make your own trading decisions.",
+    "faqs2": "Where is CATS regulated?",
+    "faqs2Desc": "CATS is the brand name we use, and Magnasale Trading Ltd is the main body of the company, which is supervised by the Financial Crimes Enforcement Network(MSB Registration Number: 31000235006070).",
     "link": "Link",
     "faqs3": "What is a CFD?",
     "faqs3Desc": "Contract for Difference (CFD) stands for Contract for Difference in English, which is a derivative product that enables you to trade with us on the rise and fall of financial market prices. With this form of trading, you don't actually own the underlying asset, but take a position on the rise or fall in its price.",
@@ -1211,19 +1211,19 @@
     "faqs6": "How to make money through forex trading?",
     "faqs6Desc": "Going long: buying at a low price and then closing the position at a high price can make money, shorting: selling at a high price and closing the position at a low price can make money. Executing trades at the best price depends on your trading strategy and its implementation. There are risks in trading foreign exchange and other leveraged products, and investors should understand the risks before starting to trade.",
     "faqs7": "Who is the management team behind it?",
-    "faqs7Desc": "Our management team consists of professionals with decades of experience in forex, finance and technology, which they bring to MagnaMarkets' daily global operations. Focus on providing customers with simple, technologically advanced and transparent trading solutions, and customer satisfaction is our top priority.",
-    "faqs8": "Why choose MagnaMarkets?",
-    "faqs8Desc": "Easy trading - MagnaMarkets provides easy and simple trading products and services",
-    "faqs8Desc2": "Safe and reliable —— Safety is always the primary consideration of MagnaMarkets, users will be able to query transaction records one by one, and can compare and verify other people's transaction prices at the same time",
-    "faqs8Desc3": "Intelligent innovation —— Through industry-leading technology and innovation capabilities, you can get the best trading experience in MagnaMarkets",
+    "faqs7Desc": "Our management team consists of professionals with decades of experience in forex, finance and technology, which they bring to CATS' daily global operations. Focus on providing customers with simple, technologically advanced and transparent trading solutions, and customer satisfaction is our top priority.",
+    "faqs8": "Why choose CATS?",
+    "faqs8Desc": "Easy trading - CATS provides easy and simple trading products and services",
+    "faqs8Desc2": "Safe and reliable —— Safety is always the primary consideration of CATS, users will be able to query transaction records one by one, and can compare and verify other people's transaction prices at the same time",
+    "faqs8Desc3": "Intelligent innovation —— Through industry-leading technology and innovation capabilities, you can get the best trading experience in CATS",
     "faqs9": "Which customers are not accepted?",
     "faqs9Desc": "We welcome customers from all over the world, but cannot accept US and Islamic users, nor anyone who violates local laws or regulations.",
     "faqs10": "Where can I get price information?",
-    "faqs10Desc": "MagnaMarkets' liquidity aggregator aggregates liquidity from different LPs, allowing us to offer the best bid and ask prices.",
+    "faqs10Desc": "CATS' liquidity aggregator aggregates liquidity from different LPs, allowing us to offer the best bid and ask prices.",
     "faqs11": "Are funds safe?",
     "faqs11Desc": "Client funds are held in segregated bank accounts, ensuring that they cannot be used for any other purpose. We employ strict policies and procedures for the maintenance and operation of segregated accounts. We also apply 3D Secure technology when processing card payments, increasing the security of these transactions.",
     "faqs12": "Is my personal information safe?",
-    "faqs12Desc": "MagnaMarkets implements state-of-the-art technologies to protect customers' data and ensure secure network communications. All data is encrypted and stored on secure servers and cannot be accessed by any unauthorized person."
+    "faqs12Desc": "CATS implements state-of-the-art technologies to protect customers' data and ensure secure network communications. All data is encrypted and stored on secure servers and cannot be accessed by any unauthorized person."
   },
   "commonFees": {
     "feesMargin": "Trading Fees",
@@ -1274,6 +1274,6 @@
   "24Hchange": "24H change",
   "noAccess": {
     "ip": "Current IP is restricted",
-    "text": "According to your IP address, you are located in a country or region where MagnaMarkets services are restricted. Unfortunately, MagnaMarkets cannot provide services to you."
+    "text": "According to your IP address, you are located in a country or region where CATS services are restricted. Unfortunately, CATS cannot provide services to you."
   }
 }

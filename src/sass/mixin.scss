@@ -229,3 +229,7 @@
         padding: 0 32px;
     }
 }
+// 字体 
+@mixin globalFont() {
+    font-family: inherit;
+}

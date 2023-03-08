@@ -38,8 +38,8 @@
 <script setup>
 const downloads = {
     'ios': '',
-    'android': 'https://www.magnamarkets.com/site/magnamarkets.apk',
-    'google': 'https://play.google.com/store/apps/details?id=com.magnamarkets.app'
+    'android': 'https://www.CATS.com/site/CATS.apk',
+    'google': 'https://play.google.com/store/apps/details?id=com.CATS.app'
 }
 </script>
 

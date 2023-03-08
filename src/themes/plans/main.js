@@ -63,7 +63,7 @@ const token = getToken()
 
 // 设置默认主题色
 if (isEmpty(localGet('invertColor'))) {
-    localSet('invertColor', 'night') // 默认黑色主题
+    localSet('invertColor', 'light') // 默认白天主题
 }
 
 setRouter(router)

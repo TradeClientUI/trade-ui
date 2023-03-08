@@ -23,7 +23,7 @@
                     </p>
                     <span class='cont'>
                         Take the quotation of
-                        <a class='links' href='https://www.vitatoken.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
+                        <a class='links' href='https://www.Cats.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
                             V10/USDT
                         </a>
                         at 00:00 on September 8 as the winning number
@@ -38,7 +38,7 @@
                     </p>
                     <span class='cont'>
                         Take the quotation of
-                        <a class='links' href='https://www.vitatoken.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
+                        <a class='links' href='https://www.Cats.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
                             V10/USDT
                         </a>
                         at 00:00 on September 15 as the winning number
@@ -53,7 +53,7 @@
                     </p>
                     <span class='cont'>
                         Take the quotation of
-                        <a class='links' href='https://www.vitatoken.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
+                        <a class='links' href='https://www.Cats.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
                             V10/USDT
                         </a>
                         at 00:00 on September 22 as the winning number
@@ -68,7 +68,7 @@
                     </p>
                     <span class='cont'>
                         Take the quotation of
-                        <a class='links' href='https://www.vitatoken.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
+                        <a class='links' href='https://www.Cats.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
                             V10/USDT
                         </a>
                         at 00:00 on September 29 as the winning number
@@ -89,7 +89,7 @@
                 </div>
                 <div class='cont'>
                     Take the quotation of
-                    <a class='links' href='https://www.vitatoken.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
+                    <a class='links' href='https://www.Cats.io/en-US/order?name=V10/USDT&symbolId=368&tradeType=5' target='_blank'>
                         V10/USDT
                     </a>
                     at 00:00 on October 1 as the winning number
@@ -101,7 +101,7 @@
                 </p>
                 <p class='h3'>
                     Step 1:
-                    <a class='links' href='https://www.vitatoken.io/en-US/register' target='_blank'>
+                    <a class='links' href='https://www.Cats.io/en-US/register' target='_blank'>
                         Register an account
                     </a>
                     and deposit.
@@ -251,13 +251,13 @@
                         3. Rewards will be sent within 2 working days after the tweet.
                     </p>
                     <p class='desc'>
-                        4. During the campaign, if any cheating behaviors are found, MagnaMarkets will consider canceling your qualification and may freeze your account according to the situation.
+                        4. During the campaign, if any cheating behaviors are found, CATS will consider canceling your qualification and may freeze your account according to the situation.
                     </p>
                     <p class='desc'>
-                        5. MagnaMarkets reserves the right to modify or cancel this campaign at any point.
+                        5. CATS reserves the right to modify or cancel this campaign at any point.
                     </p>
                     <p class='desc'>
-                        Warning: Cryptocurrency trading is risky, so please be cautious and aware of the risks involved. MagnaMarkets is not responsible for any guarantee, compensation, etc. for any of your transactions.
+                        Warning: Cryptocurrency trading is risky, so please be cautious and aware of the risks involved. CATS is not responsible for any guarantee, compensation, etc. for any of your transactions.
                     </p>
                 </div>
             </div>

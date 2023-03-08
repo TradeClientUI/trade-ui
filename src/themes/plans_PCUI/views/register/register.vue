@@ -7,14 +7,10 @@
                     {{ $t('register.businessOpen') }}
                 </h5> -->
                 <h5 class='opentype2'>
-                    {{ $t("register.welcomeRegister") }}MagnaMarkets
+                    {{ $t("register.welcomeRegister") }}CATS
                 </h5>
             </div>
             <div class='content' :class="inAnimation?'anim':''" @animationend='inAnimation=false'>
-                <!-- <div class='logo'>
-                    <img alt='' src='/images/logo_vitamin.png' srcset='' />
-                </div> -->
-
                 <van-tabs
                     v-model:active='openType'
                     class='openTypeTab'
@@ -688,12 +684,6 @@ export default {
                 100% {
                     transform: rotateY(0deg);
                     opacity: 1;
-                }
-            }
-            .logo {
-                width: 100px;
-                img {
-                    width: 100%;
                 }
             }
             .businessOpen {
